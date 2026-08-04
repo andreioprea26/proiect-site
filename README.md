@@ -4,7 +4,7 @@ Repository-ul conține proiectul unui magazin online pentru produse handmade, de
 
 ## Stadiul proiectului
 
-Proiectul se află în Etapa 5 — Implementarea ghidată cu Codex, Faza 1 — Pregătirea proiectului. Task 1.1 pregătește structura Git și documentația de bază. Aplicația Next.js nu este încă inițializată și nu există dependențe instalate.
+Proiectul se află în Etapa 5 — Implementarea ghidată cu Codex, Faza 1 — Pregătirea proiectului. Aplicația Next.js de bază este inițializată, iar pagina principală confirmă că magazinul este în pregătire.
 
 ## Tehnologii planificate
 
@@ -15,6 +15,33 @@ Proiectul se află în Etapa 5 — Implementarea ghidată cu Codex, Faza 1 — P
 - Vercel pentru hosting și Preview deployments;
 - Playwright pentru testarea fluxurilor critice;
 - GitHub pentru versionare.
+
+## Rulare locală
+
+Este necesară o versiune modernă de Node.js (minimum 20.9) și npm.
+
+Instalează dependențele:
+
+```bash
+npm install
+```
+
+Pornește aplicația locală:
+
+```bash
+npm run dev
+```
+
+Aplicația va fi disponibilă implicit la `http://localhost:3000`.
+
+Comenzi de verificare disponibile:
+
+```bash
+npm run lint
+npm run build
+```
+
+Build-ul Next.js include verificarea TypeScript.
 
 ## Structura branch-urilor
 
