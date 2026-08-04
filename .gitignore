@@ -52,7 +52,7 @@ pnpm-debug.log*
 Thumbs.db
 Desktop.ini
 
-# Local source drafts predating the repository layout
-/project-bible-v0.1.md
-/project-bible-v0.2.md
-/project-bible-v0.3.md
+# Local source drafts predating the current Project Bible
+/docs/project-bible-v0.1.md
+/docs/project-bible-v0.2.md
+/docs/project-bible-v0.3.md
