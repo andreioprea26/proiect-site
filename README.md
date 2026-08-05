@@ -34,14 +34,23 @@ npm run dev
 
 Aplicația va fi disponibilă implicit la `http://localhost:3000`.
 
-Comenzi de verificare disponibile:
+## Comenzi de dezvoltare și verificare
 
 ```bash
+npm run dev
 npm run lint
+npm run typecheck
 npm run build
+npm run check
 ```
 
-Build-ul Next.js include verificarea TypeScript.
+- `npm run dev` pornește serverul local de dezvoltare.
+- `npm run lint` verifică regulile ESLint.
+- `npm run typecheck` verifică TypeScript fără să genereze fișiere.
+- `npm run build` creează și validează build-ul de producție.
+- `npm run check` rulează succesiv lint, typecheck și build.
+
+`npm run check` este verificarea standard înainte de commit sau Pull Request.
 
 ## Structura proiectului
 
