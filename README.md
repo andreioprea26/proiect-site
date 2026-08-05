@@ -52,6 +52,26 @@ npm run check
 
 `npm run check` este verificarea standard înainte de commit sau Pull Request.
 
+## Configurarea mediului local
+
+Creează fișierul local de configurare pornind de la exemplul versionat:
+
+```bash
+cp .env.example .env.local
+```
+
+În PowerShell folosește:
+
+```powershell
+Copy-Item .env.example .env.local
+```
+
+Completează numai valorile necesare pentru task-ul curent. `.env.local` nu se salvează în Git, iar valorile reale nu trebuie incluse în documentație, commit-uri sau prompturi.
+
+Variabilele care încep cu `NEXT_PUBLIC_` pot fi incluse în codul trimis browserului. Cheile private, inclusiv `SUPABASE_SERVICE_ROLE_KEY`, cheile Stripe secrete și cheile API private, nu trebuie să folosească acest prefix și trebuie accesate exclusiv server-side.
+
+Secțiunile pentru Supabase, Stripe, e-mail și livrare sunt doar pregătitoare; aceste servicii nu sunt încă configurate.
+
 ## Structura proiectului
 
 - `src/app` conține rutele și layout-urile Next.js.
