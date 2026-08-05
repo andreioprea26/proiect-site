@@ -43,6 +43,16 @@ npm run build
 
 Build-ul Next.js include verificarea TypeScript.
 
+## Structura proiectului
+
+- `src/app` conține rutele și layout-urile Next.js.
+- `src/components` grupează componentele de layout, componentele partajate și elementele UI generice.
+- `src/features` conține modulele funcționale pentru autentificare, catalog, coș, checkout, comenzi și administrare.
+- `src/lib` conține configurări, validări și utilitare comune.
+- `src/types` și `src/styles` sunt rezervate tipurilor TypeScript comune și stilurilor globale suplimentare.
+- `tests/e2e` este rezervat viitoarelor teste end-to-end.
+- `supabase/migrations` este rezervat viitoarelor migrații SQL versionate.
+
 ## Structura branch-urilor
 
 - `main` — codul aprobat pentru producție;
