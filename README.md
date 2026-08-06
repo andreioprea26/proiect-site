@@ -18,7 +18,7 @@ Proiectul se află în Etapa 5 — Implementarea ghidată cu Codex, Faza 1 — P
 
 ## Rulare locală
 
-Este necesară o versiune modernă de Node.js (minimum 20.9) și npm.
+Este necesară o versiune modernă de Node.js (minimum 22) și npm.
 
 Instalează dependențele:
 
@@ -70,7 +70,14 @@ Completează numai valorile necesare pentru task-ul curent. `.env.local` nu se s
 
 Variabilele care încep cu `NEXT_PUBLIC_` pot fi incluse în codul trimis browserului. Cheile private, inclusiv `SUPABASE_SERVICE_ROLE_KEY`, cheile Stripe secrete și cheile API private, nu trebuie să folosească acest prefix și trebuie accesate exclusiv server-side.
 
-Secțiunile pentru Supabase, Stripe, e-mail și livrare sunt doar pregătitoare; aceste servicii nu sunt încă configurate.
+Conexiunea locală folosește proiectul Supabase Development prin
+`NEXT_PUBLIC_SUPABASE_URL` și `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`.
+Clienții pentru browser și server sunt separați în `src/lib/supabase`.
+Autentificarea, tabelele, politicile RLS și migrațiile vor fi configurate în
+task-urile dedicate.
+
+Secțiunile pentru Stripe, e-mail și livrare sunt doar pregătitoare; aceste
+servicii nu sunt încă configurate.
 
 ## Structura proiectului
 
