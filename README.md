@@ -42,6 +42,8 @@ npm run lint
 npm run typecheck
 npm run build
 npm run check
+npm run test:e2e
+npm run test:e2e:headed
 ```
 
 - `npm run dev` pornește serverul local de dezvoltare.
@@ -51,6 +53,16 @@ npm run check
 - `npm run check` rulează succesiv lint, typecheck și build.
 
 `npm run check` este verificarea standard înainte de commit sau Pull Request.
+
+## Teste end-to-end
+
+Playwright este folosit pentru testele end-to-end din `tests/e2e`. Comanda
+`npm run test:e2e` pregătește build-ul, pornește automat aplicația locală pe
+portul dedicat 3100 și rulează testele headless în Chromium. Pentru rularea cu
+browserul vizibil se folosește `npm run test:e2e:headed`.
+
+Testele trebuie să folosească exclusiv date fictive și medii de test sau
+Development. Mediul Production nu este folosit pentru testare.
 
 ## Preview deployments
 
@@ -98,7 +110,7 @@ servicii nu sunt încă configurate.
 - `src/features` conține modulele funcționale pentru autentificare, catalog, coș, checkout, comenzi și administrare.
 - `src/lib` conține configurări, validări și utilitare comune.
 - `src/types` și `src/styles` sunt rezervate tipurilor TypeScript comune și stilurilor globale suplimentare.
-- `tests/e2e` este rezervat viitoarelor teste end-to-end.
+- `tests/e2e` conține testele end-to-end Playwright.
 - `supabase/migrations` este rezervat viitoarelor migrații SQL versionate.
 
 ## Structura branch-urilor
