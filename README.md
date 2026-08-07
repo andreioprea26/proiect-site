@@ -52,6 +52,18 @@ npm run check
 
 `npm run check` este verificarea standard înainte de commit sau Pull Request.
 
+## Preview deployments
+
+Proiectul Vercel este conectat la repository-ul GitHub. Branch-ul `main` este
+Production Branch, iar celelalte branch-uri și Pull Request-urile generează
+automat Preview deployments.
+
+Mediul Preview folosește proiectul Supabase Development. Variabilele
+`NEXT_PUBLIC_SUPABASE_URL` și `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` sunt
+gestionate exclusiv în mediul Preview din dashboard-ul Vercel și nu sunt
+salvate în Git. Configurarea completă a mediului Production va fi realizată în
+Faza 10.
+
 ## Configurarea mediului local
 
 Creează fișierul local de configurare pornind de la exemplul versionat:
