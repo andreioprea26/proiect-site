@@ -88,6 +88,7 @@ order by e.enumsortorder;
 | Versiune | Migrare | Mediu | Data aplicării | Rezultat |
 | --- | --- | --- | --- | --- |
 | `20260811120000` | `create_account_schema` | Development | 2026-08-12 | Aplicată; trei tabele prezente, RLS activ, zero politici |
+| `20260812120000` | `create_account_bootstrap` | Development | 2026-08-12 | Aplicată; trigger Auth verificat, rol `customer` creat atomic, utilizatorul temporar șters și cascadele confirmate |
 
 ## Limitarea fluxului manual
 
