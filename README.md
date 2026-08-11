@@ -97,8 +97,8 @@ Variabilele care încep cu `NEXT_PUBLIC_` pot fi incluse în codul trimis browse
 Conexiunea locală folosește proiectul Supabase Development prin
 `NEXT_PUBLIC_SUPABASE_URL` și `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`.
 Clienții pentru browser și server sunt separați în `src/lib/supabase`.
-Autentificarea, tabelele, politicile RLS și migrațiile vor fi configurate în
-task-urile dedicate.
+Fluxul curent pentru aplicarea și verificarea manuală a migrațiilor Development
+este documentat în [Migrații Supabase Development](docs/supabase-development-migrations.md).
 
 Secțiunile pentru Stripe, e-mail și livrare sunt doar pregătitoare; aceste
 servicii nu sunt încă configurate.
@@ -111,7 +111,7 @@ servicii nu sunt încă configurate.
 - `src/lib` conține configurări, validări și utilitare comune.
 - `src/types` și `src/styles` sunt rezervate tipurilor TypeScript comune și stilurilor globale suplimentare.
 - `tests/e2e` conține testele end-to-end Playwright.
-- `supabase/migrations` este rezervat viitoarelor migrații SQL versionate.
+- `supabase/migrations` conține migrațiile SQL versionate.
 
 ## Structura branch-urilor
 
