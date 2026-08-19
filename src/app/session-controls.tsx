@@ -1,21 +1,13 @@
 import Link from "next/link";
 
-import { createClient } from "@/lib/supabase/server";
+import { getAuthenticatedUser } from "@/lib/auth/user";
 
 import { logout } from "./login/actions";
 
 export async function SessionControls() {
-  let isAuthenticated = false;
+  const user = await getAuthenticatedUser();
 
-  try {
-    const supabase = await createClient();
-    const { data, error } = await supabase.auth.getUser();
-    isAuthenticated = !error && Boolean(data.user);
-  } catch {
-    isAuthenticated = false;
-  }
-
-  if (!isAuthenticated) {
+  if (!user) {
     return (
       <div className="mt-8 flex justify-center gap-3">
         <Link
