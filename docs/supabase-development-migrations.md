@@ -121,6 +121,42 @@ atribuită rolului PostgreSQL `authenticated`, cu condiția bazată pe
 `auth.uid() = user_id`. Nu trebuie să existe politici pentru `INSERT`, `UPDATE`
 sau `DELETE`.
 
+## Politicile RLS pentru profiluri și adrese
+
+Înainte de aplicarea migrării
+`20260820160000_add_account_rls_policies.sql`, verifică RLS și politicile deja
+prezente:
+
+```sql
+select
+  c.relname as table_name,
+  c.relrowsecurity as rls_enabled
+from pg_class c
+join pg_namespace n on n.oid = c.relnamespace
+where n.nspname = 'public'
+  and c.relname in ('profiles', 'user_roles', 'customer_addresses')
+order by c.relname;
+
+select tablename, policyname, cmd, roles
+from pg_policies
+where schemaname = 'public'
+  and tablename in ('profiles', 'user_roles', 'customer_addresses')
+order by tablename, policyname;
+```
+
+Înainte de aplicare, toate cele trei tabele trebuie să aibă RLS activ, iar
+singura politică trebuie să fie `user_roles_select_own`. După aplicare, rulează
+aceleași query-uri și verifică următorul set:
+
+- `profiles_select_own` și `profiles_update_own`;
+- `customer_addresses_select_own`, `customer_addresses_insert_own`,
+  `customer_addresses_update_own` și `customer_addresses_delete_own`;
+- politica existentă `user_roles_select_own`.
+
+Toate politicile sunt limitate la rolul PostgreSQL `authenticated`. Profilurile
+nu au politici pentru `INSERT` sau `DELETE`, iar `user_roles` nu are politici de
+scriere.
+
 ## Registrul aplicărilor manuale
 
 | Versiune | Migrare | Mediu | Data aplicării | Rezultat |
@@ -128,6 +164,7 @@ sau `DELETE`.
 | `20260811120000` | `create_account_schema` | Development | 2026-08-12 | Aplicată; trei tabele prezente, RLS activ, zero politici |
 | `20260812120000` | `create_account_bootstrap` | Development | 2026-08-12 | Aplicată; trigger Auth verificat, rol `customer` creat atomic, utilizatorul temporar șters și cascadele confirmate |
 | `20260820120000` | `add_user_roles_select_own_policy` | Development | 2026-08-20 | Aplicată; o politică `SELECT` pentru propriile roluri, zero politici de scriere |
+| `20260820160000` | `add_account_rls_policies` | Development | 2026-08-20 | Aplicată; RLS verificat, politici proprii pentru profiluri și adrese, politica rolurilor păstrată fără scriere |
 
 ## Limitarea fluxului manual
 
