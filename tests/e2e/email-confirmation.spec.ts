@@ -40,7 +40,7 @@ test("callback-ul nu urmează o destinație externă furnizată de utilizator", 
   expect(new URL(page.url()).hostname).not.toBe("example.com");
 });
 
-test("pagina de succes explică următorul pas fără a implementa autentificarea", async ({
+test("pagina de succes oferă acces la autentificare", async ({
   page,
 }) => {
   await page.goto("/auth/confirmed?status=success");
@@ -49,8 +49,11 @@ test("pagina de succes explică următorul pas fără a implementa autentificare
     page.getByRole("heading", { level: 1, name: "E-mail confirmat" }),
   ).toBeVisible();
   await expect(
-    page.getByText(/Autentificarea va fi disponibilă într-un task viitor\./),
+    page.getByText("Adresa ta de e-mail a fost confirmată. Acum te poți autentifica."),
   ).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "Mergi la autentificare" }),
+  ).toHaveAttribute("href", "/login");
 });
 
 test("pagina de eroare nu expune detalii sensibile", async ({ page }) => {

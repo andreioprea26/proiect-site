@@ -12,6 +12,9 @@ test("homepage-ul afișează mesajul de pregătire", async ({ page }) => {
   await expect(
     page.getByText("Magazinul este în pregătire.", { exact: true }),
   ).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "Autentificare" }),
+  ).toHaveAttribute("href", "/login");
 
   await expect(page.locator("body")).not.toContainText(
     /Application error|Internal Server Error|This page could not be found/i,
