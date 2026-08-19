@@ -8,14 +8,7 @@ export const metadata: Metadata = {
   description: "Autentifică-te în contul tău Brand Handmade.",
 };
 
-type LoginPageProps = {
-  searchParams: Promise<{ passwordReset?: string | string[] }>;
-};
-
-export default async function LoginPage({ searchParams }: LoginPageProps) {
-  const { passwordReset } = await searchParams;
-  const passwordWasReset = passwordReset === "success";
-
+export default function LoginPage() {
   return (
     <main className="flex min-h-screen items-center justify-center bg-amber-50 px-6 py-12 text-stone-800">
       <section className="w-full max-w-md rounded-2xl border border-stone-200 bg-white p-6 shadow-sm sm:p-8">
@@ -26,23 +19,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
         <p className="mt-3 text-sm leading-6 text-stone-600">
           Introdu adresa de e-mail confirmată și parola contului tău.
         </p>
-        {passwordWasReset ? (
-          <p
-            className="mt-5 rounded-lg bg-emerald-50 p-3 text-sm text-emerald-800"
-            role="status"
-          >
-            Parola a fost schimbată. Acum te poți autentifica folosind parola nouă.
-          </p>
-        ) : null}
         <LoginForm />
-        <p className="mt-4 text-center text-sm">
-          <Link
-            className="font-medium text-emerald-800 underline-offset-4 hover:underline"
-            href="/forgot-password"
-          >
-            Ai uitat parola?
-          </Link>
-        </p>
         <p className="mt-6 text-center text-sm text-stone-600">
           Nu ai cont?{" "}
           <Link
