@@ -18,8 +18,9 @@ export async function createClient() {
             cookieStore.set(name, value, options),
           );
         } catch {
-          // Server Components cannot write cookies. Server Actions and Route
-          // Handlers use this same client in contexts where cookie writes work.
+          // Server Components cannot write cookies. The global proxy refreshes
+          // sessions before rendering; Server Actions and Route Handlers can
+          // write cookies through this same adapter.
         }
       },
     },
