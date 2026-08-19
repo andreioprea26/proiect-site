@@ -83,12 +83,51 @@ where n.nspname = 'public'
 order by e.enumsortorder;
 ```
 
+## Politica de citire a rolului propriu
+
+Înainte de aplicarea migrării
+`20260820120000_add_user_roles_select_own_policy.sql`, confirmă că RLS este
+activ și că politica nu există deja:
+
+```sql
+select
+  c.relrowsecurity as rls_enabled,
+  exists (
+    select 1
+    from pg_policies p
+    where p.schemaname = 'public'
+      and p.tablename = 'user_roles'
+      and p.policyname = 'user_roles_select_own'
+  ) as policy_exists
+from pg_class c
+join pg_namespace n on n.oid = c.relnamespace
+where n.nspname = 'public'
+  and c.relname = 'user_roles';
+```
+
+Rezultatul așteptat înainte de aplicare este `rls_enabled = true` și
+`policy_exists = false`. După aplicare, verifică definiția exactă:
+
+```sql
+select policyname, cmd, roles, qual, with_check
+from pg_policies
+where schemaname = 'public'
+  and tablename = 'user_roles'
+order by policyname;
+```
+
+Trebuie să existe exclusiv politica `user_roles_select_own` pentru `SELECT`,
+atribuită rolului PostgreSQL `authenticated`, cu condiția bazată pe
+`auth.uid() = user_id`. Nu trebuie să existe politici pentru `INSERT`, `UPDATE`
+sau `DELETE`.
+
 ## Registrul aplicărilor manuale
 
 | Versiune | Migrare | Mediu | Data aplicării | Rezultat |
 | --- | --- | --- | --- | --- |
 | `20260811120000` | `create_account_schema` | Development | 2026-08-12 | Aplicată; trei tabele prezente, RLS activ, zero politici |
 | `20260812120000` | `create_account_bootstrap` | Development | 2026-08-12 | Aplicată; trigger Auth verificat, rol `customer` creat atomic, utilizatorul temporar șters și cascadele confirmate |
+| `20260820120000` | `add_user_roles_select_own_policy` | Development | 2026-08-20 | Aplicată; o politică `SELECT` pentru propriile roluri, zero politici de scriere |
 
 ## Limitarea fluxului manual
 
