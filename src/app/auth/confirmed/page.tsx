@@ -25,14 +25,14 @@ export default async function ConfirmationPage({
         </h1>
         <p className="mt-4 text-sm leading-6 text-stone-600">
           {isSuccess
-            ? "Adresa ta de e-mail a fost confirmată. Autentificarea va fi disponibilă într-un task viitor."
+            ? "Adresa ta de e-mail a fost confirmată. Acum te poți autentifica."
             : "Linkul de confirmare este invalid sau a expirat. Poți încerca din nou folosind cel mai recent e-mail primit."}
         </p>
         <Link
           className="mt-6 inline-flex min-h-11 items-center justify-center rounded-lg bg-emerald-800 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-800"
-          href="/"
+          href={isSuccess ? "/login" : "/"}
         >
-          Înapoi la pagina principală
+          {isSuccess ? "Mergi la autentificare" : "Înapoi la pagina principală"}
         </Link>
       </section>
     </main>
