@@ -18,7 +18,7 @@ Proiectul se află în Etapa 5 — Implementarea ghidată cu Codex, Faza 1 — P
 
 ## Rulare locală
 
-Este necesară o versiune modernă de Node.js (minimum 20.9) și npm.
+Este necesară o versiune modernă de Node.js (minimum 22) și npm.
 
 Instalează dependențele:
 
@@ -34,14 +34,84 @@ npm run dev
 
 Aplicația va fi disponibilă implicit la `http://localhost:3000`.
 
-Comenzi de verificare disponibile:
+## Comenzi de dezvoltare și verificare
 
 ```bash
+npm run dev
 npm run lint
+npm run typecheck
 npm run build
+npm run check
+npm run test:e2e
+npm run test:e2e:headed
 ```
 
-Build-ul Next.js include verificarea TypeScript.
+- `npm run dev` pornește serverul local de dezvoltare.
+- `npm run lint` verifică regulile ESLint.
+- `npm run typecheck` verifică TypeScript fără să genereze fișiere.
+- `npm run build` creează și validează build-ul de producție.
+- `npm run check` rulează succesiv lint, typecheck și build.
+
+`npm run check` este verificarea standard înainte de commit sau Pull Request.
+
+## Teste end-to-end
+
+Playwright este folosit pentru testele end-to-end din `tests/e2e`. Comanda
+`npm run test:e2e` pregătește build-ul, pornește automat aplicația locală pe
+portul dedicat 3100 și rulează testele headless în Chromium. Pentru rularea cu
+browserul vizibil se folosește `npm run test:e2e:headed`.
+
+Testele trebuie să folosească exclusiv date fictive și medii de test sau
+Development. Mediul Production nu este folosit pentru testare.
+
+## Preview deployments
+
+Proiectul Vercel este conectat la repository-ul GitHub. Branch-ul `main` este
+Production Branch, iar celelalte branch-uri și Pull Request-urile generează
+automat Preview deployments.
+
+Mediul Preview folosește proiectul Supabase Development. Variabilele
+`NEXT_PUBLIC_SUPABASE_URL` și `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` sunt
+gestionate exclusiv în mediul Preview din dashboard-ul Vercel și nu sunt
+salvate în Git. Configurarea completă a mediului Production va fi realizată în
+Faza 10.
+
+## Configurarea mediului local
+
+Creează fișierul local de configurare pornind de la exemplul versionat:
+
+```bash
+cp .env.example .env.local
+```
+
+În PowerShell folosește:
+
+```powershell
+Copy-Item .env.example .env.local
+```
+
+Completează numai valorile necesare pentru task-ul curent. `.env.local` nu se salvează în Git, iar valorile reale nu trebuie incluse în documentație, commit-uri sau prompturi.
+
+Variabilele care încep cu `NEXT_PUBLIC_` pot fi incluse în codul trimis browserului. Cheile private, inclusiv `SUPABASE_SERVICE_ROLE_KEY`, cheile Stripe secrete și cheile API private, nu trebuie să folosească acest prefix și trebuie accesate exclusiv server-side.
+
+Conexiunea locală folosește proiectul Supabase Development prin
+`NEXT_PUBLIC_SUPABASE_URL` și `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`.
+Clienții pentru browser și server sunt separați în `src/lib/supabase`.
+Fluxul curent pentru aplicarea și verificarea manuală a migrațiilor Development
+este documentat în [Migrații Supabase Development](docs/supabase-development-migrations.md).
+
+Secțiunile pentru Stripe, e-mail și livrare sunt doar pregătitoare; aceste
+servicii nu sunt încă configurate.
+
+## Structura proiectului
+
+- `src/app` conține rutele și layout-urile Next.js.
+- `src/components` grupează componentele de layout, componentele partajate și elementele UI generice.
+- `src/features` conține modulele funcționale pentru autentificare, catalog, coș, checkout, comenzi și administrare.
+- `src/lib` conține configurări, validări și utilitare comune.
+- `src/types` și `src/styles` sunt rezervate tipurilor TypeScript comune și stilurilor globale suplimentare.
+- `tests/e2e` conține testele end-to-end Playwright.
+- `supabase/migrations` conține migrațiile SQL versionate.
 
 ## Structura branch-urilor
 
