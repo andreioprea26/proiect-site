@@ -29,14 +29,22 @@ export async function SessionControls() {
   return (
     <div className="mt-8">
       <p className="text-sm font-medium text-emerald-800">Sesiune activă</p>
-      <form action={logout} className="mt-3">
+      <div className="mt-3 flex justify-center gap-3">
+        <Link
+          className="rounded-lg bg-emerald-800 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-900"
+          href="/account"
+        >
+          Contul meu
+        </Link>
+        <form action={logout}>
         <button
           className="rounded-lg border border-stone-400 px-4 py-2 text-sm font-medium text-stone-700 transition hover:bg-stone-100"
           type="submit"
         >
           Deconectare
         </button>
-      </form>
+        </form>
+      </div>
     </div>
   );
 }
