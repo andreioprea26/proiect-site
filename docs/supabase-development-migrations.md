@@ -294,6 +294,99 @@ order by e.enumsortorder;
 
 Rezultatul așteptat, în ordine, este `selection`, `text`, `boolean`, `image`.
 
+## Inventar și mișcări de stoc
+
+Migrarea `20260820220000_create_inventory.sql` creează tabelele `inventory` și
+`inventory_movements`, regulile pentru stoc direct sau pe variante și funcția
+atomică `adjust_inventory`. Migrarea a fost aplicată manual în Development la
+2026-08-20.
+
+Un rând `inventory` țintește exact un produs sau o variantă. Produsele cu
+variante folosesc exclusiv inventar pe variante. Funcția `adjust_inventory`
+blochează rândul de inventar, aplică diferența și creează mișcarea de audit în
+aceeași tranzacție. Funcția poate fi executată numai de `service_role` până la
+definirea accesului centralizat pentru catalog.
+
+Înainte de aplicare, confirmă că obiectele nu există deja:
+
+```sql
+select
+  to_regclass('public.inventory') as inventory,
+  to_regclass('public.inventory_movements') as inventory_movements,
+  to_regprocedure(
+    'public.adjust_inventory(uuid,integer,text,uuid,jsonb)'
+  ) as adjust_inventory,
+  to_regprocedure(
+    'public.validate_inventory_target()'
+  ) as validate_inventory_target,
+  to_regprocedure(
+    'public.validate_unique_product_inventory()'
+  ) as validate_unique_product_inventory,
+  to_regprocedure(
+    'public.validate_product_variant_inventory()'
+  ) as validate_product_variant_inventory;
+```
+
+Toate valorile trebuie să fie `null`. După aplicare, confirmă tabelele și RLS:
+
+```sql
+select
+  c.relname as table_name,
+  c.relrowsecurity as rls_enabled
+from pg_class c
+join pg_namespace n on n.oid = c.relnamespace
+where n.nspname = 'public'
+  and c.relname in ('inventory', 'inventory_movements')
+order by c.relname;
+```
+
+Ambele tabele trebuie să aibă `rls_enabled = true`. Politicile rămân absente:
+
+```sql
+select tablename, policyname
+from pg_policies
+where schemaname = 'public'
+  and tablename in ('inventory', 'inventory_movements');
+```
+
+Query-ul trebuie să returneze zero rânduri. Confirmă funcțiile și drepturile
+funcției atomice:
+
+```sql
+select
+  p.proname,
+  p.prosecdef as security_definer,
+  has_function_privilege(
+    'anon',
+    p.oid,
+    'EXECUTE'
+  ) as anon_can_execute,
+  has_function_privilege(
+    'authenticated',
+    p.oid,
+    'EXECUTE'
+  ) as authenticated_can_execute,
+  has_function_privilege(
+    'service_role',
+    p.oid,
+    'EXECUTE'
+  ) as service_role_can_execute
+from pg_proc p
+join pg_namespace n on n.oid = p.pronamespace
+where n.nspname = 'public'
+  and p.proname in (
+    'adjust_inventory',
+    'validate_inventory_target',
+    'validate_unique_product_inventory',
+    'validate_product_variant_inventory'
+  )
+order by p.proname;
+```
+
+`adjust_inventory` trebuie să aibă `security_definer = false`, accesul
+`anon/authenticated = false` și `service_role = true`. Cele trei funcții trigger
+nu sunt apelate direct de aplicație.
+
 ## Registrul aplicărilor manuale
 
 | Versiune | Migrare | Mediu | Data aplicării | Rezultat |
@@ -304,6 +397,7 @@ Rezultatul așteptat, în ordine, este `selection`, `text`, `boolean`, `image`.
 | `20260820160000` | `add_account_rls_policies` | Development | 2026-08-20 | Aplicată; RLS verificat, politici proprii pentru profiluri și adrese, politica rolurilor păstrată fără scriere |
 | `20260820200000` | `create_catalog_base_schema` | Development | 2026-08-20 | Aplicată; cinci tabele și trei enum-uri prezente, RLS activ, zero politici, relații și trigger-e verificate |
 | `20260820210000` | `create_variants_customizations` | Development | 2026-08-20 | Aplicată; două tabele și enum-ul prezente, RLS activ, zero politici, integritatea relațiilor, indexurile, tipurile monetare și trigger-ele verificate |
+| `20260820220000` | `create_inventory` | Development | 2026-08-20 | Aplicată; două tabele prezente, RLS activ, zero politici, drepturile RPC și trigger-ele verificate; testele tranzacționale pentru ajustări, audit și reguli de integritate au trecut cu rollback |
 
 ## Limitarea fluxului manual
 
