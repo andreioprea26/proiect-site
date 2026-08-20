@@ -161,7 +161,7 @@ scriere.
 
 Migrarea `20260820200000_create_catalog_base_schema.sql` creează tipurile,
 tabelele și relațiile de bază pentru produse, categorii și colecții. Migrarea
-nu este încă aplicată în Development.
+a fost aplicată în Development la 2026-08-20.
 
 Tipul produsului păstrează variantele structurale `standard`, `unique`,
 `made_to_order` și `bundle`. Caracterul personalizabil este un marcaj separat,
@@ -242,6 +242,7 @@ order by t.typname, e.enumsortorder;
 | `20260812120000` | `create_account_bootstrap` | Development | 2026-08-12 | Aplicată; trigger Auth verificat, rol `customer` creat atomic, utilizatorul temporar șters și cascadele confirmate |
 | `20260820120000` | `add_user_roles_select_own_policy` | Development | 2026-08-20 | Aplicată; o politică `SELECT` pentru propriile roluri, zero politici de scriere |
 | `20260820160000` | `add_account_rls_policies` | Development | 2026-08-20 | Aplicată; RLS verificat, politici proprii pentru profiluri și adrese, politica rolurilor păstrată fără scriere |
+| `20260820200000` | `create_catalog_base_schema` | Development | 2026-08-20 | Aplicată; cinci tabele și trei enum-uri prezente, RLS activ, zero politici, relații și trigger-e verificate |
 
 ## Limitarea fluxului manual
 
