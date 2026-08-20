@@ -18,12 +18,17 @@ export default async function AdminLayout({ children }: Readonly<{ children: Rea
   return (
     <div className="min-h-screen bg-stone-950 text-stone-100">
       <header className="border-b border-stone-800 bg-stone-900">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-4">
           <Link className="font-semibold text-emerald-400" href="/admin">Brand Handmade — Admin</Link>
-          <Link className="text-sm text-stone-300" href="/">Magazin</Link>
+          <nav aria-label="Navigare administrare" className="flex flex-wrap items-center gap-4 text-sm text-stone-300">
+            <Link href="/admin/products">Produse</Link>
+            <Link href="/admin/categories">Categorii</Link>
+            <Link href="/admin/collections">Colecții</Link>
+            <Link href="/">Magazin</Link>
+          </nav>
         </div>
       </header>
-      <main className="mx-auto max-w-5xl px-6 py-10">{children}</main>
+      <main className="mx-auto max-w-6xl px-6 py-10">{children}</main>
     </div>
   );
 }
