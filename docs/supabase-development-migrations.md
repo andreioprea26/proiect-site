@@ -238,7 +238,8 @@ order by t.typname, e.enumsortorder;
 
 Migrarea `20260820210000_create_variants_customizations.sql` creează tabelele
 `product_variants` și `customization_options`, plus enum-ul
-`customization_option_type`. Migrarea nu este încă aplicată în Development.
+`customization_option_type`. Migrarea a fost aplicată în Development la
+2026-08-20.
 
 Atributele fixe ale unei variante sunt păstrate într-un obiect `jsonb` nevid,
 de exemplu `{"size": "M", "color": "red"}`. Combinația dintre produs și
@@ -302,6 +303,7 @@ Rezultatul așteptat, în ordine, este `selection`, `text`, `boolean`, `image`.
 | `20260820120000` | `add_user_roles_select_own_policy` | Development | 2026-08-20 | Aplicată; o politică `SELECT` pentru propriile roluri, zero politici de scriere |
 | `20260820160000` | `add_account_rls_policies` | Development | 2026-08-20 | Aplicată; RLS verificat, politici proprii pentru profiluri și adrese, politica rolurilor păstrată fără scriere |
 | `20260820200000` | `create_catalog_base_schema` | Development | 2026-08-20 | Aplicată; cinci tabele și trei enum-uri prezente, RLS activ, zero politici, relații și trigger-e verificate |
+| `20260820210000` | `create_variants_customizations` | Development | 2026-08-20 | Aplicată; două tabele și enum-ul prezente, RLS activ, zero politici, integritatea relațiilor, indexurile, tipurile monetare și trigger-ele verificate |
 
 ## Limitarea fluxului manual
 
