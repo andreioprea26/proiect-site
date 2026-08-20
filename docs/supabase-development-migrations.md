@@ -387,6 +387,104 @@ order by p.proname;
 `anon/authenticated = false` și `service_role = true`. Cele trei funcții trigger
 nu sunt apelate direct de aplicație.
 
+## Imagini de produs și Storage
+
+Migrarea `20260820230000_create_product_images_storage.sql` creează tabelul
+`product_images` și bucket-ul public `product-images`. Migrarea a fost aplicată
+manual în Development la 2026-08-20.
+
+`product_images.storage_path` este cheia obiectului din bucket, nu un URL. Calea
+trebuie să aibă forma `<product_id>/<nume-fisier>` și este unică. URL-ul public
+se derivă din bucket și această cale. Ordinea este unică în cadrul produsului.
+
+Bucket-ul acceptă maximum 5 MiB și MIME-urile `image/jpeg`, `image/png`,
+`image/webp` și `image/avif`. UI-ul ulterior trebuie să accepte numai extensiile
+`.jpg`, `.jpeg`, `.png`, `.webp` și `.avif`, să verifice MIME-ul real, mărimea și
+să genereze nume sigure. SVG, GIF și video nu sunt acceptate în MVP.
+
+Bucket-ul public permite livrarea obiectelor prin URL-ul public fără o politică
+`SELECT` pentru `anon`. Absența acelei politici evită deschiderea listării
+metadatelor din `storage.objects`; politicile admin pentru listare și scriere
+sunt adăugate de migrarea următoare.
+
+Storage nu este tranzacțional împreună cu `product_images`. Fluxul aplicației
+trebuie să încarce obiectul, să creeze rândul DB și să șteargă compensator
+obiectul dacă inserarea DB eșuează. La ștergere, aplicația trebuie să elimine
+obiectul prin Storage API și apoi rândul DB; ștergerea rândului nu elimină
+automat fișierul fizic. Supabase blochează intenționat ștergerea directă din
+`storage.objects`; politica `DELETE` a fost verificată structural, iar fluxul
+end-to-end de ștergere va fi testat prin Storage API odată cu UI-ul de upload.
+
+## Securitatea catalogului
+
+Migrarea `20260820240000_add_catalog_rls.sql` adaugă politicile catalogului,
+helper-ul `is_admin()` și securizează RPC-ul `adjust_inventory`. Migrarea a fost
+aplicată manual în Development la 2026-08-20.
+
+Catalogul public expune numai produse cu `publication_status = 'published'`.
+Variantele și personalizările trebuie să fie și active, iar imaginile și
+relațiile devin vizibile numai printr-un produs publicat. Categoriile și
+colecțiile publice trebuie să fie legate de cel puțin un produs publicat.
+
+`inventory` și `inventory_movements` nu sunt publice. Adminul poate citi
+inventarul, crea numai rânduri cu cantitate zero și edita direct numai pragul de
+stoc redus. Cantitatea se modifică exclusiv prin `adjust_inventory`, iar
+mișcările nu au acces direct de scriere. RPC-ul este `SECURITY DEFINER`, verifică
+rolul real din `user_roles`, atribuie actorul autentificat și păstrează locking-ul
+și tranzacția atomică din Task 3.3. `anon` și customer sunt refuzați; admin și
+`service_role` sunt acceptați fără expunerea cheii privilegiate în browser.
+
+Pentru produse cu istoric de stoc, UI-ul admin trebuie să folosească
+`publication_status = 'archived'` în loc de hard-delete. Hard-delete rămâne
+disponibil pentru cazuri administrative deliberate și elimină prin cascade
+rândurile de inventar, mișcările și imaginile DB; obiectele Storage necesită
+curățare separată prin API.
+
+Ordinea obligatorie de aplicare manuală este:
+
+1. `20260820230000_create_product_images_storage.sql`;
+2. `20260820240000_add_catalog_rls.sql`.
+
+Înainte de aplicare, confirmă că obiectele noi sunt absente:
+
+```sql
+select
+  to_regclass('public.product_images') as product_images,
+  to_regprocedure('public.is_admin()') as is_admin,
+  exists (
+    select 1 from storage.buckets where id = 'product-images'
+  ) as product_images_bucket_exists;
+```
+
+Rezultatul așteptat este `null`, `null`, `false`. După ambele migrări, verifică
+bucket-ul, RLS și politicile:
+
+```sql
+select id, name, public, file_size_limit, allowed_mime_types
+from storage.buckets
+where id = 'product-images';
+
+select schemaname, tablename, policyname, cmd, roles
+from pg_policies
+where (schemaname = 'public' and tablename in (
+  'products',
+  'categories',
+  'collections',
+  'product_categories',
+  'product_collections',
+  'product_variants',
+  'customization_options',
+  'product_images',
+  'inventory',
+  'inventory_movements'
+)) or (
+  schemaname = 'storage'
+  and tablename = 'objects'
+  and policyname like 'product_images_storage_%'
+)
+order by schemaname, tablename, policyname;
+```
+
 ## Registrul aplicărilor manuale
 
 | Versiune | Migrare | Mediu | Data aplicării | Rezultat |
@@ -398,6 +496,8 @@ nu sunt apelate direct de aplicație.
 | `20260820200000` | `create_catalog_base_schema` | Development | 2026-08-20 | Aplicată; cinci tabele și trei enum-uri prezente, RLS activ, zero politici, relații și trigger-e verificate |
 | `20260820210000` | `create_variants_customizations` | Development | 2026-08-20 | Aplicată; două tabele și enum-ul prezente, RLS activ, zero politici, integritatea relațiilor, indexurile, tipurile monetare și trigger-ele verificate |
 | `20260820220000` | `create_inventory` | Development | 2026-08-20 | Aplicată; două tabele prezente, RLS activ, zero politici, drepturile RPC și trigger-ele verificate; testele tranzacționale pentru ajustări, audit și reguli de integritate au trecut cu rollback |
+| `20260820230000` | `create_product_images_storage` | Development | 2026-08-20 | Aplicată; tabelul, RLS, constrângerile, trigger-ul și bucket-ul public cu limita de 5 MiB și MIME-urile permise au fost verificate |
+| `20260820240000` | `add_catalog_rls` | Development | 2026-08-20 | Aplicată; 20 politici public catalog/inventar și 4 politici Storage verificate; testele anon/customer/admin, RPC, audit, Storage și regresia regulilor de stoc au trecut cu rollback |
 
 ## Limitarea fluxului manual
 
