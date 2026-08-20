@@ -157,6 +157,83 @@ Toate politicile sunt limitate la rolul PostgreSQL `authenticated`. Profilurile
 nu au politici pentru `INSERT` sau `DELETE`, iar `user_roles` nu are politici de
 scriere.
 
+## Schema de bază a catalogului
+
+Migrarea `20260820200000_create_catalog_base_schema.sql` creează tipurile,
+tabelele și relațiile de bază pentru produse, categorii și colecții. Migrarea
+nu este încă aplicată în Development.
+
+Tipul produsului păstrează variantele structurale `standard`, `unique`,
+`made_to_order` și `bundle`. Caracterul personalizabil este un marcaj separat,
+iar sezonalitatea se exprimă prin asocierea cu una sau mai multe colecții; în
+acest fel, ambele se pot combina cu orice tip de produs.
+
+Înainte de aplicare, confirmă că obiectele nu există deja:
+
+```sql
+select
+  to_regtype('public.product_type') as product_type,
+  to_regtype('public.product_publication_status') as publication_status,
+  to_regtype('public.product_availability_status') as availability_status,
+  to_regclass('public.products') as products,
+  to_regclass('public.categories') as categories,
+  to_regclass('public.collections') as collections,
+  to_regclass('public.product_categories') as product_categories,
+  to_regclass('public.product_collections') as product_collections;
+```
+
+Toate valorile trebuie să fie `null`. După aplicare, confirmă existența
+tabelelor și activarea RLS:
+
+```sql
+select
+  c.relname as table_name,
+  c.relrowsecurity as rls_enabled
+from pg_class c
+join pg_namespace n on n.oid = c.relnamespace
+where n.nspname = 'public'
+  and c.relname in (
+    'products',
+    'categories',
+    'collections',
+    'product_categories',
+    'product_collections'
+  )
+order by c.relname;
+```
+
+Toate cele cinci tabele trebuie să aibă `rls_enabled = true`. Acest task nu
+adaugă încă politici de catalog, deci verifică și că nu există politici:
+
+```sql
+select tablename, policyname
+from pg_policies
+where schemaname = 'public'
+  and tablename in (
+    'products',
+    'categories',
+    'collections',
+    'product_categories',
+    'product_collections'
+  );
+```
+
+Query-ul trebuie să returneze zero rânduri. Verifică valorile enum-urilor:
+
+```sql
+select t.typname, e.enumlabel
+from pg_enum e
+join pg_type t on t.oid = e.enumtypid
+join pg_namespace n on n.oid = t.typnamespace
+where n.nspname = 'public'
+  and t.typname in (
+    'product_type',
+    'product_publication_status',
+    'product_availability_status'
+  )
+order by t.typname, e.enumsortorder;
+```
+
 ## Registrul aplicărilor manuale
 
 | Versiune | Migrare | Mediu | Data aplicării | Rezultat |
