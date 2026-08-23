@@ -1,6 +1,9 @@
 "use server";
 
-import { requestAuthoritativeQuote } from "@/lib/checkout/server";
+import {
+  placeCodOrder,
+  requestAuthoritativeQuote,
+} from "@/lib/checkout/server";
 import type { CheckoutActionState } from "@/lib/checkout/types";
 import {
   readCheckoutFields,
@@ -9,13 +12,14 @@ import {
 
 const MAX_CART_PAYLOAD_LENGTH = 100_000;
 
-export async function validateCheckout(
+export async function placeCheckoutOrder(
   _previousState: CheckoutActionState,
   formData: FormData,
 ): Promise<CheckoutActionState> {
   const fields = readCheckoutFields(formData);
   const fieldErrors = validateCheckoutFields(fields);
   const rawCart = String(formData.get("cartPayload") ?? "");
+  const idempotencyKey = String(formData.get("idempotencyKey") ?? "").trim();
   let cartLines: unknown = null;
 
   if (!rawCart || rawCart.length > MAX_CART_PAYLOAD_LENGTH) {
@@ -37,38 +41,53 @@ export async function validateCheckout(
       message: "Verifică datele marcate în formular.",
       fieldErrors,
       quote: null,
+      confirmationPath: null,
     };
   }
 
-  const quote = await requestAuthoritativeQuote(
-    cartLines,
-    fields.shippingMethodId,
-  );
-  if (!quote) {
+  const result = await placeCodOrder({
+    idempotencyKey,
+    lines: cartLines,
+    checkout: {
+      email: fields.email,
+      phone: fields.phone,
+      customerType: fields.customerType,
+      companyName: fields.companyName,
+      companyTaxId: fields.companyTaxId,
+      companyRegistrationNumber: fields.companyRegistrationNumber,
+      shippingAddress: fields.shippingAddress,
+      billingSameAsShipping: fields.billingSameAsShipping,
+      billingAddress: fields.billingAddress,
+      shippingMethodId: fields.shippingMethodId,
+      paymentMethod: fields.paymentMethod,
+    },
+  });
+  if (!result.success) {
+    const quote = await requestAuthoritativeQuote(
+      cartLines,
+      fields.shippingMethodId,
+    );
     return {
       success: false,
-      message:
-        "Checkout-ul nu a putut fi verificat momentan. Încearcă din nou mai târziu.",
-      fieldErrors: {},
-      quote: null,
-    };
-  }
-
-  if (!quote.valid) {
-    return {
-      success: false,
-      message:
-        "Coșul s-a schimbat între timp. Corectează elementele indicate înainte de a continua.",
-      fieldErrors: { cart: "Unele produse necesită atenție." },
+      message: result.message,
+      fieldErrors:
+        result.code === "cart_invalid" ||
+        result.code === "insufficient_stock" ||
+        result.code === "unique_stock_unavailable"
+          ? { cart: "Unele produse necesită atenție." }
+          : {},
       quote,
+      confirmationPath: null,
     };
   }
 
   return {
     success: true,
-    message:
-      "Datele și coșul sunt valide. Comanda nu a fost creată; plasarea ei va fi adăugată în Blocul 5C.",
+    message: result.idempotentReplay
+      ? "Comanda era deja înregistrată. Deschidem confirmarea."
+      : "Comanda a fost înregistrată. Deschidem confirmarea.",
     fieldErrors: {},
-    quote,
+    quote: null,
+    confirmationPath: `/order-confirmation/${result.confirmationToken}`,
   };
 }

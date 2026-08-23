@@ -73,4 +73,32 @@ export type CheckoutActionState = {
   message: string | null;
   fieldErrors: Record<string, string>;
   quote: CheckoutQuote | null;
+  confirmationPath: string | null;
+};
+
+export type CodOrderPlacementResult =
+  | {
+      success: true;
+      idempotentReplay: boolean;
+      orderId: string;
+      publicNumber: string;
+      confirmationToken: string;
+      subtotalMinor: number;
+      shippingMinor: number;
+      totalMinor: number;
+      currency: "RON";
+    }
+  | {
+      success: false;
+      code: string;
+      message: string;
+    };
+
+export type OrderConfirmation = {
+  publicNumber: string;
+  totalMinor: number;
+  currency: "RON";
+  paymentMethod: "cash_on_delivery";
+  shippingMethodName: string;
+  createdAt: string;
 };

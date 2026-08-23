@@ -29,7 +29,7 @@ export default defineConfig({
   webServer: {
     command: `npm run start -- --hostname 127.0.0.1 --port ${testPort}`,
     url: baseURL,
-    reuseExistingServer: false,
+    reuseExistingServer: Boolean(process.env.PLAYWRIGHT_REUSE_EXISTING_SERVER),
     timeout: 120_000,
   },
 });

@@ -106,12 +106,12 @@ begin
   insert into public.shipping_methods (id, code, name, price_minor)
   values (v_shipping_id, 'sql-test', 'Curier SQL test', 1500);
   insert into public.orders (
-    id, idempotency_key, user_id, email, phone, customer_type,
+    id, idempotency_key, request_fingerprint, user_id, email, phone, customer_type,
     shipping_address, billing_address, shipping_method_id,
     shipping_method_code, shipping_method_name, payment_method,
     subtotal_minor, shipping_minor, total_minor
   ) values (
-    v_order_id, '51000000-0000-4000-8000-000000000005', null,
+    v_order_id, '51000000-0000-4000-8000-000000000005', '{}'::jsonb, null,
     'guest@example.com', '0712345678', 'individual',
     '{"city":"București"}', '{"city":"București"}', v_shipping_id,
     'sql-test', 'Curier SQL test', 'cash_on_delivery', 2870, 1500, 4370

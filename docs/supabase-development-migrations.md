@@ -499,10 +499,24 @@ produsul, varianta, personalizările, disponibilitatea, stocul și valorile
 monetare; browserul nu furnizează prețuri autoritare și nu primește inventarul
 brut. Migrarea a fost aplicată manual în Development la 2026-08-23.
 
+Migrarea `20260823140000_place_cod_order.sql` adaugă plasarea atomică a
+comenzii ramburs prin `place_cod_order(uuid, jsonb, jsonb)`, tokenul bearer
+aleator pentru pagina de confirmare și RPC-ul minimal
+`get_order_confirmation(uuid)`. Identitatea customerului este derivată din
+`auth.uid()`, iar browserul nu poate furniza prețuri, costul transportului,
+statusuri, actorul sau valorile inventarului. Funcția serializează retry-urile
+după cheia de idempotency, blochează catalogul și inventarul într-o ordine
+deterministă, recalculează quote-ul după lock, creează snapshot-urile comenzii,
+scade numai inventarul urmărit și scrie movement-ul cu order ID. Ruta publică
+primește un token UUID separat de order ID și returnează numai numărul public,
+totalul, metoda de plată/livrare și data; nu expune contactul sau adresa.
+Migrarea a fost aplicată manual în Development la 2026-08-23.
+
 Ordinea obligatorie de aplicare este:
 
 1. `20260823120000_create_checkout_order_schema.sql`;
-2. `20260823130000_create_checkout_quote_function.sql`.
+2. `20260823130000_create_checkout_quote_function.sql`;
+3. `20260823140000_place_cod_order.sql`.
 
 Verificarea pre-migrare a confirmat că tipurile, tabelele și RPC-ul nu existau.
 După aplicare au fost confirmate cele patru tabele cu RLS activ, opt politici,
@@ -533,6 +547,7 @@ submisibil după configurarea unei metode active cu tariful aprobat.
 | `20260820240000` | `add_catalog_rls` | Development | 2026-08-20 | Aplicată; 20 politici public catalog/inventar și 4 politici Storage verificate; testele anon/customer/admin, RPC, audit, Storage și regresia regulilor de stoc au trecut cu rollback |
 | `20260823120000` | `create_checkout_order_schema` | Development | 2026-08-23 | Aplicată; patru tabele și patru enum-uri prezente, RLS activ, opt politici, snapshot-uri, idempotency și constrângeri monetare verificate |
 | `20260823130000` | `create_checkout_quote_function` | Development | 2026-08-23 | Aplicată; RPC autoritar disponibil pentru anon/customer fără expunerea inventarului; testele SQL pentru preț, stoc, variante, personalizări, disponibilitate și schema orders au trecut cu rollback |
+| `20260823140000` | `place_cod_order` | Development | 2026-08-23 | Aplicată; plasare COD atomică, locking și idempotency, guest/customer, snapshot-uri, scădere/audit inventar și confirmare cu token minimal verificate; `place_cod_order.sql` și regresia `checkout_orders.sql` au trecut cu rollback |
 
 ## Limitarea fluxului manual
 
