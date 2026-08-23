@@ -63,6 +63,7 @@ export function CheckoutForm({
   const serverPrices = new Map(
     state.quote?.lines.map((line) => [line.key, line.unitPriceMinor]) ?? [],
   );
+  const cartLineNames = new Map(lines.map((line) => [line.key, line.name]));
   const priceChanged = lines.some(
     (line) =>
       serverPrices.has(line.key) &&
@@ -195,7 +196,7 @@ export function CheckoutForm({
         {priceChanged ? <p className="mt-4 rounded-xl bg-amber-50 p-3 text-sm text-amber-950">Prețul unuia sau mai multor produse a fost actualizat de server.</p> : null}
         {state.quote?.errors.length ? (
           <ul className="mt-4 grid gap-2 text-sm text-red-800" role="alert">
-            {state.quote.errors.map((error, index) => <li key={`${error.key}-${error.code}-${index}`}>• {error.message}</li>)}
+            {state.quote.errors.map((error, index) => <li key={`${error.key}-${error.code}-${index}`}>• {error.key && cartLineNames.get(error.key) ? `${cartLineNames.get(error.key)}: ` : ""}{error.message}</li>)}
           </ul>
         ) : null}
         {state.message ? <p className={`mt-5 rounded-2xl p-4 text-sm ${state.success ? "bg-emerald-50 text-emerald-950" : "bg-red-50 text-red-900"}`} data-testid="checkout-result" role="status">{state.message}</p> : null}
