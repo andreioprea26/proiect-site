@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 
 import { getStorefrontHomeData } from "@/lib/storefront/catalog";
@@ -7,6 +8,11 @@ import { TaxonomyGrid } from "./_components/taxonomy-grid";
 
 type HomePageProps = {
   searchParams: Promise<{ logout?: string | string[] }>;
+};
+
+export const metadata: Metadata = {
+  title: "Brand Handmade | Produse lucrate manual",
+  description: "Descoperă produse handmade, unicate și creații realizate la comandă în România.",
 };
 
 export default async function Home({ searchParams }: HomePageProps) {

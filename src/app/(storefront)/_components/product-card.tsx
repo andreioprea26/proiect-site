@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 import {
   AVAILABILITY_STATUS_LABELS,
@@ -25,6 +26,11 @@ export function ProductCard({ product }: { product: StorefrontProduct }) {
       className="group overflow-hidden rounded-3xl border border-stone-200 bg-white shadow-sm"
       data-testid="product-card"
     >
+      <Link
+        aria-label={`Vezi produsul ${product.name}`}
+        className="block focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-800"
+        href={`/products/${product.slug}`}
+      >
       <div className="relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-amber-100 via-rose-50 to-emerald-50">
         {product.image ? (
           <Image
@@ -64,6 +70,7 @@ export function ProductCard({ product }: { product: StorefrontProduct }) {
           </p>
         </div>
       </div>
+      </Link>
     </article>
   );
 }

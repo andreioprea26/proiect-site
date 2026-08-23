@@ -1,17 +1,32 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 
 import { getShopData } from "@/lib/storefront/catalog";
+import { parseShopFilters, type ShopSearchParams } from "@/lib/storefront/discovery";
 
+import { EmptyState } from "../_components/empty-state";
 import { ProductGrid } from "../_components/product-grid";
+import { ShopFilters } from "../_components/shop-filters";
 
 export const metadata: Metadata = {
   title: "Magazin | Brand Handmade",
   description: "Explorează produsele handmade publicate în magazin.",
 };
 
-export default async function ShopPage() {
-  const { products, categories } = await getShopData();
+export default async function ShopPage({
+  searchParams,
+}: {
+  searchParams: Promise<ShopSearchParams>;
+}) {
+  const parsedFilters = parseShopFilters(await searchParams);
+  const { products, categories, collections, filters } = await getShopData(parsedFilters);
+  const hasActiveFilters = Boolean(
+    filters.q ||
+      filters.category ||
+      filters.collection ||
+      filters.productType ||
+      filters.availability ||
+      filters.customizable !== null,
+  );
 
   return (
     <main className="mx-auto max-w-7xl px-5 py-12 sm:px-8 sm:py-16">
@@ -26,22 +41,26 @@ export default async function ShopPage() {
         </p>
       </header>
 
-      {categories.length > 0 ? (
-        <nav aria-label="Categorii Magazin" className="mt-8 flex flex-wrap gap-2">
-          {categories.map((category) => (
-            <Link
-              className="rounded-full border border-stone-300 bg-white px-4 py-2 text-sm font-medium transition hover:border-emerald-700 hover:text-emerald-900"
-              href={`/categories/${category.slug}`}
-              key={category.id}
-            >
-              {category.name}
-            </Link>
-          ))}
-        </nav>
-      ) : null}
+      <div className="mt-8">
+        <ShopFilters categories={categories} collections={collections} filters={filters} />
+      </div>
 
       <section className="mt-10" aria-label="Produse publicate">
-        <ProductGrid products={products} />
+        <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+          <h2 className="text-2xl font-semibold">Rezultate</h2>
+          <p className="text-sm text-stone-600">
+            {products.length} {products.length === 1 ? "produs" : "produse"}
+          </p>
+        </div>
+        {products.length === 0 && hasActiveFilters ? (
+          <EmptyState
+            description="Schimbă termenul de căutare sau elimină unul dintre filtre."
+            showShopLink
+            title="Nicio potrivire pentru selecția ta"
+          />
+        ) : (
+          <ProductGrid products={products} />
+        )}
       </section>
     </main>
   );
