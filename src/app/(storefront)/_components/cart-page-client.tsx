@@ -88,13 +88,12 @@ export function CartPageClient() {
           Produsele, configurațiile, prețurile, disponibilitatea și stocul vor fi
           validate din nou pe server la checkout. Transportul nu este inclus.
         </p>
-        <button
-          className="mt-6 min-h-12 w-full cursor-not-allowed rounded-full bg-stone-200 px-5 py-3 font-semibold text-stone-500"
-          disabled
-          type="button"
+        <Link
+          className="mt-6 flex min-h-12 w-full items-center justify-center rounded-full bg-emerald-900 px-5 py-3 font-semibold text-white transition hover:bg-emerald-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-800"
+          href="/checkout"
         >
-          Checkout disponibil în pasul următor
-        </button>
+          Continuă la checkout
+        </Link>
         <Link
           className="mt-4 flex justify-center text-sm font-semibold text-emerald-900 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-800"
           href="/shop"

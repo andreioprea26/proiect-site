@@ -307,15 +307,14 @@ test("liniile pot fi eliminate și coșul poate fi golit", async ({ page }) => {
   await expect(page.getByRole("link", { name: /Coș de cumpărături, 0 articole/ })).toBeVisible();
 });
 
-test("coșul rămâne local la navigarea spre login și nu oferă checkout prematur", async ({
+test("coșul rămâne local la navigarea spre login și oferă legătura spre checkout", async ({
   page,
 }) => {
   await seedCart(page, [line()]);
   await page.goto("/cart");
   await expect(
-    page.getByRole("button", { name: "Checkout disponibil în pasul următor" }),
-  ).toBeDisabled();
-  await expect(page.getByRole("link", { name: /checkout/i })).toHaveCount(0);
+    page.getByRole("link", { name: "Continuă la checkout" }),
+  ).toHaveAttribute("href", "/checkout");
 
   await page.goto("/login");
   await page.goto("/cart");
