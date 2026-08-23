@@ -6,13 +6,20 @@ import { getTaxonomyPage } from "@/lib/storefront/catalog";
 
 import { ProductGrid } from "../../_components/product-grid";
 
-export const metadata: Metadata = { title: "Colecție | Brand Handmade" };
+type CollectionPageProps = { params: Promise<{ slug: string }> };
 
-export default async function CollectionPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+export async function generateMetadata({ params }: CollectionPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const result = await getTaxonomyPage("collection", slug);
+  return result
+    ? {
+        title: `${result.taxonomy.name} | Brand Handmade`,
+        description: result.taxonomy.description?.slice(0, 160) ?? `Descoperă colecția handmade ${result.taxonomy.name}.`,
+      }
+    : { title: "Colecție indisponibilă | Brand Handmade", robots: { index: false } };
+}
+
+export default async function CollectionPage({ params }: CollectionPageProps) {
   const { slug } = await params;
   const result = await getTaxonomyPage("collection", slug);
   if (!result) notFound();
