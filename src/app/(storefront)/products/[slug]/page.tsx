@@ -101,11 +101,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
           ) : null}
 
           <div className="mt-8 border-t border-stone-200 pt-8">
-            <ProductConfigurator
-              basePrice={product.basePrice}
-              customizations={product.customizations}
-              variants={product.variants}
-            />
+            <ProductConfigurator product={product} />
           </div>
         </div>
       </div>
