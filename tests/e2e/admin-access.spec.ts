@@ -42,9 +42,10 @@ test("redirectul de la admin nu afectează paginile publice", async ({ page }) =
 
   await page.goto("/");
   await expect(
-    page.getByRole("heading", { level: 1, name: "Brand Handmade" }),
+    page.getByRole("heading", {
+      level: 1,
+      name: "Obiecte handmade pentru gesturi care rămân.",
+    }),
   ).toBeVisible();
-  await expect(
-    page.getByText("Magazinul este în pregătire.", { exact: true }),
-  ).toBeVisible();
+  await expect(page.getByRole("link", { name: "Descoperă Magazinul" })).toBeVisible();
 });

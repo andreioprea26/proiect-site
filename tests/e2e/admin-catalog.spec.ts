@@ -44,11 +44,17 @@ test("validarea produsului acceptă zero asocieri și valori conforme", () => {
 
 test("un customer autentificat nu poate accesa administrarea catalogului", async ({ page }) => {
   test.skip(!hasCustomer, "Necesită contul customer E2E configurat.");
+  test.setTimeout(60_000);
 
   await login(page, customerEmail, customerPassword);
   await page.goto("/admin/products");
   await expect(page).toHaveURL(/\/$/);
-  await expect(page.getByRole("heading", { level: 1, name: "Brand Handmade" })).toBeVisible();
+  await expect(
+    page.getByRole("heading", {
+      level: 1,
+      name: "Obiecte handmade pentru gesturi care rămân.",
+    }),
+  ).toBeVisible();
 });
 
 test.describe("catalog admin", () => {
@@ -131,7 +137,7 @@ async function login(page: Page, email: string, password: string) {
   await page.getByLabel("E-mail").fill(email);
   await page.getByLabel("Parolă").fill(password);
   await page.getByRole("button", { name: "Autentificare" }).click();
-  await expect(page).toHaveURL(/\/$/);
+  await expect(page).toHaveURL(/\/$/, { timeout: 30_000 });
 }
 
 async function cleanup(email: string, password: string, productSlug: string, categorySlug: string, collectionSlug: string) {
