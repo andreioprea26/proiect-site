@@ -485,6 +485,39 @@ where (schemaname = 'public' and tablename in (
 order by schemaname, tablename, policyname;
 ```
 
+## Checkout și schema comenzilor
+
+Migrarea `20260823120000_create_checkout_order_schema.sql` creează schema
+checkout-ului: `shipping_methods`, `orders`, `order_items` și
+`order_status_history`, enum-urile stabile din Project Bible, snapshot-urile
+istorice, cheia unică de idempotency și politicile RLS pentru guest, customer și
+admin. Migrarea a fost aplicată manual în Development la 2026-08-23.
+
+Migrarea `20260823130000_create_checkout_quote_function.sql` adaugă RPC-ul
+read-only `quote_checkout(jsonb)`. Funcția reconstruiește din baza de date
+produsul, varianta, personalizările, disponibilitatea, stocul și valorile
+monetare; browserul nu furnizează prețuri autoritare și nu primește inventarul
+brut. Migrarea a fost aplicată manual în Development la 2026-08-23.
+
+Ordinea obligatorie de aplicare este:
+
+1. `20260823120000_create_checkout_order_schema.sql`;
+2. `20260823130000_create_checkout_quote_function.sql`.
+
+Verificarea pre-migrare a confirmat că tipurile, tabelele și RPC-ul nu existau.
+După aplicare au fost confirmate cele patru tabele cu RLS activ, opt politici,
+cele 11 statusuri exacte ale comenzilor, accesul `anon/authenticated` la RPC și
+absența accesului `anon` la `orders`. Testul tranzacțional
+`supabase/tests/checkout_orders.sql` a trecut integral și a făcut `rollback`;
+fixture-urile pentru produs, inventar, livrare și comandă nu au rămas în DB.
+Testul acoperă izolarea rolurilor și ownership-ul structural, FK-uri,
+snapshot-uri, bani în unități întregi, cantități, idempotency, livrare și
+revalidarea autoritară pentru preț, stoc, variantă, personalizare și produs
+indisponibil.
+
+Migrarea nu introduce un tarif de livrare inventat. Checkout-ul devine
+submisibil după configurarea unei metode active cu tariful aprobat.
+
 ## Registrul aplicărilor manuale
 
 | Versiune | Migrare | Mediu | Data aplicării | Rezultat |
@@ -498,6 +531,8 @@ order by schemaname, tablename, policyname;
 | `20260820220000` | `create_inventory` | Development | 2026-08-20 | Aplicată; două tabele prezente, RLS activ, zero politici, drepturile RPC și trigger-ele verificate; testele tranzacționale pentru ajustări, audit și reguli de integritate au trecut cu rollback |
 | `20260820230000` | `create_product_images_storage` | Development | 2026-08-20 | Aplicată; tabelul, RLS, constrângerile, trigger-ul și bucket-ul public cu limita de 5 MiB și MIME-urile permise au fost verificate |
 | `20260820240000` | `add_catalog_rls` | Development | 2026-08-20 | Aplicată; 20 politici public catalog/inventar și 4 politici Storage verificate; testele anon/customer/admin, RPC, audit, Storage și regresia regulilor de stoc au trecut cu rollback |
+| `20260823120000` | `create_checkout_order_schema` | Development | 2026-08-23 | Aplicată; patru tabele și patru enum-uri prezente, RLS activ, opt politici, snapshot-uri, idempotency și constrângeri monetare verificate |
+| `20260823130000` | `create_checkout_quote_function` | Development | 2026-08-23 | Aplicată; RPC autoritar disponibil pentru anon/customer fără expunerea inventarului; testele SQL pentru preț, stoc, variante, personalizări, disponibilitate și schema orders au trecut cu rollback |
 
 ## Limitarea fluxului manual
 
