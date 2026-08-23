@@ -11,7 +11,10 @@ test("paginile publice rămân accesibile fără sesiune după reload", async ({
   await page.reload();
 
   await expect(
-    page.getByRole("heading", { level: 1, name: "Brand Handmade" }),
+    page.getByRole("heading", {
+      level: 1,
+      name: "Obiecte handmade pentru gesturi care rămân.",
+    }),
   ).toBeVisible();
   await expect(
     page.getByRole("link", { name: "Autentificare" }),

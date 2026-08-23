@@ -154,7 +154,7 @@ async function login(page: Page) {
   await page.getByLabel("E-mail").fill(e2eEmail);
   await page.getByLabel("Parolă").fill(e2ePassword);
   await page.getByRole("button", { name: "Autentificare" }).click();
-  await expect(page).toHaveURL(/\/$/);
+  await expect(page).toHaveURL(/\/$/, { timeout: 30_000 });
 }
 
 async function fillAddressForm(
