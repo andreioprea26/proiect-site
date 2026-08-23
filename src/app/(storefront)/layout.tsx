@@ -1,12 +1,15 @@
 import Link from "next/link";
 
 import { AccountNavigation } from "./_components/account-navigation";
+import { CartIndicator } from "./_components/cart-indicator";
+import { CartProvider } from "./_components/cart-provider";
 
 export default function StorefrontLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <div className="min-h-screen bg-[#fbfaf6] text-stone-900">
+    <CartProvider>
+      <div className="min-h-screen bg-[#fbfaf6] text-stone-900">
       <header className="border-b border-stone-200/80 bg-white/95">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-5 py-4 sm:px-8">
           <Link
@@ -32,7 +35,8 @@ export default function StorefrontLayout({
               Colecții
             </Link>
           </nav>
-          <div className="order-2 md:order-3">
+          <div className="order-2 flex items-center gap-2 md:order-3">
+            <CartIndicator />
             <AccountNavigation />
           </div>
         </div>
@@ -63,6 +67,7 @@ export default function StorefrontLayout({
           </div>
         </div>
       </footer>
-    </div>
+      </div>
+    </CartProvider>
   );
 }
