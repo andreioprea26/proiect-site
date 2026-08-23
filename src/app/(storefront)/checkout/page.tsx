@@ -12,6 +12,7 @@ export const metadata: Metadata = {
 
 export default async function CheckoutPage() {
   const { prefill, shippingMethods } = await getCheckoutPageData();
+  const idempotencyKey = crypto.randomUUID();
 
   return (
     <main className="mx-auto max-w-7xl px-5 py-12 sm:px-8 sm:py-16">
@@ -24,11 +25,15 @@ export default async function CheckoutPage() {
         </h1>
         <p className="mt-5 text-lg leading-8 text-stone-600">
           Completează datele, apoi verificăm pe server prețurile,
-          personalizările, disponibilitatea și stocul. În acest pas nu se
-          creează încă o comandă.
+          personalizările, disponibilitatea și stocul înainte de înregistrarea
+          atomică a comenzii ramburs.
         </p>
       </header>
-      <CheckoutForm prefill={prefill} shippingMethods={shippingMethods} />
+      <CheckoutForm
+        idempotencyKey={idempotencyKey}
+        prefill={prefill}
+        shippingMethods={shippingMethods}
+      />
     </main>
   );
 }

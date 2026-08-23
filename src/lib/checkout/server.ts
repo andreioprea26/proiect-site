@@ -4,11 +4,30 @@ import { createClient } from "@/lib/supabase/server";
 
 import type {
   CheckoutPrefill,
+  CodOrderPlacementResult,
+  OrderConfirmation,
   CheckoutQuote,
   CheckoutQuoteError,
   CheckoutQuoteLine,
   ShippingMethod,
 } from "./types";
+
+const UUID_PATTERN =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+const placementMessages: Record<string, string> = {
+  invalid_idempotency_key: "Reîncarcă pagina de checkout și încearcă din nou.",
+  invalid_checkout: "Verifică datele de contact, livrare și facturare.",
+  invalid_customer_type: "Tipul de client nu este valid.",
+  invalid_billing_choice: "Opțiunea de facturare nu este validă.",
+  invalid_company: "Datele companiei nu sunt valide.",
+  payment_method_unavailable: "În această etapă este disponibilă numai plata ramburs.",
+  shipping_unavailable: "Metoda de livrare nu mai este disponibilă.",
+  idempotency_conflict: "Această încercare a fost deja folosită cu alte date. Reîncarcă pagina.",
+  cart_invalid: "Coșul s-a schimbat. Verifică produsele înainte de a continua.",
+  insufficient_stock: "Cantitatea totală solicitată nu mai este disponibilă.",
+  unique_stock_unavailable: "Produsul unicat nu mai este disponibil.",
+};
 
 export async function getCheckoutPageData(): Promise<{
   prefill: CheckoutPrefill;
@@ -142,4 +161,93 @@ export async function requestAuthoritativeQuote(
     currency: "RON",
     shippingMethod: method,
   };
+}
+
+export async function placeCodOrder(input: {
+  idempotencyKey: string;
+  lines: unknown;
+  checkout: Record<string, unknown>;
+}): Promise<CodOrderPlacementResult> {
+  if (!UUID_PATTERN.test(input.idempotencyKey)) {
+    return {
+      success: false,
+      code: "invalid_idempotency_key",
+      message: placementMessages.invalid_idempotency_key,
+    };
+  }
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("place_cod_order", {
+    p_idempotency_key: input.idempotencyKey,
+    p_lines: input.lines,
+    p_checkout: input.checkout,
+  });
+  if (error || !isRecord(data) || typeof data.success !== "boolean") {
+    return {
+      success: false,
+      code: "placement_unavailable",
+      message: "Comanda nu a putut fi înregistrată momentan. Coșul a fost păstrat.",
+    };
+  }
+  if (!data.success) {
+    const code = typeof data.code === "string" ? data.code : "placement_unavailable";
+    return {
+      success: false,
+      code,
+      message:
+        placementMessages[code] ??
+        "Comanda nu a putut fi înregistrată momentan. Coșul a fost păstrat.",
+    };
+  }
+  if (
+    typeof data.idempotentReplay !== "boolean" ||
+    typeof data.orderId !== "string" ||
+    typeof data.publicNumber !== "string" ||
+    typeof data.confirmationToken !== "string" ||
+    !Number.isSafeInteger(data.subtotalMinor) ||
+    !Number.isSafeInteger(data.shippingMinor) ||
+    !Number.isSafeInteger(data.totalMinor) ||
+    data.currency !== "RON"
+  ) {
+    return {
+      success: false,
+      code: "placement_unavailable",
+      message: "Comanda a răspuns într-un format neașteptat. Coșul a fost păstrat.",
+    };
+  }
+  return data as CodOrderPlacementResult;
+}
+
+export async function getOrderConfirmation(
+  token: string,
+): Promise<OrderConfirmation | null> {
+  if (!UUID_PATTERN.test(token)) return null;
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("get_order_confirmation", {
+    p_confirmation_token: token,
+  });
+  if (
+    error ||
+    !isRecord(data) ||
+    data.found !== true ||
+    typeof data.publicNumber !== "string" ||
+    !Number.isSafeInteger(data.totalMinor) ||
+    data.currency !== "RON" ||
+    data.paymentMethod !== "cash_on_delivery" ||
+    typeof data.shippingMethodName !== "string" ||
+    typeof data.createdAt !== "string"
+  ) {
+    return null;
+  }
+  return {
+    publicNumber: data.publicNumber,
+    totalMinor: data.totalMinor as number,
+    currency: "RON",
+    paymentMethod: "cash_on_delivery",
+    shippingMethodName: data.shippingMethodName,
+    createdAt: data.createdAt,
+  };
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
 }

@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useActionState, useEffect, useMemo, useRef, useState } from "react";
 
 import { formatMoney } from "@/lib/cart/model";
 import { cartLinesToCheckoutPayload } from "@/lib/checkout/payload";
@@ -12,9 +13,7 @@ import type {
   ShippingMethod,
 } from "@/lib/checkout/types";
 
-import {
-  validateCheckout,
-} from "../checkout/actions";
+import { placeCheckoutOrder } from "../checkout/actions";
 import { useCart } from "./cart-provider";
 
 const EMPTY_ADDRESS: CheckoutAddress = {
@@ -33,18 +32,23 @@ const initialCheckoutActionState: CheckoutActionState = {
   message: null,
   fieldErrors: {},
   quote: null,
+  confirmationPath: null,
 };
 
 export function CheckoutForm({
+  idempotencyKey,
   prefill,
   shippingMethods,
 }: {
+  idempotencyKey: string;
   prefill: CheckoutPrefill;
   shippingMethods: ShippingMethod[];
 }) {
-  const { hydrated, lines, subtotalMinor } = useCart();
+  const { clearCart, hydrated, lines, subtotalMinor } = useCart();
+  const router = useRouter();
+  const completionHandled = useRef(false);
   const [state, formAction, pending] = useActionState(
-    validateCheckout,
+    placeCheckoutOrder,
     initialCheckoutActionState,
   );
   const [customerType, setCustomerType] = useState<"individual" | "company">(
@@ -72,6 +76,18 @@ export function CheckoutForm({
   const canValidate =
     hydrated && lines.length > 0 && shippingMethods.length > 0 && !pending;
 
+  useEffect(() => {
+    if (
+      state.success &&
+      state.confirmationPath &&
+      !completionHandled.current
+    ) {
+      completionHandled.current = true;
+      clearCart();
+      router.replace(state.confirmationPath);
+    }
+  }, [clearCart, router, state.confirmationPath, state.success]);
+
   if (!hydrated) {
     return <p className="mt-10 text-stone-600">Se încarcă checkout-ul…</p>;
   }
@@ -96,6 +112,7 @@ export function CheckoutForm({
   return (
     <form action={formAction} className="mt-10 grid gap-8 lg:grid-cols-[minmax(0,1fr)_23rem] lg:items-start">
       <input name="cartPayload" type="hidden" value={cartPayload} />
+      <input name="idempotencyKey" type="hidden" value={idempotencyKey} />
       <div className="grid gap-6">
         {!prefill.authenticated ? (
           <p className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950">
@@ -181,7 +198,7 @@ export function CheckoutForm({
       </div>
 
       <aside className="rounded-3xl border border-stone-200 bg-white p-6 shadow-sm lg:sticky lg:top-6">
-        <h2 className="text-xl font-semibold">Verificarea coșului</h2>
+        <h2 className="text-xl font-semibold">Sumar comandă</h2>
         <ul className="mt-5 grid gap-3 border-b border-stone-200 pb-5 text-sm">
           {lines.map((line) => <li className="flex justify-between gap-4" key={line.key}><span>{line.quantity} × {line.name}</span><span className="font-semibold">{formatMoney(line.unitPriceMinor * line.quantity)}</span></li>)}
         </ul>
@@ -202,9 +219,9 @@ export function CheckoutForm({
         {state.message ? <p className={`mt-5 rounded-2xl p-4 text-sm ${state.success ? "bg-emerald-50 text-emerald-950" : "bg-red-50 text-red-900"}`} data-testid="checkout-result" role="status">{state.message}</p> : null}
         <ErrorText text={state.fieldErrors.cart} />
         <button className="mt-6 min-h-12 w-full rounded-full bg-emerald-900 px-5 py-3 font-semibold text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:bg-stone-300 disabled:text-stone-600" disabled={!canValidate} type="submit">
-          {pending ? "Se verifică…" : "Verifică datele și coșul"}
+          {pending ? "Se plasează în siguranță…" : "Plasează comanda ramburs"}
         </button>
-        <p className="mt-4 text-xs leading-5 text-stone-500">Butonul verifică datele, dar nu plasează și nu încasează comanda.</p>
+        <p className="mt-4 text-xs leading-5 text-stone-500">Comanda este reverificată și înregistrată atomic. Plata rămâne neachitată până la încasarea rambursului.</p>
         <Link className="mt-4 flex justify-center text-sm font-semibold text-emerald-900 hover:underline" href="/cart">Înapoi la coș</Link>
       </aside>
     </form>
