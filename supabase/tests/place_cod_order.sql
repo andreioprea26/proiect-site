@@ -145,7 +145,8 @@ begin
   );
   assert not (v_result->>'success')::boolean and v_result->>'code' = 'cart_invalid',
     'invalid product was not rejected';
-  assert (select count(*) = 1 from public.orders),
+  assert (select count(*) = 1 from public.orders
+    where idempotency_key::text like '52000000-%'),
     'failed placement left a partial order';
 
   v_result := public.place_cod_order(
@@ -243,7 +244,8 @@ begin
   assert not (v_result->>'success')::boolean,
     'unique product was sold twice';
 
-  assert (select count(*) = 3 from public.orders),
+  assert (select count(*) = 3 from public.orders
+    where idempotency_key::text like '52000000-%'),
     'unexpected orders remained after failed placement attempts';
 end;
 $$;
