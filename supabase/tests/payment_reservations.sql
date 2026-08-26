@@ -9,7 +9,7 @@ begin
   if exists (
     select 1 from public.inventory i
     where i.id = new.inventory_id
-      and i.product_id = '54000000-0000-4000-8000-000000000004'::uuid
+      and i.product_id = '58000000-0000-4000-8000-000000000004'::uuid
   ) then
     raise exception 'forced reservation failure' using errcode = '23514';
   end if;
@@ -23,15 +23,15 @@ for each row execute function public.test_force_reservation_rollback();
 
 do $$
 declare
-  v_standard_id uuid := '54000000-0000-4000-8000-000000000001';
-  v_unique_id uuid := '54000000-0000-4000-8000-000000000002';
-  v_expiring_id uuid := '54000000-0000-4000-8000-000000000003';
-  v_rollback_id uuid := '54000000-0000-4000-8000-000000000004';
-  v_shipping_id uuid := '54000000-0000-4000-8000-000000000005';
-  v_standard_key uuid := '54000000-0000-4000-8000-000000000010';
-  v_unique_key uuid := '54000000-0000-4000-8000-000000000011';
-  v_expiring_key uuid := '54000000-0000-4000-8000-000000000012';
-  v_rollback_key uuid := '54000000-0000-4000-8000-000000000013';
+  v_standard_id uuid := '58000000-0000-4000-8000-000000000001';
+  v_unique_id uuid := '58000000-0000-4000-8000-000000000002';
+  v_expiring_id uuid := '58000000-0000-4000-8000-000000000003';
+  v_rollback_id uuid := '58000000-0000-4000-8000-000000000004';
+  v_shipping_id uuid := '58000000-0000-4000-8000-000000000005';
+  v_standard_key uuid := '58000000-0000-4000-8000-000000000010';
+  v_unique_key uuid := '58000000-0000-4000-8000-000000000011';
+  v_expiring_key uuid := '58000000-0000-4000-8000-000000000012';
+  v_rollback_key uuid := '58000000-0000-4000-8000-000000000013';
   v_checkout jsonb;
   v_cod_checkout jsonb;
   v_result jsonb;
@@ -225,7 +225,7 @@ begin
 
   -- Effective availability is 1 (physical 3 - reservation 2).
   v_result := public.prepare_card_order(
-    '54000000-0000-4000-8000-000000000020',
+    '58000000-0000-4000-8000-000000000020',
     jsonb_build_array(jsonb_build_object(
       'key', 'over-stock', 'productId', v_standard_id,
       'quantity', 2, 'customizations', '[]'::jsonb
@@ -236,7 +236,7 @@ begin
     'reservation above effective stock was accepted';
 
   v_result := public.prepare_card_order(
-    '54000000-0000-4000-8000-000000000026',
+    '58000000-0000-4000-8000-000000000026',
     jsonb_build_array(
       jsonb_build_object(
         'key', 'aggregate-a', 'productId', v_standard_id,
@@ -254,7 +254,7 @@ begin
 
   -- COD can buy the one unreserved unit, but not either reserved unit.
   v_result := public.place_cod_order(
-    '54000000-0000-4000-8000-000000000021',
+    '58000000-0000-4000-8000-000000000021',
     jsonb_build_array(jsonb_build_object(
       'key', 'cod-available', 'productId', v_standard_id,
       'quantity', 1, 'customizations', '[]'::jsonb
@@ -268,7 +268,7 @@ begin
     'COD physical decrement is incorrect';
 
   v_result := public.place_cod_order(
-    '54000000-0000-4000-8000-000000000022',
+    '58000000-0000-4000-8000-000000000022',
     jsonb_build_array(jsonb_build_object(
       'key', 'cod-reserved', 'productId', v_standard_id,
       'quantity', 1, 'customizations', '[]'::jsonb
@@ -349,7 +349,7 @@ begin
   v_unique_payment_id := (v_result->>'paymentId')::uuid;
 
   v_result := public.prepare_card_order(
-    '54000000-0000-4000-8000-000000000023',
+    '58000000-0000-4000-8000-000000000023',
     jsonb_build_array(jsonb_build_object(
       'key', 'unique-second-card', 'productId', v_unique_id,
       'quantity', 1, 'customizations', '[]'::jsonb
@@ -360,7 +360,7 @@ begin
     'unique product was reserved twice';
 
   v_result := public.place_cod_order(
-    '54000000-0000-4000-8000-000000000024',
+    '58000000-0000-4000-8000-000000000024',
     jsonb_build_array(jsonb_build_object(
       'key', 'unique-cod', 'productId', v_unique_id,
       'quantity', 1, 'customizations', '[]'::jsonb
@@ -402,7 +402,7 @@ begin
 
   -- Once released, the unique product can be reserved again and sold once.
   v_result := public.prepare_card_order(
-    '54000000-0000-4000-8000-000000000025',
+    '58000000-0000-4000-8000-000000000025',
     jsonb_build_array(jsonb_build_object(
       'key', 'unique-after-release', 'productId', v_unique_id,
       'quantity', 1, 'customizations', '[]'::jsonb

@@ -534,9 +534,8 @@ submisibil după configurarea unei metode active cu tariful aprobat.
 
 ## Blocul 6A — plăți și rezervări temporare
 
-Migrarea `20260827120000_create_payment_reservations.sql` este pregătită în
-repository, dar **nu este încă aplicată în Development**. Ea trebuie aplicată
-manual numai după aprobarea Blocului 6A.
+Migrarea `20260827120000_create_payment_reservations.sql` a fost aplicată
+manual în Development la 2026-08-27, prin Supabase SQL Editor.
 
 Migrarea adaugă `payments`, `stock_reservations`, statusurile lor, TTL-ul
 centralizat de 30 de minute și operațiile atomice pentru pregătirea unei
@@ -635,8 +634,9 @@ Repetă perechea cu `place_cod_order` în a doua sesiune pentru cazul card versu
 COD. În ambele cazuri verifică `inventory.quantity >= 0`, o singură rezervare
 activă și absența rândurilor parțiale pentru cererea respinsă.
 
-După aplicarea și verificarea reușită, adaugă migrarea în registrul de mai jos
-cu data reală și rezultatele reale. Nu o înregistra înainte de aplicare.
+Aplicarea a fost verificată structural și prin testele tranzacționale de mai
+sus. Testul real cu două sesiuni SQL rămâne o verificare manuală separată;
+SQL Editor nu păstrează în mod fiabil o tranzacție între rulări distincte.
 
 ## Registrul aplicărilor manuale
 
@@ -654,6 +654,7 @@ cu data reală și rezultatele reale. Nu o înregistra înainte de aplicare.
 | `20260823120000` | `create_checkout_order_schema` | Development | 2026-08-23 | Aplicată; patru tabele și patru enum-uri prezente, RLS activ, opt politici, snapshot-uri, idempotency și constrângeri monetare verificate |
 | `20260823130000` | `create_checkout_quote_function` | Development | 2026-08-23 | Aplicată; RPC autoritar disponibil pentru anon/customer fără expunerea inventarului; testele SQL pentru preț, stoc, variante, personalizări, disponibilitate și schema orders au trecut cu rollback |
 | `20260823140000` | `place_cod_order` | Development | 2026-08-23 | Aplicată; plasare COD atomică, locking și idempotency, guest/customer, snapshot-uri, scădere/audit inventar și confirmare cu token minimal verificate; `place_cod_order.sql` și regresia `checkout_orders.sql` au trecut cu rollback |
+| `20260827120000` | `create_payment_reservations` | Development | 2026-08-27 | Aplicată; tabelele, enum-urile, TTL-ul, RLS și privilegiile RPC au fost verificate; 76 aserțiuni 6A, 36 aserțiuni COD și 22 aserțiuni checkout au trecut cu rollback; testul real cu două sesiuni rămâne manual |
 
 ## Limitarea fluxului manual
 
