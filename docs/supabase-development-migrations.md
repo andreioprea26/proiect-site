@@ -532,6 +532,112 @@ indisponibil.
 Migrarea nu introduce un tarif de livrare inventat. Checkout-ul devine
 submisibil după configurarea unei metode active cu tariful aprobat.
 
+## Blocul 6A — plăți și rezervări temporare
+
+Migrarea `20260827120000_create_payment_reservations.sql` este pregătită în
+repository, dar **nu este încă aplicată în Development**. Ea trebuie aplicată
+manual numai după aprobarea Blocului 6A.
+
+Migrarea adaugă `payments`, `stock_reservations`, statusurile lor, TTL-ul
+centralizat de 30 de minute și operațiile atomice pentru pregătirea unei
+comenzi card, release, expiration și confirmarea internă a plății. RPC-ul
+public `quote_checkout` devine reservation-aware, iar inventarul nu mai poate
+fi redus sub cantitatea rezervată activ. Fluxul COD existent rămâne separat,
+dar folosește noul quote și aceeași invariantă DB.
+
+Înainte de aplicare, toate obiectele noi trebuie să fie absente, iar funcția
+Fazei 5 trebuie să aibă numele original:
+
+```sql
+select
+  to_regtype('public.payment_record_status') as payment_record_status,
+  to_regtype('public.stock_reservation_status') as stock_reservation_status,
+  to_regclass('public.payments') as payments,
+  to_regclass('public.stock_reservations') as stock_reservations,
+  to_regprocedure('public.prepare_card_order(uuid,jsonb,jsonb)')
+    as prepare_card_order,
+  to_regprocedure('public.confirm_card_payment(uuid,text,text)')
+    as confirm_card_payment,
+  to_regprocedure('public.quote_checkout(jsonb)') as quote_checkout,
+  to_regprocedure('public.quote_checkout_without_reservations(jsonb)')
+    as quote_checkout_without_reservations;
+```
+
+Rezultatul așteptat este `null` pentru toate obiectele 6A, iar
+`quote_checkout` trebuie să existe. Migrarea se aplică integral, o singură
+dată, după toate migrările Fazei 5.
+
+După aplicare, verifică tabelele și RLS:
+
+```sql
+select
+  c.relname as table_name,
+  c.relrowsecurity as rls_enabled
+from pg_class c
+join pg_namespace n on n.oid = c.relnamespace
+where n.nspname = 'public'
+  and c.relname in ('payments', 'stock_reservations')
+order by c.relname;
+
+select tablename, policyname, cmd, roles
+from pg_policies
+where schemaname = 'public'
+  and tablename in ('payments', 'stock_reservations')
+order by tablename, policyname;
+```
+
+Ambele tabele trebuie să aibă RLS activ. Trebuie să existe numai politicile
+admin de `SELECT`; clienții nu primesc politici de scriere.
+
+Verifică funcțiile și drepturile lor:
+
+```sql
+select
+  p.proname,
+  p.prosecdef as security_definer,
+  has_function_privilege('anon', p.oid, 'EXECUTE') as anon_execute,
+  has_function_privilege('authenticated', p.oid, 'EXECUTE')
+    as authenticated_execute,
+  has_function_privilege('service_role', p.oid, 'EXECUTE')
+    as service_role_execute
+from pg_proc p
+join pg_namespace n on n.oid = p.pronamespace
+where n.nspname = 'public'
+  and p.proname in (
+    'quote_checkout',
+    'quote_checkout_without_reservations',
+    'prepare_card_order',
+    'release_card_order_reservations',
+    'expire_stock_reservations',
+    'confirm_card_payment'
+  )
+order by p.proname;
+```
+
+`anon` și `authenticated` pot executa numai `quote_checkout` și
+`prepare_card_order`. Operațiile de release, expiration și confirmare sunt
+doar pentru `service_role`. Funcția internă
+`quote_checkout_without_reservations` nu trebuie să fie executabilă de
+rolurile client.
+
+După aplicare rulează integral, în SQL Editor, cu rollback:
+
+1. `supabase/tests/payment_reservations.sql`;
+2. `supabase/tests/place_cod_order.sql`;
+3. `supabase/tests/checkout_orders.sql`.
+
+Pentru verificarea concurenței reale folosește două sesiuni SQL pe fixture-uri
+tranzacționale izolate: ambele sesiuni apelează `prepare_card_order` cu chei
+diferite pentru ultima unitate a aceluiași inventar, iar una menține tranzacția
+deschisă înainte de commit. A doua trebuie să aștepte lock-ul și, după commitul
+primei, să returneze lipsă de stoc fără a crea comandă, plată sau rezervare.
+Repetă perechea cu `place_cod_order` în a doua sesiune pentru cazul card versus
+COD. În ambele cazuri verifică `inventory.quantity >= 0`, o singură rezervare
+activă și absența rândurilor parțiale pentru cererea respinsă.
+
+După aplicarea și verificarea reușită, adaugă migrarea în registrul de mai jos
+cu data reală și rezultatele reale. Nu o înregistra înainte de aplicare.
+
 ## Registrul aplicărilor manuale
 
 | Versiune | Migrare | Mediu | Data aplicării | Rezultat |
