@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useActionState, useEffect, useMemo, useRef, useState } from "react";
 
-import { formatMoney } from "@/lib/cart/model";
+import { formatMoney, serializeCart } from "@/lib/cart/model";
 import { cartLinesToCheckoutPayload } from "@/lib/checkout/payload";
 import type {
   CheckoutActionState,
@@ -33,14 +33,18 @@ const initialCheckoutActionState: CheckoutActionState = {
   fieldErrors: {},
   quote: null,
   confirmationPath: null,
+  redirectUrl: null,
+  confirmationToken: null,
 };
 
 export function CheckoutForm({
   idempotencyKey,
+  paymentCancelled,
   prefill,
   shippingMethods,
 }: {
   idempotencyKey: string;
+  paymentCancelled: boolean;
   prefill: CheckoutPrefill;
   shippingMethods: ShippingMethod[];
 }) {
@@ -55,6 +59,9 @@ export function CheckoutForm({
     "individual",
   );
   const [billingSame, setBillingSame] = useState(true);
+  const [paymentMethod, setPaymentMethod] = useState<"cash_on_delivery" | "card">(
+    "cash_on_delivery",
+  );
   const [shippingAddress, setShippingAddress] = useState<CheckoutAddress>({
     ...EMPTY_ADDRESS,
     recipientName: prefill.customerName,
@@ -79,14 +86,23 @@ export function CheckoutForm({
   useEffect(() => {
     if (
       state.success &&
-      state.confirmationPath &&
       !completionHandled.current
     ) {
+      if (state.redirectUrl && state.confirmationToken) {
+        completionHandled.current = true;
+        window.sessionStorage.setItem(
+          `brand-handmade:card-checkout:${state.confirmationToken}`,
+          serializeCart(lines),
+        );
+        window.location.assign(state.redirectUrl);
+        return;
+      }
+      if (!state.confirmationPath) return;
       completionHandled.current = true;
       clearCart();
       router.replace(state.confirmationPath);
     }
-  }, [clearCart, router, state.confirmationPath, state.success]);
+  }, [clearCart, lines, router, state.confirmationPath, state.confirmationToken, state.redirectUrl, state.success]);
 
   if (!hydrated) {
     return <p className="mt-10 text-stone-600">Se încarcă checkout-ul…</p>;
@@ -114,6 +130,11 @@ export function CheckoutForm({
       <input name="cartPayload" type="hidden" value={cartPayload} />
       <input name="idempotencyKey" type="hidden" value={idempotencyKey} />
       <div className="grid gap-6">
+        {paymentCancelled ? (
+          <p className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950" role="status">
+            Plata nu a fost finalizată. Coșul este păstrat, iar rezervarea rămâne activă până la expirarea sigură a sesiunii.
+          </p>
+        ) : null}
         {!prefill.authenticated ? (
           <p className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950">
             Poți continua ca vizitator. Dacă ai deja cont, te poți <Link className="font-semibold underline" href="/login?next=/checkout">autentifica</Link> pentru precompletarea adreselor.
@@ -187,10 +208,8 @@ export function CheckoutForm({
           <fieldset className="mt-6">
             <legend className="font-semibold">Metoda de plată</legend>
             <div className="mt-3 grid gap-3">
-              <Radio defaultChecked label="Ramburs la livrare" name="paymentMethod" value="cash_on_delivery" />
-              <label className="flex cursor-not-allowed items-center gap-3 rounded-2xl border border-stone-200 bg-stone-50 p-4 text-stone-500">
-                <input disabled type="radio" /> Card online — disponibil ulterior
-              </label>
+              <Radio checked={paymentMethod === "cash_on_delivery"} label="Ramburs la livrare" name="paymentMethod" onChange={() => setPaymentMethod("cash_on_delivery")} value="cash_on_delivery" />
+              <Radio checked={paymentMethod === "card"} label="Card online · Stripe test mode" name="paymentMethod" onChange={() => setPaymentMethod("card")} value="card" />
             </div>
             <ErrorText text={state.fieldErrors.paymentMethod} />
           </fieldset>
@@ -219,9 +238,17 @@ export function CheckoutForm({
         {state.message ? <p className={`mt-5 rounded-2xl p-4 text-sm ${state.success ? "bg-emerald-50 text-emerald-950" : "bg-red-50 text-red-900"}`} data-testid="checkout-result" role="status">{state.message}</p> : null}
         <ErrorText text={state.fieldErrors.cart} />
         <button className="mt-6 min-h-12 w-full rounded-full bg-emerald-900 px-5 py-3 font-semibold text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:bg-stone-300 disabled:text-stone-600" disabled={!canValidate} type="submit">
-          {pending ? "Se plasează în siguranță…" : "Plasează comanda ramburs"}
+          {pending
+            ? "Se pregătește în siguranță…"
+            : paymentMethod === "card"
+              ? "Continuă către plata cu cardul"
+              : "Plasează comanda ramburs"}
         </button>
-        <p className="mt-4 text-xs leading-5 text-stone-500">Comanda este reverificată și înregistrată atomic. Plata rămâne neachitată până la încasarea rambursului.</p>
+        <p className="mt-4 text-xs leading-5 text-stone-500">
+          {paymentMethod === "card"
+            ? "Comanda și stocul sunt reverificate înainte de redirect. Numai webhook-ul Stripe verificat poate confirma plata."
+            : "Comanda este reverificată și înregistrată atomic. Plata rămâne neachitată până la încasarea rambursului."}
+        </p>
         <Link className="mt-4 flex justify-center text-sm font-semibold text-emerald-900 hover:underline" href="/cart">Înapoi la coș</Link>
       </aside>
     </form>

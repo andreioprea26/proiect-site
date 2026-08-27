@@ -74,7 +74,22 @@ export type CheckoutActionState = {
   fieldErrors: Record<string, string>;
   quote: CheckoutQuote | null;
   confirmationPath: string | null;
+  redirectUrl: string | null;
+  confirmationToken: string | null;
 };
+
+export type CardCheckoutResult =
+  | {
+      success: true;
+      idempotentReplay: boolean;
+      redirectUrl: string;
+      confirmationToken: string;
+    }
+  | {
+      success: false;
+      code: string;
+      message: string;
+    };
 
 export type CodOrderPlacementResult =
   | {
@@ -98,7 +113,9 @@ export type OrderConfirmation = {
   publicNumber: string;
   totalMinor: number;
   currency: "RON";
-  paymentMethod: "cash_on_delivery";
+  paymentMethod: "cash_on_delivery" | "card";
+  paymentStatus: "unpaid" | "pending" | "paid" | "refunded";
+  orderStatus: string;
   shippingMethodName: string;
   createdAt: string;
 };

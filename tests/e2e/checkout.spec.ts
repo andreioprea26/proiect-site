@@ -84,7 +84,7 @@ test("checkout-ul este disponibil vizitatorului fără autentificare obligatorie
   await expect(page.getByText("Poți continua ca vizitator")).toBeVisible();
   await expect(page.getByLabel("E-mail")).toBeVisible();
   await expect(page.getByLabel("Ramburs la livrare")).toBeChecked();
-  await expect(page.getByLabel(/Card online/)).toBeDisabled();
+  await expect(page.getByLabel(/Card online/)).toBeEnabled();
 });
 
 test("checkout-ul oferă plasarea reală a comenzii ramburs", async ({ page }) => {

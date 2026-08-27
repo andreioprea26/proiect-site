@@ -4,6 +4,7 @@ import {
   placeCodOrder,
   requestAuthoritativeQuote,
 } from "@/lib/checkout/server";
+import { createCardCheckout } from "@/lib/checkout/card-server";
 import type { CheckoutActionState } from "@/lib/checkout/types";
 import {
   readCheckoutFields,
@@ -42,25 +43,34 @@ export async function placeCheckoutOrder(
       fieldErrors,
       quote: null,
       confirmationPath: null,
+      redirectUrl: null,
+      confirmationToken: null,
     };
   }
 
-  const result = await placeCodOrder({
+  const checkoutPayload = {
+    email: fields.email,
+    phone: fields.phone,
+    customerType: fields.customerType,
+    companyName: fields.companyName,
+    companyTaxId: fields.companyTaxId,
+    companyRegistrationNumber: fields.companyRegistrationNumber,
+    shippingAddress: fields.shippingAddress,
+    billingSameAsShipping: fields.billingSameAsShipping,
+    billingAddress: fields.billingAddress,
+    shippingMethodId: fields.shippingMethodId,
+    paymentMethod: fields.paymentMethod,
+  };
+  const result = fields.paymentMethod === "card"
+    ? await createCardCheckout({
+        idempotencyKey,
+        lines: cartLines,
+        checkout: checkoutPayload,
+      })
+    : await placeCodOrder({
     idempotencyKey,
     lines: cartLines,
-    checkout: {
-      email: fields.email,
-      phone: fields.phone,
-      customerType: fields.customerType,
-      companyName: fields.companyName,
-      companyTaxId: fields.companyTaxId,
-      companyRegistrationNumber: fields.companyRegistrationNumber,
-      shippingAddress: fields.shippingAddress,
-      billingSameAsShipping: fields.billingSameAsShipping,
-      billingAddress: fields.billingAddress,
-      shippingMethodId: fields.shippingMethodId,
-      paymentMethod: fields.paymentMethod,
-    },
+    checkout: checkoutPayload,
   });
   if (!result.success) {
     const quote = await requestAuthoritativeQuote(
@@ -78,6 +88,22 @@ export async function placeCheckoutOrder(
           : {},
       quote,
       confirmationPath: null,
+      redirectUrl: null,
+      confirmationToken: null,
+    };
+  }
+
+  if (fields.paymentMethod === "card" && "redirectUrl" in result) {
+    return {
+      success: true,
+      message: result.idempotentReplay
+        ? "Plata era deja pregătită. Redeschidem pagina Stripe sigură."
+        : "Comanda este rezervată. Deschidem pagina Stripe sigură.",
+      fieldErrors: {},
+      quote: null,
+      confirmationPath: null,
+      redirectUrl: result.redirectUrl,
+      confirmationToken: result.confirmationToken,
     };
   }
 
@@ -89,5 +115,7 @@ export async function placeCheckoutOrder(
     fieldErrors: {},
     quote: null,
     confirmationPath: `/order-confirmation/${result.confirmationToken}`,
+    redirectUrl: null,
+    confirmationToken: result.confirmationToken,
   };
 }

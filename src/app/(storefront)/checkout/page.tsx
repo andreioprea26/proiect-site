@@ -10,7 +10,12 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default async function CheckoutPage() {
+export default async function CheckoutPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ payment?: string }>;
+}) {
+  const { payment } = await searchParams;
   const { prefill, shippingMethods } = await getCheckoutPageData();
   const idempotencyKey = crypto.randomUUID();
 
@@ -26,11 +31,12 @@ export default async function CheckoutPage() {
         <p className="mt-5 text-lg leading-8 text-stone-600">
           Completează datele, apoi verificăm pe server prețurile,
           personalizările, disponibilitatea și stocul înainte de înregistrarea
-          atomică a comenzii ramburs.
+          atomică a comenzii și a stocului disponibil.
         </p>
       </header>
       <CheckoutForm
         idempotencyKey={idempotencyKey}
+        paymentCancelled={payment === "cancelled"}
         prefill={prefill}
         shippingMethods={shippingMethods}
       />

@@ -655,6 +655,7 @@ SQL Editor nu păstrează în mod fiabil o tranzacție între rulări distincte.
 | `20260823130000` | `create_checkout_quote_function` | Development | 2026-08-23 | Aplicată; RPC autoritar disponibil pentru anon/customer fără expunerea inventarului; testele SQL pentru preț, stoc, variante, personalizări, disponibilitate și schema orders au trecut cu rollback |
 | `20260823140000` | `place_cod_order` | Development | 2026-08-23 | Aplicată; plasare COD atomică, locking și idempotency, guest/customer, snapshot-uri, scădere/audit inventar și confirmare cu token minimal verificate; `place_cod_order.sql` și regresia `checkout_orders.sql` au trecut cu rollback |
 | `20260827120000` | `create_payment_reservations` | Development | 2026-08-27 | Aplicată; tabelele, enum-urile, TTL-ul, RLS și privilegiile RPC au fost verificate; 76 aserțiuni 6A, 36 aserțiuni COD și 22 aserțiuni checkout au trecut cu rollback; testul real cu două sesiuni rămâne manual |
+| `20260827130000` | `create_stripe_checkout_webhook` | Development | 2026-08-27 | Aplicată; TTL 35 minute și marjă Stripe 5 minute, RPC prepare server-only, Session attachment, event idempotency, reconciliere completed/expired și confirmare publică reservation-aware verificate; 43 aserțiuni 6B plus regresiile 76/36/22 au trecut cu rollback |
 
 ## Limitarea fluxului manual
 

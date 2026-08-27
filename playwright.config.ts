@@ -31,5 +31,12 @@ export default defineConfig({
     url: baseURL,
     reuseExistingServer: Boolean(process.env.PLAYWRIGHT_REUSE_EXISTING_SERVER),
     timeout: 120_000,
+    env: {
+      ...process.env,
+      STRIPE_SECRET_KEY:
+        process.env.STRIPE_SECRET_KEY || "sk_test_playwright_placeholder",
+      STRIPE_WEBHOOK_SECRET:
+        process.env.STRIPE_WEBHOOK_SECRET || "whsec_playwright_placeholder",
+    },
   },
 });

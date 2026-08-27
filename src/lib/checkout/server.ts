@@ -232,7 +232,11 @@ export async function getOrderConfirmation(
     typeof data.publicNumber !== "string" ||
     !Number.isSafeInteger(data.totalMinor) ||
     data.currency !== "RON" ||
-    data.paymentMethod !== "cash_on_delivery" ||
+    !["cash_on_delivery", "card"].includes(String(data.paymentMethod)) ||
+    !["unpaid", "pending", "paid", "refunded"].includes(
+      String(data.paymentStatus),
+    ) ||
+    typeof data.orderStatus !== "string" ||
     typeof data.shippingMethodName !== "string" ||
     typeof data.createdAt !== "string"
   ) {
@@ -242,7 +246,9 @@ export async function getOrderConfirmation(
     publicNumber: data.publicNumber,
     totalMinor: data.totalMinor as number,
     currency: "RON",
-    paymentMethod: "cash_on_delivery",
+    paymentMethod: data.paymentMethod as "cash_on_delivery" | "card",
+    paymentStatus: data.paymentStatus as OrderConfirmation["paymentStatus"],
+    orderStatus: data.orderStatus,
     shippingMethodName: data.shippingMethodName,
     createdAt: data.createdAt,
   };
