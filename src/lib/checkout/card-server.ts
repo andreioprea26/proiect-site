@@ -1,6 +1,6 @@
 import "server-only";
 
-import { readRequiredServerEnvironmentVariable } from "@/lib/config/env";
+import { getAppUrl } from "@/lib/config/env";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import {
@@ -115,7 +115,7 @@ export async function createCardCheckout(input: {
 
     const expiresAt = checkoutSessionExpiresAt();
     const params = buildStripeCheckoutSessionParams({
-      appUrl: readRequiredServerEnvironmentVariable("APP_URL"),
+      appUrl: getAppUrl(),
       paymentId: prepared.paymentId,
       expiresAt,
       order,

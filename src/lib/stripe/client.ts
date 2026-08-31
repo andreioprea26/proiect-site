@@ -2,14 +2,17 @@ import "server-only";
 
 import Stripe from "stripe";
 
-import { readRequiredServerEnvironmentVariable } from "@/lib/config/env";
+import {
+  getStripeSecretKey,
+  getStripeWebhookSecretValue,
+} from "@/lib/config/env";
 
 let stripeClient: Stripe | null = null;
 
 export function getStripeClient(): Stripe {
   if (stripeClient) return stripeClient;
 
-  const secretKey = readRequiredServerEnvironmentVariable("STRIPE_SECRET_KEY");
+  const secretKey = getStripeSecretKey();
   if (!secretKey.startsWith("sk_test_")) {
     throw new Error("STRIPE_SECRET_KEY must be a Stripe test-mode key.");
   }
@@ -24,9 +27,7 @@ export function getStripeClient(): Stripe {
 }
 
 export function getStripeWebhookSecret(): string {
-  const secret = readRequiredServerEnvironmentVariable(
-    "STRIPE_WEBHOOK_SECRET",
-  );
+  const secret = getStripeWebhookSecretValue();
   if (!secret.startsWith("whsec_")) {
     throw new Error("STRIPE_WEBHOOK_SECRET must be a Stripe webhook secret.");
   }
