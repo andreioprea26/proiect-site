@@ -5,14 +5,18 @@ declare
   v_product_id uuid := '59000000-0000-4000-8000-000000000001';
   v_expiring_product_id uuid := '59000000-0000-4000-8000-000000000002';
   v_shipping_id uuid := '59000000-0000-4000-8000-000000000003';
+  v_untracked_product_id uuid := '59000000-0000-4000-8000-000000000004';
   v_paid_key uuid := '59000000-0000-4000-8000-000000000010';
   v_expiring_key uuid := '59000000-0000-4000-8000-000000000011';
+  v_untracked_key uuid := '59000000-0000-4000-8000-000000000012';
   v_checkout jsonb;
   v_result jsonb;
   v_order_id uuid;
   v_payment_id uuid;
   v_expiring_order_id uuid;
   v_expiring_payment_id uuid;
+  v_untracked_order_id uuid;
+  v_untracked_payment_id uuid;
   v_inventory_id uuid;
   v_expiring_inventory_id uuid;
   v_session_expires_at timestamptz := statement_timestamp() + interval '30 minutes';
@@ -60,7 +64,10 @@ begin
       'standard', 'published', 'in_stock', false),
     (v_expiring_product_id, 'Produs Stripe expirat SQL',
       'produs-stripe-expirat-sql', 30.00,
-      'standard', 'published', 'in_stock', false);
+      'standard', 'published', 'in_stock', false),
+    (v_untracked_product_id, 'Produs Stripe fără inventar SQL',
+      'produs-stripe-fara-inventar-sql', 15.00,
+      'made_to_order', 'published', 'in_stock', false);
 
   insert into public.inventory (product_id, quantity)
   values (v_product_id, 3), (v_expiring_product_id, 1);
@@ -95,6 +102,59 @@ begin
     'shippingMethodId', v_shipping_id,
     'paymentMethod', 'card'
   );
+
+  v_result := public.prepare_card_order_server(
+    v_untracked_key,
+    jsonb_build_array(jsonb_build_object(
+      'key', 'stripe-untracked',
+      'productId', v_untracked_product_id,
+      'variantId', null,
+      'quantity', 1,
+      'customizations', '[]'::jsonb
+    )),
+    v_checkout,
+    null
+  );
+  assert (v_result->>'success')::boolean,
+    'card preparation without tracked inventory failed';
+  v_untracked_order_id := (v_result->>'orderId')::uuid;
+  v_untracked_payment_id := (v_result->>'paymentId')::uuid;
+  assert not exists (
+    select 1 from public.stock_reservations
+    where order_id = v_untracked_order_id
+  ), 'product without inventory created a fictitious reservation';
+
+  v_result := public.attach_stripe_checkout_session(
+    v_untracked_payment_id,
+    'cs_test_sql_untracked',
+    v_session_expires_at
+  );
+  assert (v_result->>'success')::boolean,
+    'Stripe Session was not attached without tracked inventory';
+
+  v_result := public.process_stripe_checkout_event(
+    'evt_sql_untracked_completed',
+    'checkout.session.completed',
+    'cs_test_sql_untracked',
+    'pi_test_sql_untracked',
+    v_untracked_payment_id,
+    v_untracked_order_id,
+    2250,
+    'ron',
+    'paid',
+    'payment'
+  );
+  assert (v_result->>'success')::boolean,
+    'completed payment without tracked inventory failed';
+  assert (select status = 'paid' from public.payments
+    where id = v_untracked_payment_id),
+    'payment without tracked inventory was not marked paid';
+  assert (select status = 'paid' and payment_status = 'paid'
+    from public.orders where id = v_untracked_order_id),
+    'order without tracked inventory was not marked paid';
+  assert not exists (select 1 from public.inventory_movements
+    where context->>'paymentId' = v_untracked_payment_id::text),
+    'payment without tracked inventory created a fictitious movement';
 
   v_result := public.prepare_card_order_server(
     v_paid_key,
