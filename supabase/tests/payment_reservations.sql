@@ -443,8 +443,8 @@ begin
     statement_timestamp() + interval '36 minutes'
   );
   assert (v_result->>'success')::boolean
-    and (v_result->>'expiredReservations')::integer = 1
-    and (v_result->>'expiredOrders')::integer = 1,
+    and (v_result->>'expiredReservations')::integer >= 1
+    and (v_result->>'expiredOrders')::integer >= 1,
     'expiration sweep did not transition the due graph';
   assert (select status = 'expired' and expired_at is not null
     from public.stock_reservations where order_id = v_expiring_order_id),

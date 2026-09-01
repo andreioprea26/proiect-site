@@ -55,10 +55,7 @@ export function getStripeSecretKey(): string {
 }
 
 export function getStripeWebhookSecretValue(): string {
-  return readRequiredEnvironmentVariable(
-    "STRIPE_WEBHOOK_SECRET",
-    process.env.STRIPE_WEBHOOK_SECRET,
-  );
+  return readRequiredEnvironmentVariable("STRIPE_WEBHOOK_SECRET");
 }
 
 export function getAppUrl(): string {
