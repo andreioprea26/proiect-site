@@ -640,9 +640,10 @@ SQL Editor nu păstrează în mod fiabil o tranzacție între rulări distincte.
 
 ## Blocul 7A — administrarea comenzilor și istoricul statusurilor
 
-Migrarea `20260902120000_admin_order_status_transitions.sql` este pregătită,
-dar **nu este aplicată automat**. Se aplică manual, o singură dată, în proiectul
-Supabase Development/Test, prin SQL Editor, după toate migrările Fazei 6.
+Migrarea `20260902120000_admin_order_status_transitions.sql` a fost aplicată
+manual la 2026-09-02 în proiectul Supabase Development/Test, prin SQL Editor,
+după toate migrările Fazei 6. Suita tranzacțională
+`supabase/tests/admin_orders.sql` a trecut cu 19 PASS / 0 FAILED.
 
 Migrarea:
 
@@ -721,7 +722,7 @@ fixture-urile izolate într-o tranzacție și încheie cu `rollback`.
 | `20260901130000` | `stripe_hardening_refunds` | Development | 2026-09-01 | Aplicată; adaugă audit webhook final clasificat, orphan recovery, state machine terminal-safe, stale Session reconciliation, `payment_refunds`, full refund idempotent și evenimente refund; suita 6C a trecut cu rollback |
 | `20260901140000` | `allow_stale_attached_stripe_holds` | Development | 2026-09-01 | Aplicată; permite unei rezervări active trecute de TTL să rămână blocantă numai când are o Session Stripe atașată; rezervările fără Session păstrează regula expirării viitoare |
 | `20260901150000` | `reject_conflicting_stripe_sessions` | Development | 2026-09-01 | Aplicată; clasifică și auditează permanent conflictul dintre metadata payment/order și alt Session deja atașat, expunând numai wrapper-ul hardened către `service_role` |
-| `20260902120000` | `admin_order_status_transitions` | Development | — | Neaplicată; de aplicat manual prin SQL Editor înaintea testelor integrate 7A. Adaugă tranziția admin atomică/idempotentă, `request_id` unic în istoric și elimină scrierile directe din browser pe orders/items/history |
+| `20260902120000` | `admin_order_status_transitions` | Development | 2026-09-02 | Aplicată manual prin SQL Editor; tranziția admin atomică/idempotentă, `request_id` unic în istoric și eliminarea scrierilor directe din browser pe orders/items/history au fost verificate prin `admin_orders.sql`: 19 PASS / 0 FAILED, cu rollback |
 
 ## Limitarea fluxului manual
 

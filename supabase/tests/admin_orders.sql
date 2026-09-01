@@ -48,8 +48,10 @@ begin
       'authenticated', 'customer-7a@example.com', '', now(),
       '{"provider":"email","providers":["email"]}', '{}'::jsonb,
       now(), now());
+  -- The Auth bootstrap trigger already grants customer to both temporary
+  -- users. Add only the elevated role required by this fixture.
   insert into public.user_roles (user_id, role)
-  values (v_admin_id, 'admin'), (v_customer_id, 'customer');
+  values (v_admin_id, 'admin');
 
   insert into public.shipping_methods (id, code, name, price_minor)
   values (v_shipping_id, 'admin-orders-sql', 'Curier 7A SQL', 500);
