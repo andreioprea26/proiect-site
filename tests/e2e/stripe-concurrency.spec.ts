@@ -47,12 +47,15 @@ test.describe.serial("Stripe DB concurrency cu fixture-uri izolate", () => {
 
   test.afterAll(async () => {
     if (!admin || !productIds?.length) return;
-    const { data: items } = await admin.from("order_items")
-      .select("order_id").in("product_id", productIds);
-    const orderIds = [...new Set((items ?? []).map((item) => item.order_id))];
-    if (orderIds.length) await admin.from("orders").delete().in("id", orderIds);
-    await admin.from("products").delete().in("id", productIds);
-    await admin.from("shipping_methods").delete().eq("id", shippingId);
+    // Orders and movements are immutable audit records, so their FK graph can
+    // intentionally prevent deletion. Archive only this run's namespace to
+    // keep repeat runs out of the public storefront without erasing history.
+    await admin.from("products").update({
+      publication_status: "archived",
+      availability_status: "unavailable",
+    }).in("id", productIds);
+    await admin.from("shipping_methods").update({ is_active: false })
+      .eq("id", shippingId);
   });
 
   test("card/card acceptă exact o rezervare pentru ultima unitate", async () => {
