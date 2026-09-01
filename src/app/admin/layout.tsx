@@ -21,6 +21,7 @@ export default async function AdminLayout({ children }: Readonly<{ children: Rea
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-4">
           <Link className="font-semibold text-emerald-400" href="/admin">Brand Handmade — Admin</Link>
           <nav aria-label="Navigare administrare" className="flex flex-wrap items-center gap-4 text-sm text-stone-300">
+            <Link href="/admin/orders">Comenzi</Link>
             <Link href="/admin/products">Produse</Link>
             <Link href="/admin/categories">Categorii</Link>
             <Link href="/admin/collections">Colecții</Link>
