@@ -8,6 +8,7 @@ declare
   v_key uuid := '6c000000-0000-4000-8000-000000000010';
   v_second_key uuid := '6c000000-0000-4000-8000-000000000011';
   v_third_key uuid := '6c000000-0000-4000-8000-000000000012';
+  v_cleanup_key uuid := '6c000000-0000-4000-8000-000000000013';
   v_checkout jsonb;
   v_lines jsonb;
   v_result jsonb;
@@ -18,6 +19,8 @@ declare
   v_second_payment_id uuid;
   v_third_order_id uuid;
   v_third_payment_id uuid;
+  v_cleanup_order_id uuid;
+  v_cleanup_payment_id uuid;
   v_inventory_id uuid;
   v_second_inventory_id uuid;
   v_inventory_before integer;
@@ -87,10 +90,12 @@ begin
         pending_expires_at = statement_timestamp() - interval '1 second'
     where id = v_payment_id;
   v_result := public.expire_stock_reservations(statement_timestamp());
-  assert (v_result->>'expiredReservations')::integer = 0,
-    'local cleanup released an attached Stripe reservation';
   assert (select bool_and(status = 'active') from public.stock_reservations
     where payment_id = v_payment_id), 'attached reservation stopped blocking stock';
+  assert (select status = 'pending' from public.payments where id = v_payment_id),
+    'local cleanup changed the attached fixture payment';
+  assert (select status = 'awaiting_payment' from public.orders where id = v_order_id),
+    'local cleanup changed the attached fixture order';
   v_result := public.quote_checkout(jsonb_build_array(jsonb_build_object(
     'key', 'all-stock', 'productId', v_product_id, 'variantId', null,
     'quantity', 3, 'customizations', '[]'::jsonb)));
@@ -215,6 +220,26 @@ begin
   assert (select provider_checkout_session_id = 'cs_test_6c_orphan'
     and status = 'expired' from public.payments where id = v_third_payment_id),
     'orphan Session recovery did not finish expiry';
+
+  -- Local expiry assertions are scoped to this unattached fixture. The cleanup
+  -- result can legitimately include other stale Development rows.
+  v_result := public.prepare_card_order_server(v_cleanup_key,
+    jsonb_build_array(jsonb_build_object(
+      'key', 'local-cleanup', 'productId', v_product_id, 'variantId', null,
+      'quantity', 1, 'customizations', '[]'::jsonb)), v_checkout, null);
+  assert (v_result->>'success')::boolean, 'local cleanup fixture preparation failed';
+  v_cleanup_order_id := (v_result->>'orderId')::uuid;
+  v_cleanup_payment_id := (v_result->>'paymentId')::uuid;
+  perform public.expire_stock_reservations(statement_timestamp() + interval '1 hour');
+  assert (select status = 'expired' from public.stock_reservations
+    where payment_id = v_cleanup_payment_id),
+    'unattached fixture reservation was not expired';
+  assert (select status = 'expired' and provider_checkout_session_id is null
+    from public.payments where id = v_cleanup_payment_id),
+    'unattached fixture payment was not expired';
+  assert (select status = 'cancelled' from public.orders
+    where id = v_cleanup_order_id),
+    'unattached fixture order was not cancelled';
 
   -- Failed and partial external refunds are audited without claiming a full refund.
   v_result := public.process_stripe_refund_event(

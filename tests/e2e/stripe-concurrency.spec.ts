@@ -4,6 +4,7 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 let admin: SupabaseClient;
 let shippingId: string;
 let productIds: string[];
+const fixtureNamespace = crypto.randomUUID().replaceAll("-", "").slice(0, 12);
 
 test.describe.serial("Stripe DB concurrency cu fixture-uri izolate", () => {
   test.beforeAll(async () => {
@@ -15,13 +16,12 @@ test.describe.serial("Stripe DB concurrency cu fixture-uri izolate", () => {
     admin = createClient(url, serviceKey, {
       auth: { autoRefreshToken: false, persistSession: false },
     });
-    const ns = crypto.randomUUID().replaceAll("-", "").slice(0, 12);
     shippingId = crypto.randomUUID();
     productIds = Array.from({ length: 7 }, () => crypto.randomUUID());
     const products = productIds.map((id, index) => ({
       id,
-      name: `Concurrency 6C ${ns} ${index}`,
-      slug: `concurrency-6c-${ns}-${index}`,
+      name: `Concurrency 6C ${fixtureNamespace} ${index}`,
+      slug: `concurrency-6c-${fixtureNamespace}-${index}`,
       base_price: 10,
       product_type: index === 3 ? "unique" : "standard",
       publication_status: "published",
@@ -36,8 +36,8 @@ test.describe.serial("Stripe DB concurrency cu fixture-uri izolate", () => {
     if (inventoryError) throw inventoryError;
     const { error: shippingError } = await admin.from("shipping_methods").insert({
       id: shippingId,
-      code: `concurrency-6c-${ns}`,
-      name: `Concurrency 6C ${ns}`,
+      code: `concurrency-6c-${fixtureNamespace}`,
+      name: `Concurrency 6C ${fixtureNamespace}`,
       price_minor: 500,
       is_active: true,
       display_order: 0,
@@ -46,16 +46,55 @@ test.describe.serial("Stripe DB concurrency cu fixture-uri izolate", () => {
   });
 
   test.afterAll(async () => {
-    if (!admin || !productIds?.length) return;
+    if (!admin) return;
+    const cleanupErrors: unknown[] = [];
+    const fixtureProductIds = await findFixtureProductIds();
+    const orderIds = await findFixtureOrderIds(fixtureProductIds);
+
+    if (orderIds.length > 0) {
+      const { data: pendingPayments, error: paymentError } = await admin
+        .from("payments")
+        .select("order_id")
+        .in("order_id", orderIds)
+        .eq("status", "pending");
+      if (paymentError) throw paymentError;
+
+      for (const payment of pendingPayments ?? []) {
+        const { data, error } = await admin.rpc("release_card_order_reservations", {
+          p_order_id: payment.order_id,
+          p_resolution_key: `e2e-6c-cleanup-${fixtureNamespace}`,
+        });
+        if (error) {
+          cleanupErrors.push(error);
+        } else if (!isRpcSuccess(data)) {
+          cleanupErrors.push(new Error(`Could not release E2E order ${payment.order_id}.`));
+        }
+      }
+    }
+
     // Orders and movements are immutable audit records, so their FK graph can
     // intentionally prevent deletion. Archive only this run's namespace to
     // keep repeat runs out of the public storefront without erasing history.
-    await admin.from("products").update({
-      publication_status: "archived",
-      availability_status: "unavailable",
-    }).in("id", productIds);
-    await admin.from("shipping_methods").update({ is_active: false })
-      .eq("id", shippingId);
+    if (fixtureProductIds.length > 0) {
+      const { error } = await admin.from("products").update({
+        publication_status: "archived",
+        availability_status: "unavailable",
+      }).in("id", fixtureProductIds);
+      if (error) cleanupErrors.push(error);
+    }
+    const { error: shippingError } = await admin.from("shipping_methods")
+      .update({ is_active: false })
+      .eq("code", `concurrency-6c-${fixtureNamespace}`);
+    if (shippingError) cleanupErrors.push(shippingError);
+
+    try {
+      await expectFixtureResidueCleared(fixtureProductIds, orderIds);
+    } catch (error) {
+      cleanupErrors.push(error);
+    }
+    if (cleanupErrors.length > 0) {
+      throw new AggregateError(cleanupErrors, "Stripe concurrency fixture teardown failed.");
+    }
   });
 
   test("card/card acceptă exact o rezervare pentru ultima unitate", async () => {
@@ -234,6 +273,77 @@ test.describe.serial("Stripe DB concurrency cu fixture-uri izolate", () => {
     expect(finalPayment?.status).toBe("paid");
   });
 });
+
+async function findFixtureProductIds() {
+  const { data, error } = await admin.from("products")
+    .select("id")
+    .like("slug", `concurrency-6c-${fixtureNamespace}-%`);
+  if (error) throw error;
+  return (data ?? []).map(({ id }) => id as string);
+}
+
+async function findFixtureOrderIds(fixtureProductIds: string[]) {
+  if (fixtureProductIds.length === 0) return [];
+  const { data, error } = await admin.from("order_items")
+    .select("order_id")
+    .in("product_id", fixtureProductIds);
+  if (error) throw error;
+  return [...new Set((data ?? []).map(({ order_id }) => order_id as string))];
+}
+
+async function expectFixtureResidueCleared(
+  fixtureProductIds: string[],
+  orderIds: string[],
+) {
+  if (orderIds.length > 0) {
+    const { count: activeReservations, error: reservationError } = await admin
+      .from("stock_reservations")
+      .select("id", { count: "exact", head: true })
+      .in("order_id", orderIds)
+      .eq("status", "active");
+    if (reservationError) throw reservationError;
+    expect(activeReservations, "fixture reservations active after teardown").toBe(0);
+
+    const { count: pendingWithoutSession, error: pendingError } = await admin
+      .from("payments")
+      .select("id", { count: "exact", head: true })
+      .in("order_id", orderIds)
+      .eq("status", "pending")
+      .is("provider_checkout_session_id", null);
+    if (pendingError) throw pendingError;
+    expect(pendingWithoutSession, "fixture payments pending without Session").toBe(0);
+
+    const { count: pendingPayments, error: allPendingError } = await admin
+      .from("payments")
+      .select("id", { count: "exact", head: true })
+      .in("order_id", orderIds)
+      .eq("status", "pending");
+    if (allPendingError) throw allPendingError;
+    expect(pendingPayments, "fixture payments still pending after teardown").toBe(0);
+  }
+
+  const { count: activeShipping, error: shippingError } = await admin
+    .from("shipping_methods")
+    .select("id", { count: "exact", head: true })
+    .eq("code", `concurrency-6c-${fixtureNamespace}`)
+    .eq("is_active", true);
+  if (shippingError) throw shippingError;
+  expect(activeShipping, "fixture shipping methods left active").toBe(0);
+
+  if (fixtureProductIds.length > 0) {
+    const { data: products, error: productError } = await admin.from("products")
+      .select("publication_status, availability_status")
+      .in("id", fixtureProductIds);
+    if (productError) throw productError;
+    expect(
+      products?.every((product) =>
+        product.publication_status === "archived" &&
+        product.availability_status === "unavailable"
+      ),
+      "fixture products remained public or available",
+    ).toBe(true);
+  }
+}
 
 type AttachedCard = {
   orderId: string;
