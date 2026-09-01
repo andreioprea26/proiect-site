@@ -39,3 +39,28 @@ export function readRequiredServerEnvironmentVariable(name: string): string {
 
   return readRequiredEnvironmentVariable(name);
 }
+
+export function getSupabaseServiceRoleKey(): string {
+  return readRequiredEnvironmentVariable(
+    "SUPABASE_SERVICE_ROLE_KEY",
+    process.env.SUPABASE_SERVICE_ROLE_KEY,
+  );
+}
+
+export function getStripeSecretKey(): string {
+  return readRequiredEnvironmentVariable(
+    "STRIPE_SECRET_KEY",
+    process.env.STRIPE_SECRET_KEY,
+  );
+}
+
+export function getStripeWebhookSecretValue(): string {
+  return readRequiredEnvironmentVariable(
+    "STRIPE_WEBHOOK_SECRET",
+    process.env.STRIPE_WEBHOOK_SECRET,
+  );
+}
+
+export function getAppUrl(): string {
+  return readRequiredEnvironmentVariable("APP_URL", process.env.APP_URL);
+}

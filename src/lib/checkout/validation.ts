@@ -11,7 +11,7 @@ export type CheckoutFields = {
   billingSameAsShipping: boolean;
   billingAddress: CheckoutAddress;
   shippingMethodId: string;
-  paymentMethod: "cash_on_delivery" | "";
+  paymentMethod: "cash_on_delivery" | "card" | "";
 };
 
 const UUID_PATTERN =
@@ -38,10 +38,11 @@ export function readCheckoutFields(formData: FormData): CheckoutFields {
       ? shippingAddress
       : readAddress(formData, "billing"),
     shippingMethodId: field(formData, "shippingMethodId"),
-    paymentMethod:
-      field(formData, "paymentMethod") === "cash_on_delivery"
-        ? "cash_on_delivery"
-        : "",
+    paymentMethod: ["cash_on_delivery", "card"].includes(
+      field(formData, "paymentMethod"),
+    )
+      ? (field(formData, "paymentMethod") as "cash_on_delivery" | "card")
+      : "",
   };
 }
 

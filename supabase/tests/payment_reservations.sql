@@ -57,8 +57,8 @@ begin
     'release_card_order_reservations is missing';
   assert to_regprocedure('public.expire_stock_reservations(timestamptz)') is not null,
     'expire_stock_reservations is missing';
-  assert public.stock_reservation_ttl() = interval '30 minutes',
-    'reservation TTL is not centralized at 30 minutes';
+  assert public.stock_reservation_ttl() = interval '35 minutes',
+    'reservation TTL is not centralized at 35 minutes';
 
   assert (select relrowsecurity from pg_class
     where oid = 'public.payments'::regclass),
@@ -74,12 +74,12 @@ begin
     'anonymous users must not insert reservations directly';
   assert not has_table_privilege('authenticated', 'public.stock_reservations', 'update'),
     'customers must not update reservations directly';
-  assert has_function_privilege(
+  assert not has_function_privilege(
     'anon', 'public.prepare_card_order(uuid,jsonb,jsonb)', 'execute'
-  ), 'guest checkout cannot prepare a card order';
-  assert has_function_privilege(
+  ), 'guest can call privileged card preparation directly';
+  assert not has_function_privilege(
     'authenticated', 'public.prepare_card_order(uuid,jsonb,jsonb)', 'execute'
-  ), 'customer checkout cannot prepare a card order';
+  ), 'customer can call privileged card preparation directly';
   assert not has_function_privilege(
     'anon', 'public.confirm_card_payment(uuid,text,text)', 'execute'
   ), 'guest can confirm a payment';
@@ -440,7 +440,7 @@ begin
   v_expiring_payment_id := (v_result->>'paymentId')::uuid;
 
   v_result := public.expire_stock_reservations(
-    statement_timestamp() + interval '31 minutes'
+    statement_timestamp() + interval '36 minutes'
   );
   assert (v_result->>'success')::boolean
     and (v_result->>'expiredReservations')::integer = 1
@@ -471,7 +471,7 @@ begin
     'expired reservation was consumed';
 
   v_retry := public.expire_stock_reservations(
-    statement_timestamp() + interval '31 minutes'
+    statement_timestamp() + interval '36 minutes'
   );
   assert (v_retry->>'expiredReservations')::integer = 0
     and (v_retry->>'expiredOrders')::integer = 0,
