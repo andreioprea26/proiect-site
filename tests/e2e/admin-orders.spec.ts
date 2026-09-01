@@ -180,7 +180,11 @@ test.describe.serial("administrare comenzi cu fixture-uri Development izolate", 
     await expect(page.getByText(codPublicNumber).first()).toBeVisible();
     expect(page.url()).not.toContain("example.com");
 
-    await page.getByRole("link", { name: /Deschide/ }).first().click();
+    await page
+      .getByRole("row")
+      .filter({ hasText: codPublicNumber })
+      .getByRole("link", { name: "Deschide" })
+      .click();
     await expect(page).toHaveURL(new RegExp(`/admin/orders/${codOrderId}$`));
     await expect(page.getByText(`Produs snapshot ${namespace}`)).toBeVisible();
     await expect(page.getByText("Mărime specială · mărime: M")).toBeVisible();
