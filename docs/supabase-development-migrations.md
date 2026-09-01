@@ -638,6 +638,67 @@ Aplicarea a fost verificată structural și prin testele tranzacționale de mai
 sus. Testul real cu două sesiuni SQL rămâne o verificare manuală separată;
 SQL Editor nu păstrează în mod fiabil o tranzacție între rulări distincte.
 
+## Blocul 7A — administrarea comenzilor și istoricul statusurilor
+
+Migrarea `20260902120000_admin_order_status_transitions.sql` este pregătită,
+dar **nu este aplicată automat**. Se aplică manual, o singură dată, în proiectul
+Supabase Development/Test, prin SQL Editor, după toate migrările Fazei 6.
+
+Migrarea:
+
+- adaugă `request_id` nullable și unic pentru idempotency în
+  `order_status_history`;
+- elimină drepturile directe `INSERT/UPDATE/DELETE` ale rolului
+  `authenticated` pe `orders`, `order_items` și `order_status_history`;
+- adaugă RPC-ul `transition_admin_order_status`, care reautorizează rolul
+  admin, blochează comanda, validează state machine-ul, păstrează separat
+  starea plății și inserează atomic istoricul cu actorul din `auth.uid()`.
+
+Verificare înainte de aplicare:
+
+```sql
+select
+  to_regprocedure(
+    'public.transition_admin_order_status(uuid,public.order_status,uuid,text)'
+  ) as transition_rpc,
+  exists (
+    select 1 from information_schema.columns
+    where table_schema = 'public'
+      and table_name = 'order_status_history'
+      and column_name = 'request_id'
+  ) as request_id_exists;
+```
+
+Rezultatul așteptat înainte este `null` și `false`. După aplicare, RPC-ul
+trebuie să existe, coloana trebuie să fie prezentă, `anon` nu trebuie să aibă
+`EXECUTE`, iar `authenticated` nu trebuie să aibă drepturi directe de scriere:
+
+```sql
+select
+  to_regprocedure(
+    'public.transition_admin_order_status(uuid,public.order_status,uuid,text)'
+  ) is not null as rpc_exists,
+  has_function_privilege(
+    'anon',
+    'public.transition_admin_order_status(uuid,public.order_status,uuid,text)',
+    'execute'
+  ) as anon_execute,
+  has_function_privilege(
+    'authenticated',
+    'public.transition_admin_order_status(uuid,public.order_status,uuid,text)',
+    'execute'
+  ) as authenticated_execute,
+  has_table_privilege('authenticated', 'public.orders', 'update')
+    as direct_order_update,
+  has_table_privilege(
+    'authenticated', 'public.order_status_history', 'insert'
+  ) as direct_history_insert;
+```
+
+Rezultatul așteptat este `true, false, true, false, false`. Apoi rulează
+integral `supabase/tests/admin_orders.sql` în SQL Editor; testul își creează
+fixture-urile izolate într-o tranzacție și încheie cu `rollback`.
+
 ## Registrul aplicărilor manuale
 
 | Versiune | Migrare | Mediu | Data aplicării | Rezultat |
@@ -660,6 +721,7 @@ SQL Editor nu păstrează în mod fiabil o tranzacție între rulări distincte.
 | `20260901130000` | `stripe_hardening_refunds` | Development | 2026-09-01 | Aplicată; adaugă audit webhook final clasificat, orphan recovery, state machine terminal-safe, stale Session reconciliation, `payment_refunds`, full refund idempotent și evenimente refund; suita 6C a trecut cu rollback |
 | `20260901140000` | `allow_stale_attached_stripe_holds` | Development | 2026-09-01 | Aplicată; permite unei rezervări active trecute de TTL să rămână blocantă numai când are o Session Stripe atașată; rezervările fără Session păstrează regula expirării viitoare |
 | `20260901150000` | `reject_conflicting_stripe_sessions` | Development | 2026-09-01 | Aplicată; clasifică și auditează permanent conflictul dintre metadata payment/order și alt Session deja atașat, expunând numai wrapper-ul hardened către `service_role` |
+| `20260902120000` | `admin_order_status_transitions` | Development | — | Neaplicată; de aplicat manual prin SQL Editor înaintea testelor integrate 7A. Adaugă tranziția admin atomică/idempotentă, `request_id` unic în istoric și elimină scrierile directe din browser pe orders/items/history |
 
 ## Limitarea fluxului manual
 
