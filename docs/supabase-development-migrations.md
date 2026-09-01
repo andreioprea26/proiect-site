@@ -657,6 +657,9 @@ SQL Editor nu păstrează în mod fiabil o tranzacție între rulări distincte.
 | `20260827120000` | `create_payment_reservations` | Development | 2026-08-27 | Aplicată; tabelele, enum-urile, TTL-ul, RLS și privilegiile RPC au fost verificate; 76 aserțiuni 6A, 36 aserțiuni COD și 22 aserțiuni checkout au trecut cu rollback; testul real cu două sesiuni rămâne manual |
 | `20260827130000` | `create_stripe_checkout_webhook` | Development | 2026-08-27 | Aplicată; TTL 35 minute și marjă Stripe 5 minute, RPC prepare server-only, Session attachment, event idempotency, reconciliere completed/expired și confirmare publică reservation-aware verificate; 43 aserțiuni 6B plus regresiile 76/36/22 au trecut cu rollback |
 | `20260901010000` | `allow_stripe_sessions_without_stock_reservations` | Development | 2026-09-01 | Aplicată; permite atașarea sesiunii Stripe pentru comenzi alcătuite numai din produse fără inventar urmărit, păstrând validarea tuturor rezervărilor existente; testul Stripe tranzacțional extins a trecut cu rollback |
+| `20260901130000` | `stripe_hardening_refunds` | Development | 2026-09-01 | Aplicată; adaugă audit webhook final clasificat, orphan recovery, state machine terminal-safe, stale Session reconciliation, `payment_refunds`, full refund idempotent și evenimente refund; suita 6C a trecut cu rollback |
+| `20260901140000` | `allow_stale_attached_stripe_holds` | Development | 2026-09-01 | Aplicată; permite unei rezervări active trecute de TTL să rămână blocantă numai când are o Session Stripe atașată; rezervările fără Session păstrează regula expirării viitoare |
+| `20260901150000` | `reject_conflicting_stripe_sessions` | Development | 2026-09-01 | Aplicată; clasifică și auditează permanent conflictul dintre metadata payment/order și alt Session deja atașat, expunând numai wrapper-ul hardened către `service_role` |
 
 ## Limitarea fluxului manual
 

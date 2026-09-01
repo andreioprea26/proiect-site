@@ -1,21 +1,29 @@
 import { expect, test, type Page } from "@playwright/test";
+import { createClient as createSupabaseClient, type SupabaseClient } from "@supabase/supabase-js";
 
 import { CART_STORAGE_KEY, createCartLine, serializeCart } from "../../src/lib/cart/model";
 import { cartLinesToCheckoutPayload } from "../../src/lib/checkout/payload";
 import { readCheckoutFields, validateCheckoutFields } from "../../src/lib/checkout/validation";
 
-const TEST_PRODUCT_ID = "53000000-0000-4000-8000-000000000001";
-const TEST_UNIQUE_PRODUCT_ID = "53000000-0000-4000-8000-000000000002";
+let testProductId = "";
+let testUniqueProductId = "";
+let testShippingId = "";
+let testProductSlug = "";
+let testUniqueProductSlug = "";
+let testShippingName = "";
+let fixtureAdmin: SupabaseClient | null = null;
 const e2eEmail = process.env.E2E_TEST_EMAIL ?? "";
 const e2ePassword = process.env.E2E_TEST_PASSWORD ?? "";
+
+test.describe.configure({ mode: "serial" });
 
 function line({
   availabilityStatus = "in_stock",
   basePriceMinor = 9_999_999,
-  productId = TEST_PRODUCT_ID,
+  productId = testProductId,
   productType = "standard",
   quantity = 1,
-  slug = "produs-cod-e2e",
+  slug = testProductSlug,
 }: {
   availabilityStatus?: "in_stock" | "unique";
   basePriceMinor?: number;
@@ -38,11 +46,93 @@ function line({
   });
 }
 
+test.beforeAll(async () => {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!supabaseUrl || !serviceRoleKey) {
+    throw new Error("Fixture-urile checkout E2E necesită Supabase Development server env.");
+  }
+
+  fixtureAdmin = createSupabaseClient(supabaseUrl, serviceRoleKey, {
+    auth: { autoRefreshToken: false, persistSession: false },
+  });
+  const namespace = crypto.randomUUID().replaceAll("-", "").slice(0, 12);
+  testProductId = crypto.randomUUID();
+  testUniqueProductId = crypto.randomUUID();
+  testShippingId = crypto.randomUUID();
+  testProductSlug = `cod-e2e-${namespace}`;
+  testUniqueProductSlug = `unic-cod-e2e-${namespace}`;
+  testShippingName = `Curier COD E2E ${namespace}`;
+
+  const { error: productError } = await fixtureAdmin.from("products").insert([
+    {
+      id: testProductId,
+      name: `Produs COD E2E ${namespace}`,
+      slug: testProductSlug,
+      base_price: 7,
+      product_type: "standard",
+      publication_status: "published",
+      availability_status: "in_stock",
+      is_customizable: false,
+    },
+    {
+      id: testUniqueProductId,
+      name: `Unicat COD E2E ${namespace}`,
+      slug: testUniqueProductSlug,
+      base_price: 37,
+      product_type: "unique",
+      publication_status: "published",
+      availability_status: "unique",
+      is_customizable: false,
+    },
+  ]);
+  if (productError) throw productError;
+
+  const { error: inventoryError } = await fixtureAdmin.from("inventory").insert([
+    { product_id: testProductId, quantity: 20 },
+    { product_id: testUniqueProductId, quantity: 1 },
+  ]);
+  if (inventoryError) throw inventoryError;
+
+  const { error: shippingError } = await fixtureAdmin.from("shipping_methods").insert({
+    id: testShippingId,
+    code: `cod-e2e-${namespace}`,
+    name: testShippingName,
+    price_minor: 2000,
+    is_active: true,
+    display_order: 0,
+  });
+  if (shippingError) throw shippingError;
+});
+
+test.afterAll(async () => {
+  if (!fixtureAdmin || !testProductId || !testUniqueProductId) return;
+  const { data: items } = await fixtureAdmin
+    .from("order_items")
+    .select("order_id")
+    .in("product_id", [testProductId, testUniqueProductId]);
+  const orderIds = [...new Set((items ?? []).map((item) => item.order_id))];
+  if (orderIds.length > 0) {
+    const { error } = await fixtureAdmin.from("orders").delete().in("id", orderIds);
+    if (error) throw error;
+  }
+  const { error: productError } = await fixtureAdmin
+    .from("products")
+    .delete()
+    .in("id", [testProductId, testUniqueProductId]);
+  if (productError) throw productError;
+  const { error: shippingError } = await fixtureAdmin
+    .from("shipping_methods")
+    .delete()
+    .eq("id", testShippingId);
+  if (shippingError) throw shippingError;
+});
+
 test("payload-ul de checkout elimină prețurile și snapshot-urile browserului", () => {
   expect(cartLinesToCheckoutPayload([line()])).toEqual([
     {
       key: line().key,
-      productId: TEST_PRODUCT_ID,
+      productId: testProductId,
       variantId: null,
       quantity: 1,
       customizations: [],
@@ -123,7 +213,7 @@ test.describe.serial("plasarea COD cu fixture-uri Development", () => {
     await expect(page.getByRole("heading", { name: "Mulțumim pentru comandă!" })).toBeVisible();
     await expect(page.getByText("27,00 RON")).toBeVisible();
     await expect(page.getByText("Ramburs la livrare · neachitată")).toBeVisible();
-    await expect(page.getByText("Curier COD E2E")).toBeVisible();
+    await expect(page.getByText(testShippingName)).toBeVisible();
     await expect.poll(() => storedCartCount(page)).toBe(0);
   });
 
@@ -156,9 +246,9 @@ test.describe.serial("plasarea COD cu fixture-uri Development", () => {
     await seedCart(page, line({
       availabilityStatus: "unique",
       basePriceMinor: 1,
-      productId: TEST_UNIQUE_PRODUCT_ID,
+      productId: testUniqueProductId,
       productType: "unique",
-      slug: "unicat-cod-e2e",
+      slug: testUniqueProductSlug,
     }));
     await page.goto("/checkout");
     await fillCheckout(page, "unique-e2e@example.com");
@@ -193,6 +283,7 @@ test("customer autentificat primește prefill și plasează COD", async ({ page 
   await page.getByLabel("Adresă", { exact: true }).fill("Strada Test 2");
   await page.getByLabel("Localitate").fill("București");
   await page.getByLabel("Județ").fill("București");
+  await page.getByLabel("Metoda de livrare").selectOption(testShippingId);
   await page.getByRole("button", { name: "Plasează comanda ramburs" }).click();
   await expect(page).toHaveURL(/\/order-confirmation\/[0-9a-f-]+$/, { timeout: 30_000 });
   await expect(page.getByText("Comandă înregistrată")).toBeVisible();
@@ -246,6 +337,7 @@ async function fillCheckout(page: Page, email: string) {
   await page.getByLabel("Adresă", { exact: true }).fill("Strada Test 1");
   await page.getByLabel("Localitate").fill("București");
   await page.getByLabel("Județ").fill("București");
+  await page.getByLabel("Metoda de livrare").selectOption(testShippingId);
 }
 
 async function storedCartCount(page: Page) {

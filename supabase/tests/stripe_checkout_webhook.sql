@@ -52,7 +52,7 @@ begin
   ), 'anon can attach Stripe Sessions';
   assert not has_function_privilege(
     'authenticated',
-    'public.process_stripe_checkout_event(text,text,text,text,uuid,uuid,bigint,text,text,text)',
+    'public.process_stripe_checkout_event_hardened(text,text,text,text,uuid,uuid,bigint,text,text,text,timestamptz)',
     'execute'
   ), 'authenticated can process Stripe events';
 
@@ -132,7 +132,7 @@ begin
   assert (v_result->>'success')::boolean,
     'Stripe Session was not attached without tracked inventory';
 
-  v_result := public.process_stripe_checkout_event(
+  v_result := public.process_stripe_checkout_event_hardened(
     'evt_sql_untracked_completed',
     'checkout.session.completed',
     'cs_test_sql_untracked',
@@ -142,7 +142,8 @@ begin
     2250,
     'ron',
     'paid',
-    'payment'
+    'payment',
+    statement_timestamp() + interval '30 minutes'
   );
   assert (v_result->>'success')::boolean,
     'completed payment without tracked inventory failed';
@@ -189,7 +190,7 @@ begin
     from public.stock_reservations where order_id = v_order_id),
     'reservation can expire before Stripe Session plus margin';
 
-  v_result := public.process_stripe_checkout_event(
+  v_result := public.process_stripe_checkout_event_hardened(
     'evt_sql_completed',
     'checkout.session.completed',
     'cs_test_sql_paid',
@@ -199,7 +200,8 @@ begin
     2750,
     'ron',
     'paid',
-    'payment'
+    'payment',
+    statement_timestamp() + interval '30 minutes'
   );
   assert (v_result->>'success')::boolean,
     'completed event was not processed';
@@ -221,7 +223,7 @@ begin
     where event_id = 'evt_sql_completed'),
     'completed event id was not recorded';
 
-  v_result := public.process_stripe_checkout_event(
+  v_result := public.process_stripe_checkout_event_hardened(
     'evt_sql_completed',
     'checkout.session.completed',
     'cs_test_sql_paid',
@@ -231,7 +233,8 @@ begin
     2750,
     'ron',
     'paid',
-    'payment'
+    'payment',
+    statement_timestamp() + interval '30 minutes'
   );
   assert (v_result->>'idempotentReplay')::boolean,
     'duplicate Stripe event did not replay idempotently';
@@ -241,7 +244,7 @@ begin
     where context->>'paymentId' = v_payment_id::text),
     'duplicate completed event duplicated movement';
 
-  v_result := public.process_stripe_checkout_event(
+  v_result := public.process_stripe_checkout_event_hardened(
     'evt_sql_expired_after_paid',
     'checkout.session.expired',
     'cs_test_sql_paid',
@@ -251,7 +254,8 @@ begin
     2750,
     'ron',
     'unpaid',
-    'payment'
+    'payment',
+    statement_timestamp() + interval '30 minutes'
   );
   assert (v_result->>'success')::boolean,
     'expired-after-paid event was not safely acknowledged';
@@ -290,7 +294,7 @@ begin
     where id = v_expiring_payment_id),
     'success-state read marked payment paid';
 
-  v_result := public.process_stripe_checkout_event(
+  v_result := public.process_stripe_checkout_event_hardened(
     'evt_sql_amount_mismatch',
     'checkout.session.completed',
     'cs_test_sql_expiring',
@@ -300,16 +304,17 @@ begin
     1,
     'ron',
     'paid',
-    'payment'
+    'payment',
+    statement_timestamp() + interval '30 minutes'
   );
-  assert not (v_result->>'success')::boolean
-    and v_result->>'code' = 'reconciliation_failed',
-    'amount mismatch was accepted';
+  assert (v_result->>'success')::boolean
+    and v_result->>'classification' = 'rejected_permanent',
+    'amount mismatch was not permanently rejected and audited';
   assert (select status = 'pending' from public.payments
     where id = v_expiring_payment_id),
     'amount mismatch changed payment';
 
-  v_result := public.process_stripe_checkout_event(
+  v_result := public.process_stripe_checkout_event_hardened(
     'evt_sql_currency_mismatch',
     'checkout.session.completed',
     'cs_test_sql_expiring',
@@ -319,12 +324,14 @@ begin
     3750,
     'eur',
     'paid',
-    'payment'
+    'payment',
+    statement_timestamp() + interval '30 minutes'
   );
-  assert not (v_result->>'success')::boolean,
-    'currency mismatch was accepted';
+  assert (v_result->>'success')::boolean
+    and v_result->>'classification' = 'rejected_permanent',
+    'currency mismatch was not permanently rejected';
 
-  v_result := public.process_stripe_checkout_event(
+  v_result := public.process_stripe_checkout_event_hardened(
     'evt_sql_session_mismatch',
     'checkout.session.completed',
     'cs_test_sql_wrong',
@@ -334,12 +341,14 @@ begin
     3750,
     'ron',
     'paid',
-    'payment'
+    'payment',
+    statement_timestamp() + interval '30 minutes'
   );
-  assert not (v_result->>'success')::boolean,
-    'Session ID mismatch was accepted';
+  assert (v_result->>'success')::boolean
+    and v_result->>'classification' = 'rejected_permanent',
+    'Session ID mismatch was not permanently rejected';
 
-  v_result := public.process_stripe_checkout_event(
+  v_result := public.process_stripe_checkout_event_hardened(
     'evt_sql_expired',
     'checkout.session.expired',
     'cs_test_sql_expiring',
@@ -349,7 +358,8 @@ begin
     3750,
     'ron',
     'unpaid',
-    'payment'
+    'payment',
+    statement_timestamp() + interval '30 minutes'
   );
   assert (v_result->>'success')::boolean,
     'expired event was not processed';
@@ -369,7 +379,7 @@ begin
     where context->>'paymentId' = v_expiring_payment_id::text),
     'expired event created a sale movement';
 
-  v_result := public.process_stripe_checkout_event(
+  v_result := public.process_stripe_checkout_event_hardened(
     'evt_sql_expired',
     'checkout.session.expired',
     'cs_test_sql_expiring',
@@ -379,7 +389,8 @@ begin
     3750,
     'ron',
     'unpaid',
-    'payment'
+    'payment',
+    statement_timestamp() + interval '30 minutes'
   );
   assert (v_result->>'idempotentReplay')::boolean,
     'duplicate expired event was not idempotent';

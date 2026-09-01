@@ -27,6 +27,9 @@ Evenimente abonate:
 
 - `checkout.session.completed`
 - `checkout.session.expired`
+- `refund.created`
+- `refund.updated`
+- `refund.failed`
 
 Secretul webhook trebuie să corespundă exact endpoint-ului care livrează
 evenimentele. Nu copia cheia `service_role`, cheia Stripe sau webhook secretul
@@ -62,6 +65,21 @@ noul signing secret emis pentru acel endpoint.
 Success URL nu confirmă plata. Numai webhook-ul semnat poate apela tranzacția
 DB care marchează plata/comanda paid și consumă rezervarea. Cancel URL nu
 schimbă starea plății și nu eliberează rezervarea.
+
+O rezervare cu Checkout Session Stripe atașată continuă să blocheze stocul
+după TTL-ul local. Numai `checkout.session.expired` sau reconcilierea
+server-side cu starea Stripe curentă o poate elibera. Helper-ul există pentru
+automatizare ulterioară, dar 6C nu introduce cron ori scheduler.
+
+Evenimentele autentice complet necunoscute sunt auditate ca
+`ignored_unmatched`, iar mismatch-urile demonstrate ca `rejected_permanent`;
+ambele primesc `2xx` și nu modifică business state. Erorile tranzitorii nu sunt
+finalizate în audit și primesc `5xx`, astfel încât Stripe să poată face retry.
+
+Full refund-ul 6C este exclusiv server-side, folosește PaymentIntent-ul salvat
+și cheia stabilă `full_refund:<payment UUID>`. Browserul nu are drepturi de
+scriere sau RPC pentru refund. Confirmarea unui refund integral marchează
+payment/order `refunded`, dar nu repune automat inventarul în stoc.
 
 ## Verificare manuală test mode
 

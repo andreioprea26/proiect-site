@@ -29,5 +29,25 @@ export function readCheckoutSessionReference(session: Stripe.Checkout.Session) {
     currency: session.currency,
     paymentStatus: session.payment_status,
     mode: session.mode,
+    expiresAt: new Date(session.expires_at * 1000).toISOString(),
+  };
+}
+
+export function readRefundReference(refund: Stripe.Refund) {
+  const paymentIntentId =
+    typeof refund.payment_intent === "string"
+      ? refund.payment_intent
+      : refund.payment_intent?.id ?? null;
+
+  return {
+    refundId: refund.id,
+    internalRefundId: refund.metadata?.refund_id ?? "",
+    paymentId: refund.metadata?.payment_id ?? "",
+    orderId: refund.metadata?.order_id ?? "",
+    paymentIntentId,
+    amountMinor: refund.amount,
+    currency: refund.currency,
+    status: refund.status,
+    failureReason: refund.failure_reason ?? null,
   };
 }
