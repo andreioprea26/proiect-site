@@ -5,9 +5,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { OrderStatusForm } from "@/app/admin/_components/order-status-form";
+import { OrderDangerActions } from "@/app/admin/_components/order-danger-actions";
+import { ShipmentForm } from "@/app/admin/_components/shipment-form";
 import { formatMoney } from "@/lib/cart/model";
 import { isValidUuid } from "@/lib/admin/catalog-validation";
-import { allowedOrderTransitions, ORDER_STATUS_LABELS, PAYMENT_METHOD_LABELS, PAYMENT_STATUS_LABELS, orderStatusBadgeClass } from "@/lib/admin/order-model";
+import { allowedOrderTransitions, canCancelOrder, canConfigureShipment, canMarkOrderShipped, canRefundStripe, ORDER_STATUS_LABELS, PAYMENT_METHOD_LABELS, PAYMENT_STATUS_LABELS, orderStatusBadgeClass } from "@/lib/admin/order-model";
 import { getAdminOrder } from "@/lib/admin/orders";
 
 export const metadata: Metadata = { title: "Detaliu comandă | Admin" };
@@ -21,6 +23,15 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
   if (!order) notFound();
   const hasCustomizations = order.items.some((item) => item.customizationsSnapshot.length > 0);
   const transitions = allowedOrderTransitions({ status: order.status, paymentStatus: order.paymentStatus, hasCustomizations });
+  const cancelAvailable = canCancelOrder({ status: order.status, paymentMethod: order.paymentMethod, paymentStatus: order.paymentStatus });
+  const refundAvailable = canRefundStripe({
+    status: order.status,
+    paymentMethod: order.paymentMethod,
+    paymentStatus: order.paymentStatus,
+    provider: order.payment?.provider ?? null,
+    paymentRecordStatus: order.payment?.status ?? null,
+    hasFullRefund: order.refunds.some((refund) => ["pending", "succeeded"].includes(refund.status)),
+  });
 
   return (
     <div>
@@ -40,12 +51,38 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
         <AddressSection title="Facturare" address={order.billingAddress}><Info label="Tip" value={order.customerType === "company" ? "Persoană juridică" : "Persoană fizică"} />{order.customerType === "company" ? <><Info label="Companie" value={order.companyName ?? "—"} /><Info label="CUI" value={order.companyTaxId ?? "—"} /><Info label="Nr. înregistrare" value={order.companyRegistrationNumber ?? "—"} /></> : null}<Info label="Aceeași cu livrarea" value={order.billingSameAsShipping ? "Da" : "Nu"} /></AddressSection>
       </div>
 
+      <section className="mt-6 rounded-2xl border border-stone-800 bg-stone-900 p-6">
+        <h2 className="text-xl font-semibold">Expediere</h2>
+        <p className="mt-2 text-sm text-stone-400">Curierul și AWB-ul sunt introduse manual. Pentru ridicare personală, baza de date adaptează obligativitatea tracking-ului după snapshot-ul metodei de livrare.</p>
+        <dl className="mt-5 grid gap-4 sm:grid-cols-4">
+          <Info label="Curier" value={order.shipment?.carrier ?? "—"} />
+          <Info label="AWB" value={order.shipment?.trackingNumber ?? "—"} />
+          <Info label="Tracking" value={order.shipment?.trackingUrl ?? "—"} />
+          <Info label="Expediată la" value={formatOptionalDate(order.shipment?.shippedAt ?? null)} />
+        </dl>
+        {order.shipment?.trackingUrl ? <a className="mt-3 inline-flex text-sm font-semibold text-emerald-400 underline-offset-4 hover:underline" href={order.shipment.trackingUrl} rel="noreferrer" target="_blank">Deschide tracking HTTPS</a> : null}
+        <ShipmentForm
+          canEdit={canConfigureShipment(order.status)}
+          canMarkShipped={canMarkOrderShipped(order.status)}
+          configureRequestId={randomUUID()}
+          markShippedRequestId={randomUUID()}
+          orderId={order.id}
+          shipment={order.shipment}
+        />
+      </section>
+
       <section className="mt-6 rounded-2xl border border-stone-800 bg-stone-900 p-6"><h2 className="text-xl font-semibold">Produse — snapshot istoric</h2><p className="mt-2 text-sm text-stone-400">Datele de mai jos provin exclusiv din comandă, nu din catalogul actual.</p><div className="mt-5 grid gap-4">{order.items.map((item) => <article className="rounded-xl border border-stone-800 bg-stone-950 p-5" key={item.id}><div className="flex flex-wrap items-start justify-between gap-3"><div><h3 className="font-semibold">{item.productName}</h3><p className="mt-1 text-xs text-stone-500">Snapshot slug: {item.productSlug}</p></div><p className="font-semibold text-emerald-400">{formatMoney(item.lineSubtotalMinor)}</p></div><dl className="mt-4 grid gap-4 sm:grid-cols-4"><Info label="Cantitate" value={String(item.quantity)} /><Info label="Preț bază / buc." value={formatMoney(item.unitBasePriceMinor)} /><Info label="Personalizări / buc." value={formatMoney(item.customizationTotalMinor)} /><Info label="Preț / buc." value={formatMoney(item.unitPriceMinor)} /></dl>{item.variantSnapshot ? <Snapshot title="Variantă" value={variantLabel(item.variantSnapshot)} /> : null}{item.customizationsSnapshot.length > 0 ? <div className="mt-4"><p className="text-xs font-semibold uppercase tracking-wide text-stone-500">Personalizări</p><ul className="mt-2 grid gap-2 text-sm text-stone-300">{item.customizationsSnapshot.map((customization, index) => <li className="rounded-lg bg-stone-900 px-3 py-2" key={`${item.id}-${index}`}>{customizationLabel(customization)}</li>)}</ul></div> : null}</article>)}</div></section>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
         <section className="rounded-2xl border border-stone-800 bg-stone-900 p-6"><h2 className="text-xl font-semibold">Plată</h2><dl className="mt-5 grid gap-4 sm:grid-cols-2"><Info label="Metodă" value={PAYMENT_METHOD_LABELS[order.paymentMethod]} /><Info label="Status financiar comandă" value={PAYMENT_STATUS_LABELS[order.paymentStatus]} />{order.payment ? <><Info label="Provider" value={order.payment.provider} /><Info label="Status payment record" value={order.payment.status} /><Info label="Sumă payment record" value={formatMoney(order.payment.amountMinor)} /><Info label="PaymentIntent" value={truncateIdentifier(order.payment.providerPaymentId)} /><Info label="Checkout Session" value={truncateIdentifier(order.payment.providerCheckoutSessionId)} /><Info label="Achitat la" value={formatOptionalDate(order.payment.paidAt)} /></> : <Info label="Înregistrare payment" value="Nu există — normal pentru COD în 7A" />}</dl>{order.paymentMethod === "cash_on_delivery" ? <p className="mt-5 rounded-lg bg-amber-950 p-3 text-sm text-amber-200">Schimbarea statusului operațional nu marchează plata ramburs drept încasată. Fluxul de încasare COD nu este inventat în 7A.</p> : <p className="mt-5 rounded-lg bg-sky-950 p-3 text-sm text-sky-200">Plata Stripe poate fi confirmată numai de webhook-ul semnat. Formularul admin nu modifică `payments` sau `payment_status`.</p>}{order.refunds.length > 0 ? <div className="mt-5 border-t border-stone-800 pt-5"><h3 className="font-semibold">Refund-uri</h3><ul className="mt-3 grid gap-3">{order.refunds.map((refund) => <li className="rounded-lg bg-stone-950 p-3 text-sm" key={refund.id}><span className="font-semibold">{refund.status}</span> · {formatMoney(refund.amountMinor)} · {truncateIdentifier(refund.providerRefundId)}{refund.reason ? <span className="block pt-1 text-stone-400">{refund.reason}</span> : null}</li>)}</ul></div> : null}</section>
         <section className="rounded-2xl border border-stone-800 bg-stone-900 p-6"><h2 className="text-xl font-semibold">Schimbă statusul operațional</h2><p className="mt-2 text-sm leading-6 text-stone-400">Tranzițiile sunt validate din nou în baza de date, sub lock. Starea financiară nu este editabilă aici.</p><OrderStatusForm orderId={order.id} requestId={randomUUID()} transitions={transitions} /></section>
       </div>
+
+      <section className="mt-6 rounded-2xl border border-red-950 bg-stone-900 p-6">
+        <h2 className="text-xl font-semibold">Acțiuni controlate</h2>
+        <p className="mt-2 text-sm leading-6 text-stone-400">Anularea COD restochează numai movement-urile istorice ale comenzii. Stripe paid oferă exclusiv refund integral; finalizarea financiară rămâne autoritatea webhook-ului.</p>
+        <OrderDangerActions cancelAvailable={cancelAvailable} cancelRequestId={randomUUID()} orderId={order.id} paymentId={order.payment?.id ?? null} refundAvailable={refundAvailable} />
+      </section>
 
       <section className="mt-6 rounded-2xl border border-stone-800 bg-stone-900 p-6"><h2 className="text-xl font-semibold">Istoric statusuri</h2>{order.history.length === 0 ? <p className="mt-4 text-sm text-stone-400">Nu există intrări de istoric.</p> : <ol className="mt-5 grid gap-4">{order.history.map((entry) => <li className="border-l-2 border-emerald-800 pl-4" key={entry.id}><p className="font-semibold">{entry.fromStatus ? ORDER_STATUS_LABELS[entry.fromStatus] : "Creare"} → {ORDER_STATUS_LABELS[entry.toStatus]}</p><p className="mt-1 text-xs text-stone-500">{dateFormatter.format(new Date(entry.createdAt))} · actor {entry.actorUserId ? truncateIdentifier(entry.actorUserId) : "sistem"}</p>{entry.note ? <p className="mt-2 text-sm text-stone-300">{entry.note}</p> : null}</li>)}</ol>}</section>
     </div>

@@ -19,9 +19,10 @@ test("tranzițiile operaționale nu degradează stările Stripe sau terminale", 
   expect(allowedOrderTransitions({ status: "paid", paymentStatus: "paid", hasCustomizations: true })).toEqual(["awaiting_customization_review", "in_progress"]);
 });
 
-test("anularea operațională este ascunsă când plata este achitată", () => {
+test("shipping și anularea sunt scoase din tranziția generică", () => {
   expect(allowedOrderTransitions({ status: "in_progress", paymentStatus: "paid", hasCustomizations: false })).toEqual(["ready"]);
-  expect(allowedOrderTransitions({ status: "in_progress", paymentStatus: "unpaid", hasCustomizations: false })).toEqual(["ready", "cancelled"]);
+  expect(allowedOrderTransitions({ status: "in_progress", paymentStatus: "unpaid", hasCustomizations: false })).toEqual(["ready"]);
+  expect(allowedOrderTransitions({ status: "ready", paymentStatus: "unpaid", hasCustomizations: false })).toEqual([]);
 });
 
 test("vizitatorul nu poate accesa lista sau detaliul comenzilor admin", async ({ page }) => {
