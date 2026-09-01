@@ -46,12 +46,12 @@ export const PAYMENT_STATUS_LABELS: Record<OrderPaymentStatus, string> = {
 };
 
 const baseTransitions: Record<OrderStatus, readonly OrderStatus[]> = {
-  new: ["awaiting_customization_review", "in_progress", "cancelled"],
+  new: ["awaiting_customization_review", "in_progress"],
   awaiting_payment: [],
   paid: ["awaiting_customization_review", "in_progress"],
-  awaiting_customization_review: ["in_progress", "cancelled"],
-  in_progress: ["ready", "cancelled"],
-  ready: ["shipped", "cancelled"],
+  awaiting_customization_review: ["in_progress"],
+  in_progress: ["ready"],
+  ready: [],
   shipped: ["completed", "returned"],
   completed: ["returned"],
   cancelled: [],
@@ -77,11 +77,44 @@ export function allowedOrderTransitions(input: {
 }) {
   return baseTransitions[input.status].filter((status) => {
     if (status === "awaiting_customization_review") return input.hasCustomizations;
-    if (status === "cancelled") {
-      return input.paymentStatus !== "paid" && input.paymentStatus !== "refunded";
-    }
     return true;
   });
+}
+
+export function canConfigureShipment(status: OrderStatus) {
+  return !["completed", "cancelled", "refunded", "returned"].includes(status);
+}
+
+export function canMarkOrderShipped(status: OrderStatus) {
+  return status === "ready";
+}
+
+export function canCancelOrder(input: {
+  status: OrderStatus;
+  paymentMethod: OrderPaymentMethod;
+  paymentStatus: OrderPaymentStatus;
+}) {
+  if (input.paymentMethod === "card") {
+    return input.status === "awaiting_payment" && input.paymentStatus === "pending";
+  }
+  return input.paymentStatus === "unpaid"
+    && ["new", "awaiting_customization_review", "in_progress", "ready"].includes(input.status);
+}
+
+export function canRefundStripe(input: {
+  status: OrderStatus;
+  paymentMethod: OrderPaymentMethod;
+  paymentStatus: OrderPaymentStatus;
+  provider: string | null;
+  paymentRecordStatus: string | null;
+  hasFullRefund: boolean;
+}) {
+  return input.paymentMethod === "card"
+    && input.paymentStatus === "paid"
+    && input.provider === "stripe"
+    && input.paymentRecordStatus === "paid"
+    && input.status !== "refunded"
+    && !input.hasFullRefund;
 }
 
 export function orderStatusBadgeClass(status: OrderStatus) {

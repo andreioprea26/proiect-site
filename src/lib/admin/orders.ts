@@ -66,8 +66,19 @@ export type AdminOrderDetail = {
   updatedAt: string;
   items: AdminOrderItem[];
   payment: AdminPayment | null;
+  shipment: AdminShipment | null;
   refunds: AdminRefund[];
   history: AdminOrderHistory[];
+};
+
+export type AdminShipment = {
+  id: string;
+  carrier: string | null;
+  trackingNumber: string | null;
+  trackingUrl: string | null;
+  shippedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type AdminOrderItem = {
@@ -178,12 +189,13 @@ export async function listAdminOrders(input: AdminOrderListInput): Promise<Admin
 
 export async function getAdminOrder(orderId: string): Promise<AdminOrderDetail | null> {
   const { supabase } = await requireAdminContext();
-  const [orderResult, itemsResult, historyResult] = await Promise.all([
+  const [orderResult, itemsResult, historyResult, shipmentResult] = await Promise.all([
     supabase.from("orders").select("id, public_number, user_id, email, phone, customer_type, company_name, company_tax_id, company_registration_number, shipping_address, billing_same_as_shipping, billing_address, shipping_method_code, shipping_method_name, payment_method, payment_status, status, subtotal_minor, shipping_minor, total_minor, currency, created_at, updated_at").eq("id", orderId).maybeSingle(),
     supabase.from("order_items").select("id, product_name, product_slug, variant_snapshot, customizations_snapshot, unit_base_price_minor, customization_total_minor, unit_price_minor, quantity, line_subtotal_minor").eq("order_id", orderId).order("created_at"),
     supabase.from("order_status_history").select("id, from_status, to_status, actor_user_id, note, created_at").eq("order_id", orderId).order("created_at"),
+    supabase.from("shipments").select("id, carrier, tracking_number, tracking_url, shipped_at, created_at, updated_at").eq("order_id", orderId).maybeSingle(),
   ]);
-  if (orderResult.error || itemsResult.error || historyResult.error) {
+  if (orderResult.error || itemsResult.error || historyResult.error || shipmentResult.error) {
     throw new Error("Comanda nu a putut fi încărcată complet.");
   }
   if (!orderResult.data) return null;
@@ -245,6 +257,15 @@ export async function getAdminOrder(orderId: string): Promise<AdminOrderDetail |
       paidAt: paymentResult.data.paid_at,
       expiredAt: paymentResult.data.expired_at,
       refundedAt: paymentResult.data.refunded_at,
+    } : null,
+    shipment: shipmentResult.data ? {
+      id: shipmentResult.data.id,
+      carrier: shipmentResult.data.carrier,
+      trackingNumber: shipmentResult.data.tracking_number,
+      trackingUrl: shipmentResult.data.tracking_url,
+      shippedAt: shipmentResult.data.shipped_at,
+      createdAt: shipmentResult.data.created_at,
+      updatedAt: shipmentResult.data.updated_at,
     } : null,
     refunds: (refundResult.data ?? []).map((refund) => ({
       id: refund.id,

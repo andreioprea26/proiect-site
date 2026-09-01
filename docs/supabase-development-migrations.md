@@ -700,6 +700,26 @@ Rezultatul așteptat este `true, false, true, false, false`. Apoi rulează
 integral `supabase/tests/admin_orders.sql` în SQL Editor; testul își creează
 fixture-urile izolate într-o tranzacție și încheie cu `rollback`.
 
+## Blocul 7B — shipments, anulări și refund admin
+
+Migrarea `20260902160000_shipments_cancellations_refunds.sql` a fost aplicată
+manual la 2026-09-02 în proiectul Supabase Development/Test, prin SQL Editor.
+Suita tranzacțională `supabase/tests/admin_fulfillment.sql` a trecut cu
+46 PASS / 0 FAILED și rollback.
+
+Migrarea:
+
+- adaugă un singur shipment operațional per comandă și jurnalul idempotent
+  `shipment_events`;
+- validează tracking HTTPS și face atomică operația `ready → shipped` împreună
+  cu `shipped_at` și istoricul;
+- mută anularea COD într-un RPC specializat care reface exclusiv movement-urile
+  istorice `place_cod_order`, exact o singură dată;
+- păstrează rezervările Stripe pending până la expirarea și reconcilierea
+  server-side a Session;
+- blochează ocolirea prin tranzițiile generice 7A și păstrează refund-ul
+  integral în infrastructura autoritară 6C.
+
 ## Registrul aplicărilor manuale
 
 | Versiune | Migrare | Mediu | Data aplicării | Rezultat |
@@ -723,6 +743,7 @@ fixture-urile izolate într-o tranzacție și încheie cu `rollback`.
 | `20260901140000` | `allow_stale_attached_stripe_holds` | Development | 2026-09-01 | Aplicată; permite unei rezervări active trecute de TTL să rămână blocantă numai când are o Session Stripe atașată; rezervările fără Session păstrează regula expirării viitoare |
 | `20260901150000` | `reject_conflicting_stripe_sessions` | Development | 2026-09-01 | Aplicată; clasifică și auditează permanent conflictul dintre metadata payment/order și alt Session deja atașat, expunând numai wrapper-ul hardened către `service_role` |
 | `20260902120000` | `admin_order_status_transitions` | Development | 2026-09-02 | Aplicată manual prin SQL Editor; tranziția admin atomică/idempotentă, `request_id` unic în istoric și eliminarea scrierilor directe din browser pe orders/items/history au fost verificate prin `admin_orders.sql`: 19 PASS / 0 FAILED, cu rollback |
+| `20260902160000` | `shipments_cancellations_refunds` | Development | 2026-09-02 | Aplicată manual prin SQL Editor; shipment/tracking, expediere atomică, anulare COD cu restock istoric, reconciliere Stripe pending și blocarea bypass-urilor 7A verificate prin `admin_fulfillment.sql`: 46 PASS / 0 FAILED, cu rollback |
 
 ## Limitarea fluxului manual
 
