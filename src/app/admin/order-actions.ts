@@ -6,6 +6,7 @@ import { isValidUuid } from "@/lib/admin/catalog-validation";
 import { isOrderStatus } from "@/lib/admin/order-model";
 import { listAdminOrders, normalizeAdminOrderListInput, type AdminOrderListResult } from "@/lib/admin/orders";
 import { requireAdminContext } from "@/lib/admin/server";
+import { deliverOrderNotification } from "@/lib/email/notifications";
 import { cancelPendingStripeOrder } from "@/lib/stripe/admin-cancellation";
 import { createFullStripeRefund } from "@/lib/stripe/refunds";
 
@@ -60,6 +61,14 @@ export async function transitionOrderStatus(
       unauthorized: "Operația este permisă numai unui administrator autentificat.",
     };
     return { success: false, message: messages[String(result.code)] ?? "Tranziția a fost refuzată." };
+  }
+
+  if (["awaiting_customization_review", "in_progress", "ready"].includes(toStatus)) {
+    await deliverOrderNotification({
+      orderId,
+      type: toStatus as "awaiting_customization_review" | "in_progress" | "ready",
+      source: "admin_status",
+    });
   }
 
   revalidatePath("/admin/orders");
@@ -125,6 +134,7 @@ export async function markOrderShipped(
       tracking_required: "Metoda de livrare necesită curier și AWB.",
     }, "Comanda nu a putut fi marcată ca expediată."));
   }
+  await deliverOrderNotification({ orderId, type: "shipped", source: "admin_shipment" });
   revalidateOrder(orderId);
   return success("Comanda a fost marcată ca expediată, atomic și cu istoric.");
 }
@@ -169,6 +179,7 @@ export async function cancelOrder(
       };
       return failure(messages[result.code] ?? "Anularea Stripe nu a putut fi reconciliată în siguranță.");
     }
+    await deliverOrderNotification({ orderId, type: "cancelled", source: "admin_cancellation" });
     revalidateOrder(orderId);
     return success("Sesiunea Stripe a fost expirată și anularea a fost reconciliată.");
   }
@@ -185,6 +196,7 @@ export async function cancelOrder(
       stripe_expiration_required: "Comanda Stripe trebuie anulată prin reconcilierea Session.",
     }, "Comanda nu a putut fi anulată."));
   }
+  await deliverOrderNotification({ orderId, type: "cancelled", source: "admin_cancellation" });
   revalidateOrder(orderId);
   return success("Comanda COD a fost anulată, iar inventarul consumat a fost restaurat exact o dată.");
 }
@@ -226,6 +238,72 @@ export async function refundStripeOrder(
   }
   revalidateOrder(orderId);
   return success("Refund-ul integral a fost inițiat în Stripe Test; webhook-ul rămâne autoritar pentru finalizare.");
+}
+
+export async function collectCodPayment(
+  orderId: string,
+  _previousState: OrderOperationActionState,
+  formData: FormData,
+): Promise<OrderOperationActionState> {
+  void _previousState;
+  const requestId = String(formData.get("requestId") ?? "");
+  if (!isValidUuid(orderId) || !isValidUuid(requestId)) {
+    return failure("Cererea de încasare ramburs nu este validă.");
+  }
+  const { supabase } = await requireAdminContext();
+  const { data, error } = await supabase.rpc("collect_admin_cod_payment", {
+    p_order_id: orderId,
+    p_request_id: requestId,
+  });
+  if (error || !isRpcResult(data) || data.success !== true) {
+    return failure(operationMessage(data, {
+      not_cod: "Comanda nu este cu plata ramburs.",
+      amount_mismatch: "Suma istorică nu corespunde registrului COD.",
+      order_not_collectible: "O comandă anulată, rambursată sau returnată nu poate fi încasată.",
+      financial_state_invalid: "Starea financiară nu permite confirmarea încasării.",
+    }, "Încasarea ramburs nu a putut fi confirmată."));
+  }
+  await deliverOrderNotification({
+    orderId,
+    type: "payment_confirmation",
+    source: "admin_cod_collection",
+  });
+  revalidateOrder(orderId);
+  return success("Încasarea ramburs a fost confirmată fără schimbarea statusului operațional.");
+}
+
+export async function retryOrderNotification(
+  orderId: string,
+  notificationId: string,
+  _previousState: OrderOperationActionState,
+  formData: FormData,
+): Promise<OrderOperationActionState> {
+  void _previousState;
+  const requestId = String(formData.get("requestId") ?? "");
+  if (![orderId, notificationId, requestId].every(isValidUuid)) {
+    return failure("Cererea de retrimitere nu este validă.");
+  }
+  const { supabase, user } = await requireAdminContext();
+  const { data: notification, error } = await supabase
+    .from("notification_logs")
+    .select("notification_type, status")
+    .eq("id", notificationId)
+    .eq("order_id", orderId)
+    .maybeSingle();
+  if (error || !notification || notification.status !== "failed") {
+    return failure("Numai o notificare eșuată a acestei comenzi poate fi retrimisă.");
+  }
+  const result = await deliverOrderNotification({
+    orderId,
+    type: notification.notification_type,
+    source: "admin_manual_retry",
+    manualRequestId: requestId,
+    actorUserId: user.id,
+  });
+  revalidateOrder(orderId);
+  return result.status === "sent"
+    ? success("Notificarea a fost retrimisă.")
+    : failure("Retrimiterea a eșuat și a fost păstrată în audit.");
 }
 
 function validTrackingUrl(value: string) {

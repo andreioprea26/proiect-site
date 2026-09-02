@@ -720,6 +720,27 @@ Migrarea:
 - blochează ocolirea prin tranzițiile generice 7A și păstrează refund-ul
   integral în infrastructura autoritară 6C.
 
+## Blocul 7C — notificări operaționale și încasare COD
+
+Migrarea `20260902200000_operational_notifications_cod_collection.sql` a fost
+aplicată manual la 2026-09-02 în proiectul Supabase Development/Test, prin SQL
+Editor. Suita tranzacțională
+`supabase/tests/operational_notifications_cod.sql` a trecut cu 30 PASS / 0
+FAILED și rollback. După aplicare au fost rerulate și toate cele șapte suite
+SQL istorice ale fluxurilor checkout, plăți și admin, fără regresii.
+
+Migrarea:
+
+- adaugă jurnalul durabil `notification_logs` și istoricul fiecărei încercări
+  în `notification_attempts`, cu deduplicare per comandă și tip de notificare;
+- expune exclusiv către `service_role` RPC-urile de enqueue, claim și finish,
+  iar adminul autentificat are numai vizibilitate asupra istoricului;
+- adaugă modelul financiar COD separat în `cod_collections` și auditul
+  `cod_collection_events`;
+- face încasarea COD atomică și idempotentă prin
+  `collect_admin_cod_payment`, fără să modifice starea operațională a comenzii;
+- blochează încasarea comenzilor anulate, returnate sau deja rambursate.
+
 ## Registrul aplicărilor manuale
 
 | Versiune | Migrare | Mediu | Data aplicării | Rezultat |
@@ -744,6 +765,7 @@ Migrarea:
 | `20260901150000` | `reject_conflicting_stripe_sessions` | Development | 2026-09-01 | Aplicată; clasifică și auditează permanent conflictul dintre metadata payment/order și alt Session deja atașat, expunând numai wrapper-ul hardened către `service_role` |
 | `20260902120000` | `admin_order_status_transitions` | Development | 2026-09-02 | Aplicată manual prin SQL Editor; tranziția admin atomică/idempotentă, `request_id` unic în istoric și eliminarea scrierilor directe din browser pe orders/items/history au fost verificate prin `admin_orders.sql`: 19 PASS / 0 FAILED, cu rollback |
 | `20260902160000` | `shipments_cancellations_refunds` | Development | 2026-09-02 | Aplicată manual prin SQL Editor; shipment/tracking, expediere atomică, anulare COD cu restock istoric, reconciliere Stripe pending și blocarea bypass-urilor 7A verificate prin `admin_fulfillment.sql`: 46 PASS / 0 FAILED, cu rollback |
+| `20260902200000` | `operational_notifications_cod_collection` | Development | 2026-09-02 | Aplicată manual prin SQL Editor; jurnal notificări și tentative, deduplicare/retry server-side, încasare COD atomică și audit financiar verificate prin `operational_notifications_cod.sql`: 30 PASS / 0 FAILED, cu rollback; cele șapte suite istorice au rămas verzi |
 
 ## Limitarea fluxului manual
 

@@ -66,9 +66,33 @@ export type AdminOrderDetail = {
   updatedAt: string;
   items: AdminOrderItem[];
   payment: AdminPayment | null;
+  codCollection: AdminCodCollection | null;
   shipment: AdminShipment | null;
   refunds: AdminRefund[];
+  notifications: AdminNotification[];
   history: AdminOrderHistory[];
+};
+
+export type AdminCodCollection = {
+  id: string;
+  status: "unpaid" | "collected";
+  expectedAmountMinor: number;
+  currency: string;
+  collectedAt: string | null;
+  collectedBy: string | null;
+};
+
+export type AdminNotification = {
+  id: string;
+  type: string;
+  status: "pending" | "sending" | "sent" | "failed";
+  attemptCount: number;
+  providerMessageId: string | null;
+  lastError: string | null;
+  lastAttemptAt: string | null;
+  sentAt: string | null;
+  source: string;
+  createdAt: string;
 };
 
 export type AdminShipment = {
@@ -189,13 +213,15 @@ export async function listAdminOrders(input: AdminOrderListInput): Promise<Admin
 
 export async function getAdminOrder(orderId: string): Promise<AdminOrderDetail | null> {
   const { supabase } = await requireAdminContext();
-  const [orderResult, itemsResult, historyResult, shipmentResult] = await Promise.all([
+  const [orderResult, itemsResult, historyResult, shipmentResult, codResult, notificationResult] = await Promise.all([
     supabase.from("orders").select("id, public_number, user_id, email, phone, customer_type, company_name, company_tax_id, company_registration_number, shipping_address, billing_same_as_shipping, billing_address, shipping_method_code, shipping_method_name, payment_method, payment_status, status, subtotal_minor, shipping_minor, total_minor, currency, created_at, updated_at").eq("id", orderId).maybeSingle(),
     supabase.from("order_items").select("id, product_name, product_slug, variant_snapshot, customizations_snapshot, unit_base_price_minor, customization_total_minor, unit_price_minor, quantity, line_subtotal_minor").eq("order_id", orderId).order("created_at"),
     supabase.from("order_status_history").select("id, from_status, to_status, actor_user_id, note, created_at").eq("order_id", orderId).order("created_at"),
     supabase.from("shipments").select("id, carrier, tracking_number, tracking_url, shipped_at, created_at, updated_at").eq("order_id", orderId).maybeSingle(),
+    supabase.from("cod_collections").select("id, status, expected_amount_minor, currency, collected_at, collected_by").eq("order_id", orderId).maybeSingle(),
+    supabase.from("notification_logs").select("id, notification_type, status, attempt_count, provider_message_id, last_error, last_attempt_at, sent_at, source, created_at").eq("order_id", orderId).order("created_at", { ascending: false }),
   ]);
-  if (orderResult.error || itemsResult.error || historyResult.error || shipmentResult.error) {
+  if (orderResult.error || itemsResult.error || historyResult.error || shipmentResult.error || codResult.error || notificationResult.error) {
     throw new Error("Comanda nu a putut fi încărcată complet.");
   }
   if (!orderResult.data) return null;
@@ -258,6 +284,14 @@ export async function getAdminOrder(orderId: string): Promise<AdminOrderDetail |
       expiredAt: paymentResult.data.expired_at,
       refundedAt: paymentResult.data.refunded_at,
     } : null,
+    codCollection: codResult.data ? {
+      id: codResult.data.id,
+      status: codResult.data.status,
+      expectedAmountMinor: Number(codResult.data.expected_amount_minor),
+      currency: codResult.data.currency,
+      collectedAt: codResult.data.collected_at,
+      collectedBy: codResult.data.collected_by,
+    } : null,
     shipment: shipmentResult.data ? {
       id: shipmentResult.data.id,
       carrier: shipmentResult.data.carrier,
@@ -276,6 +310,18 @@ export async function getAdminOrder(orderId: string): Promise<AdminOrderDetail |
       reason: refund.reason,
       createdAt: refund.created_at,
       succeededAt: refund.succeeded_at,
+    })),
+    notifications: (notificationResult.data ?? []).map((notification) => ({
+      id: notification.id,
+      type: notification.notification_type,
+      status: notification.status,
+      attemptCount: notification.attempt_count,
+      providerMessageId: notification.provider_message_id,
+      lastError: notification.last_error,
+      lastAttemptAt: notification.last_attempt_at,
+      sentAt: notification.sent_at,
+      source: notification.source,
+      createdAt: notification.created_at,
     })),
     history: (historyResult.data ?? []).map((entry) => ({
       id: entry.id,

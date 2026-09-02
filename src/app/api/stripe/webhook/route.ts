@@ -1,5 +1,6 @@
 import type Stripe from "stripe";
 
+import { deliverOrderNotification } from "@/lib/email/notifications";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getStripeClient, getStripeWebhookSecret } from "@/lib/stripe/client";
 import {
@@ -85,6 +86,7 @@ export async function POST(request: Request) {
         { status: isRecord(data) && data.retryable === false ? 200 : 500 },
       );
     }
+    await deliverWebhookNotifications(admin, event.type, event.id);
     return Response.json({
       received: true,
       classification: isRecord(data) ? data.classification : undefined,
@@ -98,6 +100,37 @@ export async function POST(request: Request) {
       { received: false, error: "processing_unavailable" },
       { status: 500 },
     );
+  }
+}
+
+async function deliverWebhookNotifications(
+  admin: ReturnType<typeof createAdminClient>,
+  eventType: string,
+  eventId: string,
+) {
+  const { data, error } = await admin
+    .from("stripe_webhook_events")
+    .select("order_id")
+    .eq("event_id", eventId)
+    .maybeSingle();
+  if (error || !data?.order_id) return;
+  if (eventType === "checkout.session.completed") {
+    await deliverOrderNotification({
+      orderId: data.order_id,
+      type: "order_confirmation",
+      source: "stripe_webhook",
+    });
+    await deliverOrderNotification({
+      orderId: data.order_id,
+      type: "payment_confirmation",
+      source: "stripe_webhook",
+    });
+  } else if (eventType.startsWith("refund.")) {
+    await deliverOrderNotification({
+      orderId: data.order_id,
+      type: "refunded",
+      source: "stripe_refund_webhook",
+    });
   }
 }
 
