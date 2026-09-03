@@ -114,19 +114,19 @@ test.describe("detalii produs admin", () => {
       await uploadImage(imageSection, imageB);
       await expect(imageSection.locator("img")).toHaveCount(2);
 
-      const imageBArticle = imageSection.locator("article").filter({ has: imageSection.locator(`img[alt="${imageB}"]`) });
+      const imageBArticle = imageSection.locator(`img[alt="${imageB}"]`).locator("xpath=ancestor::article[1]");
       await imageBArticle.getByRole("button", { name: "Mută sus" }).click();
       await expect(imageSection.locator("article").first().locator("img")).toHaveAttribute("alt", imageB);
 
-      const imageAArticle = imageSection.locator("article").filter({ has: imageSection.locator(`img[alt="${imageA}"]`) });
+      const imageAArticle = imageSection.locator(`img[alt="${imageA}"]`).locator("xpath=ancestor::article[1]");
       page.once("dialog", (dialog) => dialog.accept());
       await imageAArticle.getByRole("button", { name: "Șterge" }).click();
       await expect(imageSection.locator(`img[alt="${imageA}"]`)).toHaveCount(0);
 
       const inventorySection = page.locator("#inventar");
-      let inventoryA = inventorySection.locator("article").filter({ has: inventorySection.getByRole("heading", { name: variantAUpdated }) });
+      let inventoryA = inventorySection.getByRole("heading", { name: variantAUpdated }).locator("xpath=ancestor::article[1]");
       await inventoryA.getByRole("button", { name: "Inițializează inventarul" }).click();
-      inventoryA = inventorySection.locator("article").filter({ has: inventorySection.getByRole("heading", { name: variantAUpdated }) });
+      inventoryA = inventorySection.getByRole("heading", { name: variantAUpdated }).locator("xpath=ancestor::article[1]");
       await expect(inventoryA.getByText("0 buc.")).toBeVisible();
       await inventoryA.getByLabel("Ajustare (+/-)").fill("1");
       await inventoryA.getByLabel("Motiv opțional").fill("Stoc inițial E2E");
@@ -138,9 +138,9 @@ test.describe("detalii produs admin", () => {
       await inventoryA.getByRole("button", { name: "Ajustează stocul" }).click();
       await expect(inventoryA.getByText("Ajustarea ar produce stoc negativ și a fost refuzată.")).toBeVisible();
 
-      let inventoryB = inventorySection.locator("article").filter({ has: inventorySection.getByRole("heading", { name: variantB }) });
+      let inventoryB = inventorySection.getByRole("heading", { name: variantB }).locator("xpath=ancestor::article[1]");
       await inventoryB.getByRole("button", { name: "Inițializează inventarul" }).click();
-      inventoryB = inventorySection.locator("article").filter({ has: inventorySection.getByRole("heading", { name: variantB }) });
+      inventoryB = inventorySection.getByRole("heading", { name: variantB }).locator("xpath=ancestor::article[1]");
       await expect(inventoryB.getByText("0 buc.")).toBeVisible();
       await inventoryB.getByLabel("Ajustare (+/-)").fill("1");
       await inventoryB.getByRole("button", { name: "Ajustează stocul" }).click();
@@ -169,7 +169,7 @@ async function login(page: Page) {
 }
 
 function articleWithInputValue(section: Locator, value: string) {
-  return section.locator("article").filter({ has: section.locator(`input[value="${value}"]`) });
+  return section.locator(`input[value="${value}"]`).locator("xpath=ancestor::article[1]");
 }
 
 async function fillNewVariant(section: Locator, title: string, attributeValue: string, order: number) {

@@ -80,14 +80,14 @@ test.describe("catalog admin", () => {
       await categoryForm.getByLabel("Nume").fill(categoryName);
       await categoryForm.getByLabel("Slug").fill(categorySlug);
       await categoryForm.getByRole("button", { name: "Adaugă" }).click();
-      await expect(page.locator("article").filter({ hasText: categoryName })).toBeVisible();
+      await expect(page.locator(`input[value="${categoryName}"]`)).toBeVisible();
 
       await page.goto("/admin/collections");
       const collectionForm = page.getByRole("heading", { name: "Adaugă colecția" }).locator("..").locator("form");
       await collectionForm.getByLabel("Nume").fill(collectionName);
       await collectionForm.getByLabel("Slug").fill(collectionSlug);
       await collectionForm.getByRole("button", { name: "Adaugă" }).click();
-      await expect(page.locator("article").filter({ hasText: collectionName })).toBeVisible();
+      await expect(page.locator(`input[value="${collectionName}"]`)).toBeVisible();
 
       await page.goto("/admin/products/new");
       await page.getByLabel("Nume").fill(productName);
@@ -108,19 +108,23 @@ test.describe("catalog admin", () => {
       await expect(page.getByLabel(categoryName)).toBeChecked();
       await expect(page.getByLabel(collectionName)).toBeChecked();
 
-      await page.getByLabel("Descriere").fill("Descriere actualizată E2E");
-      await page.getByLabel("Preț de bază (RON)").fill("149.90");
-      await page.getByLabel("Status publicare").selectOption("published");
-      await page.getByRole("button", { name: "Salvează produsul" }).click();
+      const productForm = page.locator("#date-produs");
+      await productForm.getByLabel("Descriere").fill("Descriere actualizată E2E");
+      await productForm.getByLabel("Preț de bază (RON)").fill("149.90");
+      await productForm.getByLabel("Status publicare").selectOption("published");
+      await productForm.getByRole("button", { name: "Salvează produsul" }).click();
       await expect(page.getByText("Produsul a fost actualizat.")).toBeVisible();
       await page.reload();
-      await expect(page.getByLabel("Descriere")).toHaveValue("Descriere actualizată E2E");
-      await expect(page.getByLabel("Status publicare")).toHaveValue("published");
+      await expect(productForm.getByLabel("Descriere")).toHaveValue("Descriere actualizată E2E");
+      await expect(productForm.getByLabel("Status publicare")).toHaveValue("published");
 
       page.once("dialog", (dialog) => dialog.accept());
-      await page.getByRole("button", { name: "Arhivează produsul" }).click();
-      await expect(page.getByLabel("Status publicare")).toHaveValue("archived");
-      await expect(page.getByLabel("Disponibilitate")).toHaveValue("unavailable");
+      const archiveButton = page.getByRole("button", { name: "Arhivează produsul" });
+      await archiveButton.click();
+      await expect(archiveButton).toBeHidden({ timeout: 15_000 });
+      await page.reload();
+      await expect(productForm.getByLabel("Status publicare")).toHaveValue("archived");
+      await expect(productForm.getByLabel("Disponibilitate")).toHaveValue("unavailable");
 
       await page.goto("/admin/products");
       const productRow = page.getByRole("row").filter({ hasText: productName });

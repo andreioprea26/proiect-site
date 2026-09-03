@@ -59,6 +59,8 @@ test.describe.serial("administrare comenzi cu fixture-uri Development izolate", 
     const { error: signInError } = await adminAuth.auth.signInWithPassword({ email: adminEmail, password: adminPassword });
     if (signInError) throw signInError;
 
+    await removeAdminOrderFixtures(service, []);
+
     const { error: shippingError } = await service.from("shipping_methods").insert({
       id: shippingId,
       code: `admin-orders-${namespace}`,
@@ -164,8 +166,7 @@ test.describe.serial("administrare comenzi cu fixture-uri Development izolate", 
 
   test.afterAll(async () => {
     if (!service) return;
-    await service.from("orders").delete().in("id", [codOrderId, cardOrderId, refundedOrderId]);
-    await service.from("shipping_methods").delete().eq("id", shippingId);
+    await removeAdminOrderFixtures(service, [codOrderId, cardOrderId, refundedOrderId]);
     await adminAuth?.auth.signOut({ scope: "local" });
   });
 
@@ -268,6 +269,26 @@ test.describe.serial("administrare comenzi cu fixture-uri Development izolate", 
     expect(insert.error).not.toBeNull();
   });
 });
+
+async function removeAdminOrderFixtures(service: SupabaseClient, orderIds: string[]) {
+  const staleOrders = await service.from("orders").select("id").like("shipping_method_code", "admin-orders-%");
+  if (staleOrders.error) throw staleOrders.error;
+  const fixtureOrderIds = [...new Set([...orderIds, ...staleOrders.data.map((order) => order.id)])];
+
+  if (fixtureOrderIds.length > 0) {
+    const payments = await service.from("payments").select("id").in("order_id", fixtureOrderIds);
+    if (payments.error) throw payments.error;
+    if (payments.data.length > 0) {
+      const refunds = await service.from("payment_refunds").delete().in("payment_id", payments.data.map((payment) => payment.id));
+      if (refunds.error) throw refunds.error;
+    }
+    const orders = await service.from("orders").delete().in("id", fixtureOrderIds);
+    if (orders.error) throw orders.error;
+  }
+
+  const shipping = await service.from("shipping_methods").delete().like("code", "admin-orders-%");
+  if (shipping.error) throw shipping.error;
+}
 
 async function login(page: Page, email: string, password: string) {
   await page.goto("/login");
