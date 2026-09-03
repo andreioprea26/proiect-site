@@ -13,11 +13,12 @@ import {
   STRIPE_CHECKOUT_DURATION_SECONDS,
   stripeSessionIdempotencyKey,
 } from "../../src/lib/stripe/checkout";
+import { E2E_STRIPE_WEBHOOK_SECRET } from "./test-environment";
 
 const paymentId = "61000000-0000-4000-8000-000000000001";
 const orderId = "61000000-0000-4000-8000-000000000002";
 const confirmationToken = "61000000-0000-4000-8000-000000000003";
-const webhookSecret = "whsec_playwright_placeholder";
+const webhookSecret = E2E_STRIPE_WEBHOOK_SECRET;
 
 test("Stripe Session este construită numai din snapshot-ul intern și reprezintă totalul exact", () => {
   const params = buildStripeCheckoutSessionParams({
