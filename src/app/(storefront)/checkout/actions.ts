@@ -10,6 +10,7 @@ import {
   readCheckoutFields,
   validateCheckoutFields,
 } from "@/lib/checkout/validation";
+import { deliverOrderNotification } from "@/lib/email/notifications";
 
 const MAX_CART_PAYLOAD_LENGTH = 100_000;
 
@@ -105,6 +106,14 @@ export async function placeCheckoutOrder(
       redirectUrl: result.redirectUrl,
       confirmationToken: result.confirmationToken,
     };
+  }
+
+  if ("orderId" in result) {
+    await deliverOrderNotification({
+      orderId: result.orderId,
+      type: "order_confirmation",
+      source: "cod_checkout",
+    });
   }
 
   return {

@@ -190,7 +190,7 @@ test.describe.serial("administrare comenzi cu fixture-uri Development izolate", 
     await expect(page.getByText(`Produs snapshot ${namespace}`)).toBeVisible();
     await expect(page.getByText("Mărime specială · mărime: M")).toBeVisible();
     await expect(page.getByText("Mesaj: Text istoric · 6,00 RON")).toBeVisible();
-    await expect(page.getByText(/nu marchează plata ramburs drept încasată/i)).toBeVisible();
+    await expect(page.getByText(/Încasarea COD este o stare financiară separată/i)).toBeVisible();
   });
 
   test("Stripe este afișat din payments, iar admin-ul nu poate falsifica plata", async ({ page }) => {

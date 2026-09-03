@@ -61,3 +61,30 @@ export function getStripeWebhookSecretValue(): string {
 export function getAppUrl(): string {
   return readRequiredEnvironmentVariable("APP_URL", process.env.APP_URL);
 }
+
+export type EmailDeliveryMode = "redirect" | "live";
+
+export type EmailEnvironment = {
+  apiKey: string;
+  from: string;
+  replyTo: string | null;
+  mode: EmailDeliveryMode;
+  testRecipient: string | null;
+};
+
+export function getEmailEnvironment(): EmailEnvironment {
+  const requestedMode = process.env.EMAIL_DELIVERY_MODE === "live" ? "live" : "redirect";
+  const productionLive = requestedMode === "live" && process.env.VERCEL_ENV === "production";
+  return {
+    apiKey: readRequiredEnvironmentVariable("RESEND_API_KEY", process.env.RESEND_API_KEY),
+    from: readRequiredEnvironmentVariable("RESEND_FROM_EMAIL", process.env.RESEND_FROM_EMAIL),
+    replyTo: optionalEnvironmentVariable(process.env.RESEND_REPLY_TO_EMAIL),
+    mode: productionLive ? "live" : "redirect",
+    testRecipient: optionalEnvironmentVariable(process.env.EMAIL_TEST_RECIPIENT),
+  };
+}
+
+function optionalEnvironmentVariable(value: string | undefined): string | null {
+  const normalized = value?.trim();
+  return normalized ? normalized : null;
+}

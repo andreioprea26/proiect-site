@@ -101,6 +101,18 @@ export function canCancelOrder(input: {
     && ["new", "awaiting_customization_review", "in_progress", "ready"].includes(input.status);
 }
 
+export function canCollectCod(input: {
+  status: OrderStatus;
+  paymentMethod: OrderPaymentMethod;
+  paymentStatus: OrderPaymentStatus;
+  collectionStatus: "unpaid" | "collected" | null;
+}) {
+  return input.paymentMethod === "cash_on_delivery"
+    && input.paymentStatus === "unpaid"
+    && input.collectionStatus === "unpaid"
+    && !["cancelled", "refunded", "returned"].includes(input.status);
+}
+
 export function canRefundStripe(input: {
   status: OrderStatus;
   paymentMethod: OrderPaymentMethod;
