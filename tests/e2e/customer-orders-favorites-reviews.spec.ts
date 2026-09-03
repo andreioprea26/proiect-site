@@ -140,7 +140,7 @@ test.describe.serial("Faza 8A — cont, favorite și recenzii", () => {
     await page.goto(`/products/${productSlug}`);
     await page.getByLabel("Recenzia ta").fill(reviewText);
     await page.getByRole("button", { name: "Trimite recenzia" }).click();
-    await expect(page.getByText("Recenzia a fost trimisă și așteaptă moderarea.")).toBeVisible();
+    await expect(page.getByText("Ai trimis deja o recenzie pentru acest produs. Status: în așteptarea moderării.")).toBeVisible();
 
     const ineligible = createClient(supabaseUrl, publishableKey, { auth: { autoRefreshToken: false, persistSession: false } });
     await ineligible.auth.signInWithPassword({ email: customerBEmail, password });
@@ -157,6 +157,7 @@ test.describe.serial("Faza 8A — cont, favorite și recenzii", () => {
     const review = page.locator("article").filter({ hasText: reviewText });
     await expect(review).toBeVisible();
     await review.getByRole("button", { name: "Aprobă" }).click();
+    await expect(review).toHaveCount(0);
     await page.context().clearCookies();
     await page.goto(`/products/${productSlug}`);
     await expect(page.getByText(reviewText)).toBeVisible();
