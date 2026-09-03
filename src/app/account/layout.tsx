@@ -31,6 +31,8 @@ export default async function AccountLayout({
             <Link href="/account">Cont</Link>
             <Link href="/account/profile">Profil</Link>
             <Link href="/account/addresses">Adrese</Link>
+            <Link href="/account/orders">Comenzi</Link>
+            <Link href="/account/favorites">Favorite</Link>
             <form action={logout}>
               <button className="font-medium text-red-700" type="submit">
                 Deconectare

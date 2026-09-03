@@ -741,6 +741,20 @@ Migrarea:
   `collect_admin_cod_payment`, fără să modifice starea operațională a comenzii;
 - blochează încasarea comenzilor anulate, returnate sau deja rambursate.
 
+## Blocul 8A — cont client, favorite și recenzii
+
+Migrarea `20260904120000_customer_orders_favorites_reviews.sql` a fost aplicată
+manual la 2026-09-04 în proiectul Supabase Development/Test, prin SQL Editor.
+Suita tranzacțională `supabase/tests/customer_orders_favorites_reviews.sql` a
+trecut cu 25 de aserțiuni și rollback.
+
+Regula de eligibilitate pentru recenzii este: un singur review per utilizator
+și produs, numai dacă produsul apare într-o comandă proprie cu
+`payment_status = paid` și status operațional `shipped`, `completed` sau
+`returned`. Review-ul este creat exclusiv prin RPC ca achiziție verificată și
+cu status `pending`; numai un administrator îl poate aproba sau respinge.
+Storefront-ul primește doar recenziile aprobate și câmpurile publice sigure.
+
 ## Registrul aplicărilor manuale
 
 | Versiune | Migrare | Mediu | Data aplicării | Rezultat |
@@ -766,6 +780,7 @@ Migrarea:
 | `20260902120000` | `admin_order_status_transitions` | Development | 2026-09-02 | Aplicată manual prin SQL Editor; tranziția admin atomică/idempotentă, `request_id` unic în istoric și eliminarea scrierilor directe din browser pe orders/items/history au fost verificate prin `admin_orders.sql`: 19 PASS / 0 FAILED, cu rollback |
 | `20260902160000` | `shipments_cancellations_refunds` | Development | 2026-09-02 | Aplicată manual prin SQL Editor; shipment/tracking, expediere atomică, anulare COD cu restock istoric, reconciliere Stripe pending și blocarea bypass-urilor 7A verificate prin `admin_fulfillment.sql`: 46 PASS / 0 FAILED, cu rollback |
 | `20260902200000` | `operational_notifications_cod_collection` | Development | 2026-09-02 | Aplicată manual prin SQL Editor; jurnal notificări și tentative, deduplicare/retry server-side, încasare COD atomică și audit financiar verificate prin `operational_notifications_cod.sql`: 30 PASS / 0 FAILED, cu rollback; cele șapte suite istorice au rămas verzi |
+| `20260904120000` | `customer_orders_favorites_reviews` | Development | 2026-09-04 | Aplicată manual prin SQL Editor; favorite private, recenzii verificate/moderate cu audit și acces read-only al clientului la comenzile proprii verificate prin `customer_orders_favorites_reviews.sql`: 25 de aserțiuni trecute, cu rollback. |
 
 ## Limitarea fluxului manual
 

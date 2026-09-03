@@ -7,6 +7,7 @@ const sections = [
   { href: "/admin/products", title: "Produse", description: "Creează, editează, publică și arhivează produse." },
   { href: "/admin/categories", title: "Categorii", description: "Organizează produsele în categorii." },
   { href: "/admin/collections", title: "Colecții", description: "Grupează produsele în colecții tematice." },
+  { href: "/admin/reviews", title: "Recenzii", description: "Aprobă sau respinge recenziile cumpărătorilor verificați." },
 ];
 
 const dateFormatter = new Intl.DateTimeFormat("ro-RO", { dateStyle: "medium", timeStyle: "short", timeZone: "Europe/Bucharest" });
@@ -22,7 +23,7 @@ export default async function AdminPage() {
           Administrează catalogul magazinului din secțiunile de mai jos.
         </p>
       </section>
-      <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-5">
         {sections.map((section) => (
           <Link className="rounded-2xl border border-stone-800 bg-stone-900 p-6 transition hover:border-emerald-700" href={section.href} key={section.href}>
             <h2 className="text-xl font-semibold">{section.title}</h2>

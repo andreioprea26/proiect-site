@@ -26,6 +26,14 @@ export default async function AccountPage() {
           <span className="font-semibold">Adrese</span>
           <span className="mt-2 block text-sm text-stone-600">Administrează adresele pentru livrare.</span>
         </Link>
+        <Link className="rounded-xl border border-stone-200 bg-white p-5 shadow-sm" href="/account/orders">
+          <span className="font-semibold">Comenzi</span>
+          <span className="mt-2 block text-sm text-stone-600">Vezi istoricul și detaliile comenzilor tale.</span>
+        </Link>
+        <Link className="rounded-xl border border-stone-200 bg-white p-5 shadow-sm" href="/account/favorites">
+          <span className="font-semibold">Favorite</span>
+          <span className="mt-2 block text-sm text-stone-600">Regăsește produsele pe care le-ai salvat.</span>
+        </Link>
       </div>
     </section>
   );

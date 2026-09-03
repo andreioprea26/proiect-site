@@ -1,6 +1,8 @@
 import { defineConfig, devices } from "@playwright/test";
 import { loadEnvConfig } from "@next/env";
 
+import { E2E_SERVER_ENVIRONMENT } from "./tests/e2e/test-environment";
+
 loadEnvConfig(process.cwd());
 
 const testPort = 3100;
@@ -33,10 +35,7 @@ export default defineConfig({
     timeout: 120_000,
     env: {
       ...process.env,
-      STRIPE_SECRET_KEY:
-        process.env.STRIPE_SECRET_KEY || "sk_test_playwright_placeholder",
-      STRIPE_WEBHOOK_SECRET:
-        process.env.STRIPE_WEBHOOK_SECRET || "whsec_playwright_placeholder",
+      ...E2E_SERVER_ENVIRONMENT,
     },
   },
 });
