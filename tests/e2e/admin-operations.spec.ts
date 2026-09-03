@@ -42,10 +42,9 @@ test.describe.serial("7C notificări, COD și dashboard admin", () => {
     if (customerLogin.error) throw customerLogin.error;
 
     // Recover only stale fixtures owned by this suite if an earlier serial run
-    // was interrupted before afterAll.
-    await service.from("orders").delete().like("email", "%-7c-%@example.com");
-    await service.from("products").delete().like("name", "Produs stoc 7C %");
-    await service.from("shipping_methods").delete().like("name", "Curier Operations %");
+    // was interrupted before afterAll. COD collection events intentionally
+    // restrict order deletion, so fixture events must be removed first.
+    await removeOperationFixtures(service, []);
 
     const shipping = await service.from("shipping_methods").insert({
       id: shippingId,
@@ -140,9 +139,10 @@ test.describe.serial("7C notificări, COD și dashboard admin", () => {
 
   test.afterAll(async () => {
     if (!service) return;
-    await service.from("orders").delete().in("id", [codOrderId, newOrderId, customOrderId, pendingOrderId, shippedOrderId]);
-    await service.from("products").delete().eq("id", productId);
-    await service.from("shipping_methods").delete().eq("id", shippingId);
+    await removeOperationFixtures(
+      service,
+      [codOrderId, newOrderId, customOrderId, pendingOrderId, shippedOrderId],
+    );
     await adminAuth?.auth.signOut({ scope: "local" });
     await customerAuth?.auth.signOut({ scope: "local" });
   });
@@ -245,6 +245,25 @@ test.describe.serial("7C notificări, COD și dashboard admin", () => {
     expect(codPublicNumber).toMatch(/^CMD-\d{4}-\d{8}$/);
   });
 });
+
+async function removeOperationFixtures(service: SupabaseClient, orderIds: string[]) {
+  const staleOrders = await service.from("orders").select("id").like("email", "%-7c-%@example.com");
+  if (staleOrders.error) throw staleOrders.error;
+  const fixtureOrderIds = [...new Set([
+    ...orderIds,
+    ...staleOrders.data.map((order) => order.id),
+  ])];
+  if (fixtureOrderIds.length > 0) {
+    const events = await service.from("cod_collection_events").delete().in("order_id", fixtureOrderIds);
+    if (events.error) throw events.error;
+    const orders = await service.from("orders").delete().in("id", fixtureOrderIds);
+    if (orders.error) throw orders.error;
+  }
+  const products = await service.from("products").delete().like("name", "Produs stoc 7C %");
+  if (products.error) throw products.error;
+  const shipping = await service.from("shipping_methods").delete().like("name", "Curier Operations %");
+  if (shipping.error) throw shipping.error;
+}
 
 async function login(page: Page, email: string, password: string) {
   await page.goto("/login");
