@@ -200,6 +200,10 @@ async function loadProducts(
   );
 }
 
+export async function getStorefrontProductsByIds(ids: string[]) {
+  return loadProducts(await createClient(), { ids });
+}
+
 async function loadTaxonomies(
   supabase: SupabaseClient,
   table: "categories" | "collections",
