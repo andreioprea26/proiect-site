@@ -1,12 +1,15 @@
 import Link from "next/link";
+import { listPublishedContentPages } from "@/lib/content/server";
 
 import { AccountNavigation } from "./_components/account-navigation";
 import { CartIndicator } from "./_components/cart-indicator";
 import { CartProvider } from "./_components/cart-provider";
+import { NewsletterForm } from "./_components/newsletter-form";
 
-export default function StorefrontLayout({
+export default async function StorefrontLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const informationPages = await listPublishedContentPages();
   return (
     <CartProvider>
       <div className="min-h-screen bg-[#fbfaf6] text-stone-900">
@@ -34,6 +37,12 @@ export default function StorefrontLayout({
             <Link className="hover:text-emerald-900" href="/collections">
               Colecții
             </Link>
+            <Link className="hover:text-emerald-900" href="/custom-orders">
+              Cereri personalizate
+            </Link>
+            <Link className="hover:text-emerald-900" href="/contact">
+              Contact
+            </Link>
           </nav>
           <div className="order-2 flex items-center gap-2 md:order-3">
             <CartIndicator />
@@ -43,7 +52,7 @@ export default function StorefrontLayout({
       </header>
       {children}
       <footer className="mt-20 border-t border-stone-200 bg-emerald-950 text-emerald-50">
-        <div className="mx-auto grid max-w-7xl gap-8 px-5 py-10 sm:px-8 md:grid-cols-3">
+        <div className="mx-auto grid max-w-7xl gap-8 px-5 py-10 sm:px-8 md:grid-cols-2 lg:grid-cols-4">
           <div>
             <p className="font-semibold">Brand Handmade</p>
             <p className="mt-2 max-w-sm text-sm leading-6 text-emerald-100/80">
@@ -57,13 +66,13 @@ export default function StorefrontLayout({
               <Link href="/shop">Magazin</Link>
               <Link href="/categories">Categorii</Link>
               <Link href="/collections">Colecții</Link>
+              <Link href="/custom-orders">Cereri personalizate</Link>
+              <Link href="/contact">Contact</Link>
             </div>
           </nav>
-          <div className="text-sm">
-            <p className="font-semibold">Cumpărături cu încredere</p>
-            <p className="mt-3 leading-6 text-emerald-100/80">
-              Produse handmade · Livrare în România
-            </p>
+          <div className="text-sm"><p className="font-semibold">Informații</p><div className="mt-3 flex flex-col items-start gap-2 text-emerald-100/80">{informationPages.length ? informationPages.slice(0, 6).map((page) => <Link href={`/info/${page.slug}`} key={page.id}>{page.title}</Link>) : <span>Conținutul va fi publicat în curând.</span>}</div></div>
+          <div>
+            <NewsletterForm />
           </div>
         </div>
       </footer>

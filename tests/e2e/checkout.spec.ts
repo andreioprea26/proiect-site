@@ -189,7 +189,10 @@ test.describe.serial("plasarea COD cu fixture-uri Development", () => {
   test("checkout invalid nu creează comandă și păstrează coșul", async ({ page }) => {
     await seedCart(page);
     await page.goto("/checkout");
-    await page.locator("form").evaluate((form) => ((form as HTMLFormElement).noValidate = true));
+    await page
+      .locator("form")
+      .filter({ has: page.getByRole("button", { name: "Plasează comanda ramburs" }) })
+      .evaluate((form) => ((form as HTMLFormElement).noValidate = true));
     await page.getByRole("button", { name: "Plasează comanda ramburs" }).click();
 
     await expect(page).toHaveURL(/\/checkout$/);
@@ -201,7 +204,10 @@ test.describe.serial("plasarea COD cu fixture-uri Development", () => {
     await seedCart(page, line({ basePriceMinor: 1 }));
     await page.goto("/checkout");
     await fillCheckout(page, "guest-cod-e2e@example.com");
-    await page.locator("form").evaluate((form) => {
+    await page
+      .locator("form")
+      .filter({ has: page.getByRole("button", { name: "Plasează comanda ramburs" }) })
+      .evaluate((form) => {
       const tamperedShipping = document.createElement("input");
       tamperedShipping.name = "shippingMinor";
       tamperedShipping.value = "1";
@@ -221,7 +227,10 @@ test.describe.serial("plasarea COD cu fixture-uri Development", () => {
     await seedCart(page);
     await page.goto("/checkout");
     await fillCheckout(page, "double-submit-e2e@example.com");
-    await page.locator("form").evaluate((form) => {
+    await page
+      .locator("form")
+      .filter({ has: page.getByRole("button", { name: "Plasează comanda ramburs" }) })
+      .evaluate((form) => {
       (form as HTMLFormElement).requestSubmit();
       (form as HTMLFormElement).requestSubmit();
     });
