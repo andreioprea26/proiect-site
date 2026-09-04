@@ -1,12 +1,12 @@
 import { defineConfig, devices } from "@playwright/test";
 import { loadEnvConfig } from "@next/env";
 
-import { E2E_SERVER_ENVIRONMENT } from "./tests/e2e/test-environment";
+import { E2E_APP_URL, E2E_SERVER_ENVIRONMENT } from "./tests/e2e/test-environment";
 
 loadEnvConfig(process.cwd());
 
-const testPort = 3100;
-const baseURL = `http://127.0.0.1:${testPort}`;
+const baseURL = E2E_APP_URL;
+const testPort = new URL(baseURL).port;
 
 export default defineConfig({
   testDir: "./tests/e2e",

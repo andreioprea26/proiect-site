@@ -1,12 +1,13 @@
 import { NextResponse } from "next/server";
 
 import { isRecoveryClaim } from "@/lib/auth/password-reset";
+import { getAppUrl } from "@/lib/config/env";
 import { createClient } from "@/lib/supabase/server";
 
 const PASSWORD_RESET_PATH = "/reset-password";
 
-function resetResultUrl(requestUrl: URL, status: "error" | "ready") {
-  const resultUrl = new URL(PASSWORD_RESET_PATH, requestUrl.origin);
+function resetResultUrl(status: "error" | "ready") {
+  const resultUrl = new URL(PASSWORD_RESET_PATH, getAppUrl());
   resultUrl.searchParams.set("status", status);
 
   return resultUrl;
@@ -18,7 +19,7 @@ export async function GET(request: Request) {
   const flowId = requestUrl.searchParams.get("sb_flow_id")?.trim();
 
   if (!code) {
-    return NextResponse.redirect(resetResultUrl(requestUrl, "error"));
+    return NextResponse.redirect(resetResultUrl("error"));
   }
 
   try {
@@ -29,7 +30,7 @@ export async function GET(request: Request) {
     );
 
     if (error || !data.session) {
-      return NextResponse.redirect(resetResultUrl(requestUrl, "error"));
+      return NextResponse.redirect(resetResultUrl("error"));
     }
 
     const { data: claimsData, error: claimsError } =
@@ -41,11 +42,11 @@ export async function GET(request: Request) {
       !isRecoveryClaim(claimsData.claims)
     ) {
       await supabase.auth.signOut({ scope: "local" });
-      return NextResponse.redirect(resetResultUrl(requestUrl, "error"));
+      return NextResponse.redirect(resetResultUrl("error"));
     }
 
-    return NextResponse.redirect(resetResultUrl(requestUrl, "ready"));
+    return NextResponse.redirect(resetResultUrl("ready"));
   } catch {
-    return NextResponse.redirect(resetResultUrl(requestUrl, "error"));
+    return NextResponse.redirect(resetResultUrl("error"));
   }
 }

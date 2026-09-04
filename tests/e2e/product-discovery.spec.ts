@@ -76,7 +76,9 @@ async function publicProducts(request: APIRequestContext) {
   return readPublicRows<PublicProduct>(request, "products", {
     select: "id,name,slug,base_price,publication_status,availability_status,product_type,is_customizable",
     publication_status: "eq.published",
-    order: "created_at.desc",
+    // Prefer stable catalog data over short-lived products created concurrently
+    // by admin/checkout specs in the full parallel suite.
+    order: "created_at.asc",
     limit: "120",
   });
 }

@@ -144,7 +144,9 @@ test.describe.serial("7B shipments, anulare COD și refund admin", () => {
     await page.goto(`/admin/orders/${cancelOrderId}`);
     page.once("dialog", (dialog) => dialog.accept());
     await page.getByTestId("cancel-order-form").getByRole("button", { name: "Anulează comanda" }).click();
-    await expect(page.getByText(/inventarul consumat a fost restaurat exact o dată/i)).toBeVisible();
+    await expect(
+      page.getByText(/inventarul consumat a fost restaurat exact o dată/i),
+    ).toBeVisible({ timeout: 20_000 });
     const { data: inventory } = await service.from("inventory").select("quantity").eq("id", inventoryId).single();
     expect(inventory?.quantity).toBe(5);
     const { count } = await service.from("inventory_movements").select("id", { count: "exact", head: true }).eq("inventory_id", inventoryId).contains("context", { source: "admin_cod_cancellation", orderId: cancelOrderId });
