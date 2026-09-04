@@ -17,18 +17,38 @@ export type AdminDashboardData = {
     threshold: number;
   }>;
   lowStockCount: number;
+  stats: {
+    periodDays: number;
+    recentOrderCount: number;
+    attentionOrderCount: number;
+    ordersByStatus: Record<string, number>;
+    stripeCollectedGrossMinor: number;
+    codCollectedMinor: number;
+    successfulRefundsMinor: number;
+    stripeCollectedNetMinor: number;
+    pendingReviewCount: number;
+    newContactCount: number;
+    newCustomRequestCount: number;
+    activeSubscriberCount: number;
+    currency: string;
+  };
 };
 
 export async function getAdminDashboardData(): Promise<AdminDashboardData> {
   const { supabase } = await requireAdminContext();
-  const [newOrdersResult, customizationResult, inventoryResult] = await Promise.all([
+  const periodDays = 30;
+  const since = new Date(Date.now() - periodDays * 24 * 60 * 60 * 1000).toISOString();
+  const [newOrdersResult, customizationResult, inventoryResult, statsResult] = await Promise.all([
     supabase.from("orders").select("id, public_number, created_at", { count: "exact" }).eq("status", "new").order("created_at", { ascending: false }).limit(5),
     supabase.from("orders").select("id, public_number, created_at", { count: "exact" }).eq("status", "awaiting_customization_review").order("created_at", { ascending: false }).limit(5),
     supabase.from("inventory").select("id, product_id, variant_id, quantity, low_stock_threshold").not("low_stock_threshold", "is", null),
+    supabase.rpc("get_admin_dashboard_stats", { p_since: since }),
   ]);
-  if (newOrdersResult.error || customizationResult.error || inventoryResult.error) {
+  if (newOrdersResult.error || customizationResult.error || inventoryResult.error || statsResult.error) {
     throw new Error("Dashboard-ul operațional nu a putut fi încărcat.");
   }
+  const rawStats = statsResult.data as Record<string, unknown> | null;
+  if (!rawStats || rawStats.success !== true) throw new Error("Statisticile administrative nu au putut fi încărcate.");
 
   const inventories = inventoryResult.data ?? [];
   const inventoryIds = inventories.map((inventory) => inventory.id);
@@ -86,5 +106,32 @@ export async function getAdminDashboardData(): Promise<AdminDashboardData> {
     customizationCount: customizationResult.count ?? 0,
     lowStock: lowStock.slice(0, 5),
     lowStockCount: lowStock.length,
+    stats: {
+      periodDays,
+      recentOrderCount: numberValue(rawStats.recentOrderCount),
+      attentionOrderCount: numberValue(rawStats.attentionOrderCount),
+      ordersByStatus: numberRecord(rawStats.ordersByStatus),
+      stripeCollectedGrossMinor: numberValue(rawStats.stripeCollectedGrossMinor),
+      codCollectedMinor: numberValue(rawStats.codCollectedMinor),
+      successfulRefundsMinor: numberValue(rawStats.successfulRefundsMinor),
+      stripeCollectedNetMinor: numberValue(rawStats.stripeCollectedNetMinor),
+      pendingReviewCount: numberValue(rawStats.pendingReviewCount),
+      newContactCount: numberValue(rawStats.newContactCount),
+      newCustomRequestCount: numberValue(rawStats.newCustomRequestCount),
+      activeSubscriberCount: numberValue(rawStats.activeSubscriberCount),
+      currency: typeof rawStats.currency === "string" ? rawStats.currency : "RON",
+    },
   };
+}
+
+function numberValue(value: unknown) {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function numberRecord(value: unknown) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return {};
+  return Object.fromEntries(
+    Object.entries(value).map(([key, count]) => [key, numberValue(count)]),
+  );
 }

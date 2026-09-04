@@ -30,6 +30,7 @@ export default async function AdminLayout({ children }: Readonly<{ children: Rea
             <Link href="/admin/contact">Contact</Link>
             <Link href="/admin/custom-requests">Cereri speciale</Link>
             <Link href="/admin/content">Conținut</Link>
+            <Link href="/admin/homepage">Homepage</Link>
             <Link href="/">Magazin</Link>
           </nav>
         </div>
