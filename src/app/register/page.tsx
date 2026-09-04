@@ -2,10 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { RegisterForm } from "./register-form";
+import { PRIVATE_ROBOTS } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Înregistrare | Brand Handmade",
   description: "Creează un cont de client pentru magazinul Brand Handmade.",
+  robots: PRIVATE_ROBOTS,
 };
 
 export default function RegisterPage() {

@@ -5,8 +5,9 @@ import { getCollections } from "@/lib/storefront/catalog";
 import { TaxonomyGrid } from "../_components/taxonomy-grid";
 
 export const metadata: Metadata = {
-  title: "Colecții | Brand Handmade",
+  title: "Colecții",
   description: "Explorează selecțiile și colecțiile handmade publicate.",
+  alternates: { canonical: "/collections" },
 };
 
 export default async function CollectionsPage() {
@@ -19,7 +20,7 @@ export default async function CollectionsPage() {
         <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">Colecții</h1>
         <p className="mt-5 text-lg leading-8 text-stone-600">Descoperă selecții create pentru anotimpuri, sărbători și momente speciale.</p>
       </header>
-      <TaxonomyGrid items={collections} kind="collections" />
+      <TaxonomyGrid headingLevel={2} items={collections} kind="collections" />
     </main>
   );
 }

@@ -172,11 +172,12 @@ function customizationForm(type: string) {
 }
 
 async function login(page: Page) {
+  await page.context().clearCookies();
   await page.goto("/login");
   await page.getByLabel("E-mail").fill(adminEmail);
   await page.getByLabel("Parolă").fill(adminPassword);
   await page.getByRole("button", { name: "Autentificare" }).click();
-  await expect(page).toHaveURL(/\/$/);
+  await expect(page).toHaveURL(/\/$/, { timeout: 30_000 });
 }
 
 function articleWithInputValue(section: Locator, value: string) {

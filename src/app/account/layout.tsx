@@ -3,12 +3,14 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { getAuthenticatedUser } from "@/lib/auth/user";
+import { PRIVATE_ROBOTS } from "@/lib/seo";
 
 import { logout } from "../login/actions";
 
 export const metadata: Metadata = {
   title: "Contul meu | Brand Handmade",
   description: "Zona contului de client.",
+  robots: PRIVATE_ROBOTS,
 };
 
 export default async function AccountLayout({
@@ -27,7 +29,7 @@ export default async function AccountLayout({
           <Link className="font-semibold text-emerald-800" href="/">
             Brand Handmade
           </Link>
-          <nav aria-label="Navigare cont" className="flex flex-wrap items-center gap-4 text-sm">
+          <nav aria-label="Navigare cont" className="site-navigation flex flex-wrap items-center gap-4 text-sm">
             <Link href="/account">Cont</Link>
             <Link href="/account/profile">Profil</Link>
             <Link href="/account/addresses">Adrese</Link>

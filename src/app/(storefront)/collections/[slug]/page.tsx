@@ -13,10 +13,11 @@ export async function generateMetadata({ params }: CollectionPageProps): Promise
   const result = await getTaxonomyPage("collection", slug);
   return result
     ? {
-        title: `${result.taxonomy.name} | Brand Handmade`,
+        title: result.taxonomy.name,
         description: result.taxonomy.description?.slice(0, 160) ?? `Descoperă colecția handmade ${result.taxonomy.name}.`,
+        alternates: { canonical: `/collections/${result.taxonomy.slug}` },
       }
-    : { title: "Colecție indisponibilă | Brand Handmade", robots: { index: false } };
+    : { title: "Colecție indisponibilă", robots: { index: false, follow: false } };
 }
 
 export default async function CollectionPage({ params }: CollectionPageProps) {
@@ -35,6 +36,7 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
       <ProductGrid
         emptyDescription="Nu există momentan produse publicate în această colecție."
         emptyTitle="Colecția este pregătită pentru produse noi"
+        headingLevel={2}
         products={result.products}
       />
     </main>

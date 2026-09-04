@@ -3,12 +3,14 @@ import Link from "next/link";
 
 import { isRecoveryClaim } from "@/lib/auth/password-reset";
 import { createClient } from "@/lib/supabase/server";
+import { PRIVATE_ROBOTS } from "@/lib/seo";
 
 import { ResetPasswordForm } from "./reset-password-form";
 
 export const metadata: Metadata = {
   title: "Parolă nouă | Brand Handmade",
   description: "Alege o parolă nouă pentru contul tău.",
+  robots: PRIVATE_ROBOTS,
 };
 
 async function hasRecoverySession(): Promise<boolean> {

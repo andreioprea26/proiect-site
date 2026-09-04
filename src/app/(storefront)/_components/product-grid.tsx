@@ -7,10 +7,12 @@ export function ProductGrid({
   products,
   emptyTitle = "Nu există încă produse publicate",
   emptyDescription = "Revenim curând cu produse handmade pregătite pentru tine.",
+  headingLevel = 3,
 }: {
   products: StorefrontProduct[];
   emptyTitle?: string;
   emptyDescription?: string;
+  headingLevel?: 2 | 3;
 }) {
   if (products.length === 0) {
     return <EmptyState description={emptyDescription} title={emptyTitle} />;
@@ -19,7 +21,7 @@ export function ProductGrid({
   return (
     <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {products.map((product) => (
-        <ProductCard key={product.id} product={product} />
+        <ProductCard headingLevel={headingLevel} key={product.id} product={product} />
       ))}
     </div>
   );

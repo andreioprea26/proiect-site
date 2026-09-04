@@ -276,15 +276,17 @@ function AddressFields({ address, errors, onChange, prefix }: { address: Checkou
 const inputClass = "mt-2 min-h-11 w-full rounded-xl border border-stone-300 bg-white px-3 py-2 text-base text-stone-950 outline-none focus:border-emerald-700 focus:ring-2 focus:ring-emerald-100";
 
 function Field({ controlledValue, defaultValue, error, label, name, onValue, readOnly, required, type = "text" }: { controlledValue?: string; defaultValue?: string; error?: string; label: string; name: string; onValue?: (value: string) => void; readOnly?: boolean; required?: boolean; type?: string }) {
-  return <label className="block text-sm font-semibold text-stone-800">{label}<input aria-invalid={Boolean(error)} className={`${inputClass} ${error ? "border-red-500" : ""}`} defaultValue={defaultValue} name={name} onChange={onValue ? (event) => onValue(event.target.value) : undefined} readOnly={readOnly} required={required} type={type} value={controlledValue} /><ErrorText text={error} /></label>;
+  const inputId = `checkout-${name}`;
+  const errorId = `${inputId}-error`;
+  return <div><label className="block text-sm font-semibold text-stone-800" htmlFor={inputId}>{label}</label><input aria-describedby={error ? errorId : undefined} aria-invalid={Boolean(error)} className={`${inputClass} ${error ? "border-red-500" : ""}`} defaultValue={defaultValue} id={inputId} name={name} onChange={onValue ? (event) => onValue(event.target.value) : undefined} readOnly={readOnly} required={required} type={type} value={controlledValue} /><ErrorText id={errorId} text={error} /></div>;
 }
 
 function Radio({ label, ...props }: React.InputHTMLAttributes<HTMLInputElement> & { label: string }) {
   return <label className="flex items-center gap-3 rounded-2xl border border-stone-200 p-4"><input className="size-4 accent-emerald-800" type="radio" {...props} /><span>{label}</span></label>;
 }
 
-function ErrorText({ text }: { text?: string }) {
-  return text ? <span className="mt-2 block text-sm font-medium text-red-700" role="alert">{text}</span> : null;
+function ErrorText({ id, text }: { id?: string; text?: string }) {
+  return text ? <span className="mt-2 block text-sm font-medium text-red-700" id={id} role="alert">{text}</span> : null;
 }
 
 function MoneyRow({ emphasis, label, value }: { emphasis?: boolean; label: string; value: number }) {

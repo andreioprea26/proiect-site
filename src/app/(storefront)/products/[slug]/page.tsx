@@ -9,6 +9,7 @@ import {
 import { getPublicProductBySlug } from "@/lib/storefront/catalog";
 import { getFavoriteState } from "@/lib/account/favorites";
 import { getCustomerReviewState, getPublicProductReviews } from "@/lib/reviews/server";
+import { absoluteUrl } from "@/lib/seo";
 
 import { FavoriteButton } from "../../_components/favorite-button";
 import { ProductConfigurator } from "../../_components/product-configurator";
@@ -25,16 +26,28 @@ export async function generateMetadata({
 
   if (!product) {
     return {
-      title: "Produs indisponibil | Brand Handmade",
+      title: "Produs indisponibil",
       robots: { index: false, follow: false },
     };
   }
 
   return {
-    title: `${product.name} | Brand Handmade`,
+    title: product.name,
     description:
       product.description?.slice(0, 160) ??
       `Descoperă produsul handmade ${product.name}.`,
+    alternates: { canonical: `/products/${product.slug}` },
+    openGraph: {
+      type: "website",
+      title: product.name,
+      description:
+        product.description?.slice(0, 160) ??
+        `Descoperă produsul handmade ${product.name}.`,
+      url: `/products/${product.slug}`,
+      images: product.image
+        ? [{ url: product.image.url, alt: product.image.altText ?? product.name }]
+        : undefined,
+    },
   };
 }
 
@@ -47,9 +60,36 @@ export default async function ProductPage({ params }: ProductPageProps) {
     getCustomerReviewState(product.id),
     getPublicProductReviews(product.id),
   ]);
+  const productUrl = absoluteUrl(`/products/${product.slug}`);
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    description: product.description ?? undefined,
+    image: product.images.length ? product.images.map((image) => image.url) : undefined,
+    url: productUrl,
+    offers: {
+      "@type": "Offer",
+      url: productUrl,
+      priceCurrency: "RON",
+      price: product.displayPrice.toFixed(2),
+      availability: structuredAvailability(product.availabilityStatus),
+    },
+    aggregateRating:
+      publicReviews.averageRating === null
+        ? undefined
+        : {
+            "@type": "AggregateRating",
+            ratingValue: Number(publicReviews.averageRating.toFixed(2)),
+            reviewCount: publicReviews.reviews.length,
+          },
+  };
 
   return (
     <main className="mx-auto max-w-7xl px-5 py-10 sm:px-8 sm:py-16">
+      <script data-testid="product-structured-data" type="application/ld+json">
+        {JSON.stringify(structuredData).replace(/</g, "\\u003c")}
+      </script>
       <Link className="text-sm font-semibold text-emerald-900 hover:underline" href="/shop">
         ← Înapoi la Magazin
       </Link>
@@ -132,4 +172,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
       </section>
     </main>
   );
+}
+
+function structuredAvailability(status: string) {
+  if (status === "made_to_order") return "https://schema.org/PreOrder";
+  if (status === "unavailable") return "https://schema.org/OutOfStock";
+  return "https://schema.org/InStock";
 }

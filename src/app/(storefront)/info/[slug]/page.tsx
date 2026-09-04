@@ -4,7 +4,13 @@ import { getPublishedContentPage } from "@/lib/content/server";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const page = await getPublishedContentPage((await params).slug);
-  return { title: page ? `${page.title} | Brand Handmade` : "Pagină indisponibilă" };
+  return page
+    ? {
+        title: page.title,
+        description: page.content.replace(/\s+/g, " ").trim().slice(0, 160),
+        alternates: { canonical: `/info/${page.slug}` },
+      }
+    : { title: "Pagină indisponibilă", robots: { index: false, follow: false } };
 }
 
 export default async function InformationPage({ params }: { params: Promise<{ slug: string }> }) {

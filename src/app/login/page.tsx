@@ -2,10 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { LoginForm } from "./login-form";
+import { PRIVATE_ROBOTS } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Autentificare | Brand Handmade",
   description: "Autentifică-te în contul tău Brand Handmade.",
+  robots: PRIVATE_ROBOTS,
 };
 
 type LoginPageProps = {

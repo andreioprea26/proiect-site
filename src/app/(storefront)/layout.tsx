@@ -1,10 +1,18 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { listPublishedContentPages } from "@/lib/content/server";
 
 import { AccountNavigation } from "./_components/account-navigation";
 import { CartIndicator } from "./_components/cart-indicator";
 import { CartProvider } from "./_components/cart-provider";
 import { NewsletterForm } from "./_components/newsletter-form";
+
+export const metadata: Metadata = {
+  title: {
+    default: "Brand Handmade | Produse lucrate manual",
+    template: "%s | Brand Handmade",
+  },
+};
 
 export default async function StorefrontLayout({
   children,
@@ -23,7 +31,7 @@ export default async function StorefrontLayout({
           </Link>
           <nav
             aria-label="Navigare principală"
-            className="order-3 flex w-full flex-wrap items-center gap-x-5 gap-y-2 text-sm text-stone-700 md:order-2 md:w-auto"
+            className="site-navigation order-3 flex w-full flex-wrap items-center gap-x-5 text-sm text-stone-700 md:order-2 md:w-auto"
           >
             <Link className="hover:text-emerald-900" href="/">
               Acasă
@@ -60,7 +68,7 @@ export default async function StorefrontLayout({
               cu sens.
             </p>
           </div>
-          <nav aria-label="Navigare footer magazin" className="text-sm">
+          <nav aria-label="Navigare footer magazin" className="site-navigation text-sm">
             <p className="font-semibold">Descoperă</p>
             <div className="mt-3 flex flex-col items-start gap-2 text-emerald-100/80">
               <Link href="/shop">Magazin</Link>

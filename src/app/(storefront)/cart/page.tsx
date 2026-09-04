@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { CartPageClient } from "../_components/cart-page-client";
 
 export const metadata: Metadata = {
-  title: "Coș | Brand Handmade",
+  title: "Coș",
   description: "Produsele și configurațiile selectate pentru cumpărare.",
   robots: { index: false, follow: false },
 };

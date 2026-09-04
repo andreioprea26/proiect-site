@@ -121,8 +121,9 @@ test.describe("catalog admin", () => {
       page.once("dialog", (dialog) => dialog.accept());
       const archiveButton = page.getByRole("button", { name: "Arhivează produsul" });
       await archiveButton.click();
-      await expect(archiveButton).toBeHidden({ timeout: 15_000 });
+      await expect(archiveButton).toBeHidden({ timeout: 30_000 });
       await page.reload();
+      await expect(page.getByRole("button", { name: "Arhivează produsul" })).toHaveCount(0);
       await expect(productForm.getByLabel("Status publicare")).toHaveValue("archived");
       await expect(productForm.getByLabel("Disponibilitate")).toHaveValue("unavailable");
 

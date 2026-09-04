@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { getAccountContext } from "@/lib/account/server";
 import { ContactForm } from "./contact-form";
 
-export const metadata: Metadata = { title: "Contact | Brand Handmade", description: "Trimite o întrebare echipei Brand Handmade." };
+export const metadata: Metadata = { title: "Contact", description: "Trimite o întrebare echipei Brand Handmade.", alternates: { canonical: "/contact" } };
 
 export default async function ContactPage() {
   const context = await getAccountContext();
