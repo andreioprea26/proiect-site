@@ -110,7 +110,7 @@ test.describe.serial("Faza 8B — newsletter, contact, cereri și conținut", ()
     test.skip(!schemaReady, "Migrarea 8B trebuie aplicată în Development.");
     await page.context().clearCookies();
     await page.goto(`/info/${draftSlug}`);
-    await expect(page.getByText("This page could not be found")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Pagina nu a fost găsită" })).toBeVisible();
   });
 
   test("pagina publicată este vizibilă și randată sigur", async ({ page }) => {

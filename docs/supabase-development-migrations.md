@@ -755,6 +755,25 @@ Regula de eligibilitate pentru recenzii este: un singur review per utilizator
 cu status `pending`; numai un administrator îl poate aproba sau respinge.
 Storefront-ul primește doar recenziile aprobate și câmpurile publice sigure.
 
+## Blocul 8B — newsletter, contact, cereri și conținut informativ
+
+Migrarea `20260904160000_newsletter_contact_custom_content.sql` a fost aplicată
+manual la 2026-09-04 în proiectul Supabase Development/Test, prin SQL Editor,
+fără folosirea mecanismului CLI de migration history. Migrarea adaugă registrele
+private pentru abonări newsletter, mesaje de contact și cereri personalizate,
+plus pagini informative cu stări `draft` și `published`.
+
+Prima rulare a suitei tranzacționale a identificat că politica mixtă pentru
+`content_pages` apela `is_admin()` și pentru rolul `anon`, care nu are și nu
+trebuie să primească drept de execuție pe helper-ul administrativ. Migrarea
+corectivă `20260904170000_content_pages_rls_fix.sql` a separat politica publică
+`published` de politica de citire admin, fără relaxarea privilegiilor.
+
+După corecție, `supabase/tests/newsletter_contact_custom_content.sql` a trecut
+cu 49 de aserțiuni și rollback. Suita verifică normalizarea și deduplicarea,
+submit-urile prin RPC, lipsa citirii publice a datelor private, administrarea
+exclusivă, izolarea statusurilor și vizibilitatea draft/published.
+
 ## Registrul aplicărilor manuale
 
 | Versiune | Migrare | Mediu | Data aplicării | Rezultat |
@@ -781,6 +800,8 @@ Storefront-ul primește doar recenziile aprobate și câmpurile publice sigure.
 | `20260902160000` | `shipments_cancellations_refunds` | Development | 2026-09-02 | Aplicată manual prin SQL Editor; shipment/tracking, expediere atomică, anulare COD cu restock istoric, reconciliere Stripe pending și blocarea bypass-urilor 7A verificate prin `admin_fulfillment.sql`: 46 PASS / 0 FAILED, cu rollback |
 | `20260902200000` | `operational_notifications_cod_collection` | Development | 2026-09-02 | Aplicată manual prin SQL Editor; jurnal notificări și tentative, deduplicare/retry server-side, încasare COD atomică și audit financiar verificate prin `operational_notifications_cod.sql`: 30 PASS / 0 FAILED, cu rollback; cele șapte suite istorice au rămas verzi |
 | `20260904120000` | `customer_orders_favorites_reviews` | Development | 2026-09-04 | Aplicată manual prin SQL Editor; favorite private, recenzii verificate/moderate cu audit și acces read-only al clientului la comenzile proprii verificate prin `customer_orders_favorites_reviews.sql`: 25 de aserțiuni trecute, cu rollback. |
+| `20260904160000` | `newsletter_contact_custom_content` | Development | 2026-09-04 | Aplicată manual prin SQL Editor; newsletter, contact, cereri personalizate și conținut informativ create cu RPC-uri restrictive, RLS și fără integrare de plăți sau campanii. |
+| `20260904170000` | `content_pages_rls_fix` | Development | 2026-09-04 | Aplicată manual prin SQL Editor; politica publică `published` a fost separată de politica admin; suita `newsletter_contact_custom_content.sql` a trecut 49/49 cu rollback. |
 
 ## Limitarea fluxului manual
 
