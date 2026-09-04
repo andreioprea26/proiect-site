@@ -15,7 +15,13 @@ export const PRIVATE_ROBOTS: Metadata["robots"] = {
 };
 
 export function getSiteUrl() {
-  const url = new URL(getAppUrl());
+  const configuredUrl = process.env.APP_URL?.trim();
+  const vercelHostname =
+    process.env.VERCEL_PROJECT_PRODUCTION_URL?.trim() ||
+    process.env.VERCEL_URL?.trim();
+  const url = new URL(
+    configuredUrl || (vercelHostname ? `https://${vercelHostname}` : getAppUrl()),
+  );
   url.pathname = "/";
   url.search = "";
   url.hash = "";
