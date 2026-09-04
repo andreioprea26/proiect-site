@@ -2,10 +2,12 @@
 
 ## Fluxul curent
 
-În mediul de lucru actual, migrațiile aprobate sunt aplicate manual prin SQL
-Editor în proiectul Supabase Development. Fișierele versionate din
-`supabase/migrations` rămân sursa de adevăr și trebuie executate integral,
-neschimbate și în ordinea versiunilor.
+Istoricul CLI al proiectului Supabase Development a fost reconciliat controlat
+la 2026-09-04. Migrațiile noi aprobate se aplică prin `supabase db push
+--linked` numai după ce `supabase migration list` este aliniat și un dry-run
+enumeră exclusiv fișierele revizuite. Fișierele versionate din
+`supabase/migrations` rămân sursa de adevăr și se execută integral, neschimbate
+și în ordinea versiunilor.
 
 Eticheta `main — PRODUCTION` afișată de Supabase identifică ramura principală
 a bazei din proiectul selectat. Ea nu este branch-ul Git `main`. Înainte de
@@ -774,6 +776,24 @@ cu 49 de aserțiuni și rollback. Suita verifică normalizarea și deduplicarea,
 submit-urile prin RPC, lipsa citirii publice a datelor private, administrarea
 exclusivă, izolarea statusurilor și vizibilitatea draft/published.
 
+## Blocul 8C — homepage administrabil și statistici MVP
+
+Migrarea `20260904200000_homepage_admin_stats.sql` a fost aplicată la
+2026-09-04 prin Supabase CLI exclusiv în proiectul Development/Test cu project
+ref `bdyocajhhylvasfhmnal`, după un dry-run care a enumerat numai această
+migrare. Migrarea adaugă cele cinci sloturi controlate ale homepage-ului și
+RPC-uri separate pentru citirea publică, editarea admin și agregările
+dashboard-ului. Conținutul public este limitat la text și destinații interne;
+nu este acceptat HTML arbitrar, iar datele private nu pot fi listate public.
+
+Verificarea inițială a privilegiilor a detectat un grant implicit `EXECUTE`
+pentru `anon` pe RPC-urile administrative. Migrarea corectivă
+`20260904210000_restrict_homepage_admin_rpcs.sql` a revocat explicit acel
+acces, fără modificarea logicii de business. Suita tranzacțională
+`supabase/tests/homepage_admin_stats.sql` a trecut apoi 34/34 aserțiuni cu
+rollback, inclusiv RLS, rolurile anon/customer/admin, redarea conținutului
+inactiv și formulele agregărilor financiare și operaționale.
+
 ## Registrul aplicărilor manuale
 
 | Versiune | Migrare | Mediu | Data aplicării | Rezultat |
@@ -802,6 +822,8 @@ exclusivă, izolarea statusurilor și vizibilitatea draft/published.
 | `20260904120000` | `customer_orders_favorites_reviews` | Development | 2026-09-04 | Aplicată manual prin SQL Editor; favorite private, recenzii verificate/moderate cu audit și acces read-only al clientului la comenzile proprii verificate prin `customer_orders_favorites_reviews.sql`: 25 de aserțiuni trecute, cu rollback. |
 | `20260904160000` | `newsletter_contact_custom_content` | Development | 2026-09-04 | Aplicată manual prin SQL Editor; newsletter, contact, cereri personalizate și conținut informativ create cu RPC-uri restrictive, RLS și fără integrare de plăți sau campanii. |
 | `20260904170000` | `content_pages_rls_fix` | Development | 2026-09-04 | Aplicată manual prin SQL Editor; politica publică `published` a fost separată de politica admin; suita `newsletter_contact_custom_content.sql` a trecut 49/49 cu rollback. |
+| `20260904200000` | `homepage_admin_stats` | Development | 2026-09-04 | Aplicată prin CLI după dry-run exclusiv; sloturi homepage controlate, RPC public cu redacția blocurilor inactive, editare admin și statistici MVP. |
+| `20260904210000` | `restrict_homepage_admin_rpcs` | Development | 2026-09-04 | Aplicată prin CLI; granturile implicite `anon` pe RPC-urile admin au fost revocate explicit; `homepage_admin_stats.sql` a trecut 34/34 cu rollback. |
 
 ## Reconcilierea istoricului Supabase CLI
 
@@ -817,7 +839,7 @@ rollback. După validare, versiunile de la `20260811120000` până la
 migration repair`. Operația a actualizat numai istoricul CLI și nu a reexecutat
 SQL-ul migrărilor.
 
-Verificarea finală a confirmat:
+Verificarea finală a reconcilierii a confirmat:
 
 - 24 de versiuni identice în coloanele Local și Remote din `supabase migration
   list`;
@@ -826,6 +848,10 @@ Verificarea finală a confirmat:
   sau roluri propuse;
 - schema și datele Development au rămas neschimbate, iar Production nu a fost
   implicată.
+
+După aplicarea celor două migrări 8C, starea curentă este de 26 de versiuni
+aliniate Local/Remote, până la `20260904210000`, iar dry-run-ul nu mai propune
+nicio migrare.
 
 Pentru migrările viitoare, verifică întotdeauna project ref-ul linked și rulează
 mai întâi `supabase db push --dry-run --linked`. Aplicarea reală prin CLI este
