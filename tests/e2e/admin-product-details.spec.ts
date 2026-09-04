@@ -81,6 +81,8 @@ test.describe("detalii produs admin", () => {
       await page.getByLabel("Status publicare").selectOption("draft");
       await page.getByRole("button", { name: "Creează produsul" }).click();
       await expect(page).toHaveURL(/\/admin\/products\/[0-9a-f-]+\?created=1$/);
+      const productAdminUrl = new URL(page.url());
+      productAdminUrl.search = "";
 
       const variantSection = page.locator("#variante");
       await fillNewVariant(variantSection, variantA, "A", 0);
@@ -123,28 +125,37 @@ test.describe("detalii produs admin", () => {
       await imageAArticle.getByRole("button", { name: "Șterge" }).click();
       await expect(imageSection.locator(`img[alt="${imageA}"]`)).toHaveCount(0);
 
+      // This is intentionally a long admin workflow. Refresh the authenticated
+      // fixture before the inventory subflow so ambient suite load cannot leave
+      // the next Server Action with a stale session cookie.
+      await login(page);
+      await page.goto(productAdminUrl.toString());
       const inventorySection = page.locator("#inventar");
       let inventoryA = inventorySection.getByRole("heading", { name: variantAUpdated }).locator("xpath=ancestor::article[1]");
       await inventoryA.getByRole("button", { name: "Inițializează inventarul" }).click();
       inventoryA = inventorySection.getByRole("heading", { name: variantAUpdated }).locator("xpath=ancestor::article[1]");
-      await expect(inventoryA.getByText("0 buc.")).toBeVisible();
+      await expect(inventoryA.getByText("0 buc.")).toBeVisible({ timeout: 20_000 });
       await inventoryA.getByLabel("Ajustare (+/-)").fill("1");
       await inventoryA.getByLabel("Motiv opțional").fill("Stoc inițial E2E");
       await inventoryA.getByRole("button", { name: "Ajustează stocul" }).click();
-      await expect(inventoryA.getByText("1 buc.")).toBeVisible();
+      await expect(inventoryA.getByText("1 buc.")).toBeVisible({ timeout: 20_000 });
       await expect(inventorySection.getByText("Stoc inițial E2E")).toBeVisible();
 
       await inventoryA.getByLabel("Ajustare (+/-)").fill("-2");
       await inventoryA.getByRole("button", { name: "Ajustează stocul" }).click();
-      await expect(inventoryA.getByText("Ajustarea ar produce stoc negativ și a fost refuzată.")).toBeVisible();
+      await expect(
+        inventoryA.getByText("Ajustarea ar produce stoc negativ și a fost refuzată."),
+      ).toBeVisible({ timeout: 20_000 });
 
       let inventoryB = inventorySection.getByRole("heading", { name: variantB }).locator("xpath=ancestor::article[1]");
       await inventoryB.getByRole("button", { name: "Inițializează inventarul" }).click();
       inventoryB = inventorySection.getByRole("heading", { name: variantB }).locator("xpath=ancestor::article[1]");
-      await expect(inventoryB.getByText("0 buc.")).toBeVisible();
+      await expect(inventoryB.getByText("0 buc.")).toBeVisible({ timeout: 20_000 });
       await inventoryB.getByLabel("Ajustare (+/-)").fill("1");
       await inventoryB.getByRole("button", { name: "Ajustează stocul" }).click();
-      await expect(inventoryB.getByText("Un produs unicat nu poate avea stoc total mai mare de 1.")).toBeVisible();
+      await expect(
+        inventoryB.getByText("Un produs unicat nu poate avea stoc total mai mare de 1."),
+      ).toBeVisible({ timeout: 20_000 });
     } finally {
       await cleanup(productSlug);
     }

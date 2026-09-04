@@ -16,6 +16,8 @@ const REVIEW_MESSAGES: Record<string, string> = {
   not_eligible: "Recenzia poate fi trimisă numai după o achiziție eligibilă.",
 };
 
+const PRODUCT_SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
 export async function submitReview(
   _previousState: ReviewActionState,
   formData: FormData,
@@ -42,7 +44,11 @@ export async function submitReview(
       success: false,
     };
   }
-  revalidatePath(`/products/${productSlug}`);
+  if (productSlug.length <= 100 && PRODUCT_SLUG_PATTERN.test(productSlug)) {
+    revalidatePath(`/products/${productSlug}`);
+  } else {
+    revalidatePath("/products");
+  }
   revalidatePath("/admin/reviews");
   return { message: "Recenzia a fost trimisă și așteaptă moderarea.", success: true };
 }

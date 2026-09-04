@@ -1,7 +1,9 @@
 export const E2E_STRIPE_SECRET_KEY = "sk_test_playwright_placeholder";
 export const E2E_STRIPE_WEBHOOK_SECRET = "whsec_playwright_placeholder";
+export const E2E_APP_URL = "http://127.0.0.1:3100";
 
 export const E2E_SERVER_ENVIRONMENT = {
+  APP_URL: E2E_APP_URL,
   STRIPE_SECRET_KEY: E2E_STRIPE_SECRET_KEY,
   STRIPE_WEBHOOK_SECRET: E2E_STRIPE_WEBHOOK_SECRET,
   RESEND_API_KEY: "",

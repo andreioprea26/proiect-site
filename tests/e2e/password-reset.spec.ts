@@ -4,6 +4,7 @@ import {
   PASSWORD_RESET_REQUEST_MESSAGE,
   validatePasswordResetFields,
 } from "../../src/lib/auth/password-reset";
+import { E2E_APP_URL } from "./test-environment";
 
 test("pagina de login oferă acces la resetarea parolei", async ({ page }) => {
   await page.goto("/login");
@@ -123,6 +124,23 @@ test("callback-ul nu urmează un redirect extern furnizat de vizitator", async (
 
   await expect(page).toHaveURL(/\/reset-password\?status=error$/);
   expect(new URL(page.url()).hostname).not.toBe("example.com");
+});
+
+test("callback-ul recovery nu construiește redirectul din host-ul proxy", async ({ request }) => {
+  const response = await request.get("/auth/reset-password", {
+    headers: {
+      "x-forwarded-host": "attacker.example",
+      "x-forwarded-proto": "https",
+    },
+    maxRedirects: 0,
+  });
+
+  expect(response.status()).toBeGreaterThanOrEqual(300);
+  expect(response.status()).toBeLessThan(400);
+  const location = response.headers().location;
+  expect(location).toBeTruthy();
+  expect(new URL(location!).origin).toBe(E2E_APP_URL);
+  expect(new URL(location!).hostname).not.toBe("attacker.example");
 });
 
 test("respinge o parolă nouă prea scurtă", () => {

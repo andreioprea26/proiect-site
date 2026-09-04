@@ -824,6 +824,7 @@ inactiv și formulele agregărilor financiare și operaționale.
 | `20260904170000` | `content_pages_rls_fix` | Development | 2026-09-04 | Aplicată manual prin SQL Editor; politica publică `published` a fost separată de politica admin; suita `newsletter_contact_custom_content.sql` a trecut 49/49 cu rollback. |
 | `20260904200000` | `homepage_admin_stats` | Development | 2026-09-04 | Aplicată prin CLI după dry-run exclusiv; sloturi homepage controlate, RPC public cu redacția blocurilor inactive, editare admin și statistici MVP. |
 | `20260904210000` | `restrict_homepage_admin_rpcs` | Development | 2026-09-04 | Aplicată prin CLI; granturile implicite `anon` pe RPC-urile admin au fost revocate explicit; `homepage_admin_stats.sql` a trecut 34/34 cu rollback. |
+| `20260904230000` | `security_data_integrity` | Development | 2026-09-04 | Aplicată prin CLI după dry-run exclusiv; elimină `anon` de pe patru RPC-uri admin 8B, blochează apelarea directă a generatorului de numere de comandă și restrânge granturile tabelelor de cont. Suita `security_data_integrity.sql` a trecut integral cu rollback. |
 
 ## Reconcilierea istoricului Supabase CLI
 

@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+import { E2E_APP_URL } from "./test-environment";
+
 test("callback-ul fără parametri afișează o eroare sigură", async ({ page }) => {
   await page.goto("/auth/confirm");
 
@@ -38,6 +40,23 @@ test("callback-ul nu urmează o destinație externă furnizată de utilizator", 
 
   await expect(page).toHaveURL(/\/auth\/confirmed\?status=error$/);
   expect(new URL(page.url()).hostname).not.toBe("example.com");
+});
+
+test("callback-ul nu construiește redirectul din host-ul proxy", async ({ request }) => {
+  const response = await request.get("/auth/confirm", {
+    headers: {
+      "x-forwarded-host": "attacker.example",
+      "x-forwarded-proto": "https",
+    },
+    maxRedirects: 0,
+  });
+
+  expect(response.status()).toBeGreaterThanOrEqual(300);
+  expect(response.status()).toBeLessThan(400);
+  const location = response.headers().location;
+  expect(location).toBeTruthy();
+  expect(new URL(location!).origin).toBe(E2E_APP_URL);
+  expect(new URL(location!).hostname).not.toBe("attacker.example");
 });
 
 test("pagina de succes oferă acces la autentificare", async ({

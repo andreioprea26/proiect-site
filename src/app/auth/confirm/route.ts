@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
 
+import { getAppUrl } from "@/lib/config/env";
 import { createClient } from "@/lib/supabase/server";
 
 const CONFIRMATION_PATH = "/auth/confirmed";
 
-function confirmationResultUrl(requestUrl: URL, status: "error" | "success") {
-  const resultUrl = new URL(CONFIRMATION_PATH, requestUrl.origin);
+function confirmationResultUrl(status: "error" | "success") {
+  const resultUrl = new URL(CONFIRMATION_PATH, getAppUrl());
   resultUrl.searchParams.set("status", status);
 
   return resultUrl;
@@ -22,7 +23,7 @@ export async function GET(request: Request) {
   const hasCodeConfirmation = Boolean(code) && !tokenHash && !type;
 
   if (!hasTokenHashConfirmation && !hasCodeConfirmation) {
-    return NextResponse.redirect(confirmationResultUrl(requestUrl, "error"));
+    return NextResponse.redirect(confirmationResultUrl("error"));
   }
 
   try {
@@ -38,9 +39,9 @@ export async function GET(request: Request) {
         );
 
     return NextResponse.redirect(
-      confirmationResultUrl(requestUrl, error ? "error" : "success"),
+      confirmationResultUrl(error ? "error" : "success"),
     );
   } catch {
-    return NextResponse.redirect(confirmationResultUrl(requestUrl, "error"));
+    return NextResponse.redirect(confirmationResultUrl("error"));
   }
 }
