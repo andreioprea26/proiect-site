@@ -755,6 +755,25 @@ Regula de eligibilitate pentru recenzii este: un singur review per utilizator
 cu status `pending`; numai un administrator îl poate aproba sau respinge.
 Storefront-ul primește doar recenziile aprobate și câmpurile publice sigure.
 
+## Blocul 8B — newsletter, contact, cereri și conținut informativ
+
+Migrarea `20260904160000_newsletter_contact_custom_content.sql` a fost aplicată
+manual la 2026-09-04 în proiectul Supabase Development/Test, prin SQL Editor,
+fără folosirea mecanismului CLI de migration history. Migrarea adaugă registrele
+private pentru abonări newsletter, mesaje de contact și cereri personalizate,
+plus pagini informative cu stări `draft` și `published`.
+
+Prima rulare a suitei tranzacționale a identificat că politica mixtă pentru
+`content_pages` apela `is_admin()` și pentru rolul `anon`, care nu are și nu
+trebuie să primească drept de execuție pe helper-ul administrativ. Migrarea
+corectivă `20260904170000_content_pages_rls_fix.sql` a separat politica publică
+`published` de politica de citire admin, fără relaxarea privilegiilor.
+
+După corecție, `supabase/tests/newsletter_contact_custom_content.sql` a trecut
+cu 49 de aserțiuni și rollback. Suita verifică normalizarea și deduplicarea,
+submit-urile prin RPC, lipsa citirii publice a datelor private, administrarea
+exclusivă, izolarea statusurilor și vizibilitatea draft/published.
+
 ## Registrul aplicărilor manuale
 
 | Versiune | Migrare | Mediu | Data aplicării | Rezultat |
@@ -781,14 +800,38 @@ Storefront-ul primește doar recenziile aprobate și câmpurile publice sigure.
 | `20260902160000` | `shipments_cancellations_refunds` | Development | 2026-09-02 | Aplicată manual prin SQL Editor; shipment/tracking, expediere atomică, anulare COD cu restock istoric, reconciliere Stripe pending și blocarea bypass-urilor 7A verificate prin `admin_fulfillment.sql`: 46 PASS / 0 FAILED, cu rollback |
 | `20260902200000` | `operational_notifications_cod_collection` | Development | 2026-09-02 | Aplicată manual prin SQL Editor; jurnal notificări și tentative, deduplicare/retry server-side, încasare COD atomică și audit financiar verificate prin `operational_notifications_cod.sql`: 30 PASS / 0 FAILED, cu rollback; cele șapte suite istorice au rămas verzi |
 | `20260904120000` | `customer_orders_favorites_reviews` | Development | 2026-09-04 | Aplicată manual prin SQL Editor; favorite private, recenzii verificate/moderate cu audit și acces read-only al clientului la comenzile proprii verificate prin `customer_orders_favorites_reviews.sql`: 25 de aserțiuni trecute, cu rollback. |
+| `20260904160000` | `newsletter_contact_custom_content` | Development | 2026-09-04 | Aplicată manual prin SQL Editor; newsletter, contact, cereri personalizate și conținut informativ create cu RPC-uri restrictive, RLS și fără integrare de plăți sau campanii. |
+| `20260904170000` | `content_pages_rls_fix` | Development | 2026-09-04 | Aplicată manual prin SQL Editor; politica publică `published` a fost separată de politica admin; suita `newsletter_contact_custom_content.sql` a trecut 49/49 cu rollback. |
 
-## Limitarea fluxului manual
+## Reconcilierea istoricului Supabase CLI
 
-SQL Editor nu înregistrează automat versiunea în istoricul folosit de Supabase
-CLI. Din acest motiv, comenzile CLI de aplicare, inclusiv `db push`, nu trebuie
-folosite asupra acestui proiect până când reconcilierea istoricului nu este
-definită și aprobată într-un task separat. Nu rula `migration repair`, `db
-reset`, `db pull` sau `db diff` pentru a încerca o reconciliere ad-hoc.
+Istoricul proiectului Supabase Development/Test cu project ref
+`bdyocajhhylvasfhmnal` a fost reconciliat controlat la 2026-09-04. Înainte de
+reconciliere, toate cele 24 de migrări locale erau deja aplicate manual, iar
+tabela `supabase_migrations.schema_migrations` nu exista.
+
+Cele zece suite SQL din `supabase/tests` au fost rulate din nou direct asupra
+Development prin `supabase db query --linked --file`, toate cu transaction și
+rollback. După validare, versiunile de la `20260811120000` până la
+`20260904170000` au fost marcate cronologic ca `applied` prin `supabase
+migration repair`. Operația a actualizat numai istoricul CLI și nu a reexecutat
+SQL-ul migrărilor.
+
+Verificarea finală a confirmat:
+
+- 24 de versiuni identice în coloanele Local și Remote din `supabase migration
+  list`;
+- 24 de rânduri în `supabase_migrations.schema_migrations`;
+- `supabase db push --dry-run --linked`: `upToDate: true`, zero migrări, seeds
+  sau roluri propuse;
+- schema și datele Development au rămas neschimbate, iar Production nu a fost
+  implicată.
+
+Pentru migrările viitoare, verifică întotdeauna project ref-ul linked și rulează
+mai întâi `supabase db push --dry-run --linked`. Aplicarea reală prin CLI este
+permisă numai după review și numai când dry-run-ul enumeră exclusiv migrările
+noi aprobate pentru Development. Nu rula `db reset --linked` și nu folosi
+`migration repair`, `db pull` sau `db diff` ca remediere ad-hoc.
 
 Tokenurile Supabase, parolele bazei de date și orice alte credentiale nu se
 salvează în repository, documentație, capturi sau loguri partajate.

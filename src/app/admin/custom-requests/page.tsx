@@ -1,0 +1,12 @@
+import type { Metadata } from "next";
+import { listCustomOrderRequests, type CustomRequestStatus } from "@/lib/admin/engagement";
+import { updateCustomRequest } from "./actions";
+
+export const metadata: Metadata = { title: "Cereri speciale | Admin" };
+const labels: Record<CustomRequestStatus, string> = { new: "Nouă", reviewing: "În analiză", accepted: "Acceptată", rejected: "Respinsă", closed: "Închisă" };
+const money = new Intl.NumberFormat("ro-RO", { style: "currency", currency: "RON" });
+
+export default async function AdminCustomRequestsPage() {
+  const requests = await listCustomOrderRequests();
+  return <div><p className="text-sm font-medium text-emerald-400">Lead-uri</p><h1 className="mt-2 text-3xl font-semibold">Cereri personalizate</h1><p className="mt-3 text-stone-400">Aceste cereri nu sunt comenzi și nu inițiază plăți sau rezervări.</p><div className="mt-8 grid gap-5">{requests.length ? requests.map((item) => <article className="rounded-2xl border border-stone-800 bg-stone-900 p-6" key={item.id}><div className="flex flex-wrap justify-between gap-3"><div><h2 className="font-semibold">{item.name} · {item.email}</h2><p className="mt-1 text-sm text-emerald-400">{item.budget_minor === null ? "Buget nespecificat" : money.format(item.budget_minor / 100)}{item.desired_date ? ` · dorit ${item.desired_date}` : ""}</p></div><span className="rounded-full bg-stone-800 px-3 py-1 text-xs">{labels[item.status as CustomRequestStatus]}</span></div><p className="mt-4 whitespace-pre-line text-stone-300">{item.description}</p><form action={updateCustomRequest} className="mt-5 grid gap-3 border-t border-stone-800 pt-5"><input name="id" type="hidden" value={item.id} /><label className="text-sm">Status<select className="mt-1 block rounded-lg border border-stone-700 bg-stone-950 px-3 py-2" defaultValue={item.status} name="status">{Object.entries(labels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label><label className="text-sm">Notă internă<textarea className="mt-1 min-h-24 w-full rounded-lg border border-stone-700 bg-stone-950 px-3 py-2" defaultValue={item.internal_note ?? ""} maxLength={4000} name="internalNote" /></label><button className="w-fit rounded-lg bg-emerald-800 px-4 py-2 text-sm font-semibold" type="submit">Salvează cererea</button></form></article>) : <p className="rounded-xl border border-dashed border-stone-700 p-6 text-stone-400">Nu există cereri.</p>}</div></div>;
+}

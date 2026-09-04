@@ -26,6 +26,10 @@ export default async function AdminLayout({ children }: Readonly<{ children: Rea
             <Link href="/admin/categories">Categorii</Link>
             <Link href="/admin/collections">Colecții</Link>
             <Link href="/admin/reviews">Recenzii</Link>
+            <Link href="/admin/newsletter">Newsletter</Link>
+            <Link href="/admin/contact">Contact</Link>
+            <Link href="/admin/custom-requests">Cereri speciale</Link>
+            <Link href="/admin/content">Conținut</Link>
             <Link href="/">Magazin</Link>
           </nav>
         </div>
