@@ -850,9 +850,22 @@ Verificarea finală a reconcilierii a confirmat:
 - schema și datele Development au rămas neschimbate, iar Production nu a fost
   implicată.
 
-După aplicarea celor două migrări 8C, starea curentă este de 26 de versiuni
-aliniate Local/Remote, până la `20260904210000`, iar dry-run-ul nu mai propune
-nicio migrare.
+După aplicarea migrării 9A, starea curentă este de 27 de versiuni aliniate
+Local/Remote, până la `20260904230000`, iar dry-run-ul nu propune nicio migrare.
+
+Checkpoint-ul final 9C din 2026-09-10 a reconfirmat project ref-ul Development
+`bdyocajhhylvasfhmnal`, toate cele 27 de perechi Local/Remote și rezultatul
+`upToDate: true` pentru `supabase db push --dry-run --linked`. Cele 12 suite SQL
+curente au trecut 496 de aserțiuni cu transaction + rollback și 0 eșecuri.
+
+În același checkpoint au fost identificate 30 de rezervări istorice expirate,
+create de vechi teste de concurență și rămase fără Session Stripe. Toate aveau
+comenzi `awaiting_payment`, plăți `pending` și date de expirare depășite.
+Acestea au fost reconciliate atomic prin RPC-ul existent
+`release_card_order_reservations`, fără `DELETE`, fără migrare și exclusiv în
+Development. Verificarea post-operație a confirmat zero rezervări active, zero
+plăți pending și zero comenzi awaiting-payment în namespace-ul vizat; comenzile
+anulate și produsele arhivate au fost păstrate ca audit nepericulos.
 
 Pentru migrările viitoare, verifică întotdeauna project ref-ul linked și rulează
 mai întâi `supabase db push --dry-run --linked`. Aplicarea reală prin CLI este
