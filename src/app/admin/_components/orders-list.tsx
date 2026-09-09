@@ -51,7 +51,7 @@ export function OrdersList({ initialState }: { initialState: AdminOrderListResul
         <p className="mt-6 rounded-xl border border-dashed border-stone-700 p-6 text-stone-400">Nu există comenzi pentru criteriile alese.</p>
       ) : (
         <>
-          <div className="mt-6 hidden overflow-x-auto rounded-2xl border border-stone-800 md:block">
+          <div className="mt-6 hidden overflow-x-auto rounded-2xl border border-stone-800 lg:block">
             <table className="w-full min-w-[1040px] text-left text-sm">
               <thead className="bg-stone-900 text-stone-300"><tr><Th>Comandă</Th><Th>Data</Th><Th>Client</Th><Th>Total</Th><Th>Plată</Th><Th>Status plată</Th><Th>Status comandă</Th><Th>Livrare</Th><Th><span className="sr-only">Acțiuni</span></Th></tr></thead>
               <tbody className="divide-y divide-stone-800">
@@ -71,12 +71,12 @@ export function OrdersList({ initialState }: { initialState: AdminOrderListResul
               </tbody>
             </table>
           </div>
-          <div className="mt-6 grid gap-4 md:hidden">
+          <div className="mt-6 grid gap-4 lg:hidden">
             {state.orders.map((order) => (
               <article className="rounded-2xl border border-stone-800 bg-stone-900 p-5" key={order.id}>
                 <div className="flex flex-wrap items-start justify-between gap-3"><div><p className="font-semibold">{order.publicNumber}</p><p className="mt-1 text-xs text-stone-400">{dateFormatter.format(new Date(order.createdAt))}</p></div><StatusBadge status={order.status} /></div>
                 <dl className="mt-5 grid grid-cols-2 gap-4 text-sm"><Info label="Client" value={`${order.customerName} · ${order.email}`} /><Info label="Total" value={formatMoney(order.totalMinor)} /><Info label="Plată" value={`${PAYMENT_METHOD_LABELS[order.paymentMethod]} · ${PAYMENT_STATUS_LABELS[order.paymentStatus]}`} /><Info label="Livrare" value={order.shippingMethodName} /></dl>
-                <Link className="mt-5 inline-flex font-semibold text-emerald-400 underline-offset-4 hover:underline" href={`/admin/orders/${order.id}`}>Deschide comanda</Link>
+                <Link className="mt-5 inline-flex min-h-11 items-center font-semibold text-emerald-400 underline-offset-4 hover:underline" href={`/admin/orders/${order.id}`}>Deschide comanda</Link>
               </article>
             ))}
           </div>
@@ -103,4 +103,4 @@ function StatusBadge({ status }: { status: AdminOrderListResult["orders"][number
 
 function Th({ children }: { children: React.ReactNode }) { return <th className="px-3 py-3 font-medium">{children}</th>; }
 function Td({ children }: { children: React.ReactNode }) { return <td className="px-3 py-4 text-stone-300">{children}</td>; }
-function Info({ label, value }: { label: string; value: string }) { return <div><dt className="text-xs uppercase tracking-wide text-stone-500">{label}</dt><dd className="mt-1 break-words text-stone-200">{value}</dd></div>; }
+function Info({ label, value }: { label: string; value: string }) { return <div className="min-w-0"><dt className="text-xs uppercase tracking-wide text-stone-500">{label}</dt><dd className="mt-1 break-words text-stone-200">{value}</dd></div>; }

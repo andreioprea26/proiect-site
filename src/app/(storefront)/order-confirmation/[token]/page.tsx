@@ -8,7 +8,7 @@ import { getOrderConfirmation } from "@/lib/checkout/server";
 import { CardCartConfirmation } from "./card-cart-confirmation";
 
 export const metadata: Metadata = {
-  title: "Comandă înregistrată | Brand Handmade",
+  title: "Comandă înregistrată",
   robots: { index: false, follow: false },
 };
 

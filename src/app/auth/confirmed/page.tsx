@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { PRIVATE_ROBOTS } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Confirmare e-mail | Brand Handmade",
   description: "Rezultatul confirmării adresei de e-mail.",
+  robots: PRIVATE_ROBOTS,
 };
 
 type ConfirmationPageProps = {

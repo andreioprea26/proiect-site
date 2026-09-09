@@ -12,7 +12,14 @@ const currency = new Intl.NumberFormat("ro-RO", {
   currency: "RON",
 });
 
-export function ProductCard({ product }: { product: StorefrontProduct }) {
+export function ProductCard({
+  product,
+  headingLevel = 3,
+}: {
+  product: StorefrontProduct;
+  headingLevel?: 2 | 3;
+}) {
+  const Heading = headingLevel === 2 ? "h2" : "h3";
   const badges = [
     product.productType === "unique" ? PRODUCT_TYPE_LABELS.unique : null,
     product.productType === "made_to_order"
@@ -37,7 +44,7 @@ export function ProductCard({ product }: { product: StorefrontProduct }) {
             alt={product.image.altText ?? product.name}
             className="object-cover transition duration-500 group-hover:scale-[1.03]"
             fill
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
             src={product.image.url}
           />
         ) : (
@@ -59,7 +66,7 @@ export function ProductCard({ product }: { product: StorefrontProduct }) {
             ))}
           </div>
         ) : null}
-        <h3 className="text-lg font-semibold text-stone-950">{product.name}</h3>
+        <Heading className="text-lg font-semibold text-stone-950">{product.name}</Heading>
         <div className="mt-3 flex items-end justify-between gap-4">
           <p className="font-semibold text-emerald-900">
             {product.hasVariantPricing ? "De la " : ""}

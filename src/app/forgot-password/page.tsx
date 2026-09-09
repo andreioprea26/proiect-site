@@ -2,10 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { ForgotPasswordForm } from "./forgot-password-form";
+import { PRIVATE_ROBOTS } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Am uitat parola | Brand Handmade",
   description: "Solicită instrucțiuni pentru resetarea parolei contului tău.",
+  robots: PRIVATE_ROBOTS,
 };
 
 export default function ForgotPasswordPage() {

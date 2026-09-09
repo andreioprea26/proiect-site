@@ -40,8 +40,27 @@ export default async function ProductsPage() {
           Nu există încă produse.
         </p>
       ) : (
-        <div className="mt-8 overflow-x-auto rounded-2xl border border-stone-800">
-          <table className="w-full min-w-[760px] text-left text-sm">
+        <>
+          <div className="mt-8 grid gap-4 lg:hidden">
+            {products.map((product) => (
+              <article className="rounded-2xl border border-stone-800 bg-stone-950 p-5" key={product.id}>
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <h2 className="min-w-0 break-words font-semibold">{product.name}</h2>
+                  <Link className="inline-flex min-h-11 items-center font-semibold text-emerald-400 underline-offset-4 hover:underline" href={`/admin/products/${product.id}`}>
+                    Editează
+                  </Link>
+                </div>
+                <dl className="mt-4 grid grid-cols-2 gap-4 text-sm">
+                  <ProductInfo label="Tip" value={PRODUCT_TYPE_LABELS[product.product_type]} />
+                  <ProductInfo label="Publicare" value={PUBLICATION_STATUS_LABELS[product.publication_status]} />
+                  <ProductInfo label="Disponibilitate" value={AVAILABILITY_STATUS_LABELS[product.availability_status]} />
+                  <ProductInfo label="Preț" value={currency.format(Number(product.base_price))} />
+                </dl>
+              </article>
+            ))}
+          </div>
+          <div className="mt-8 hidden max-w-full overflow-x-auto rounded-2xl border border-stone-800 lg:block">
+            <table className="w-full min-w-[760px] text-left text-sm">
             <thead className="bg-stone-900 text-stone-300">
               <tr>
                 <th className="px-4 py-3 font-medium">Nume</th>
@@ -68,9 +87,19 @@ export default async function ProductsPage() {
                 </tr>
               ))}
             </tbody>
-          </table>
-        </div>
+            </table>
+          </div>
+        </>
       )}
+    </div>
+  );
+}
+
+function ProductInfo({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="min-w-0">
+      <dt className="text-xs font-semibold uppercase tracking-wide text-stone-500">{label}</dt>
+      <dd className="mt-1 break-words text-stone-300">{value}</dd>
     </div>
   );
 }

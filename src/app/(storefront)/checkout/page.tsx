@@ -5,7 +5,7 @@ import { getCheckoutPageData } from "@/lib/checkout/server";
 import { CheckoutForm } from "../_components/checkout-form";
 
 export const metadata: Metadata = {
-  title: "Checkout | Brand Handmade",
+  title: "Checkout",
   description: "Verifică datele de contact, livrare și produsele din coș.",
   robots: { index: false, follow: false },
 };

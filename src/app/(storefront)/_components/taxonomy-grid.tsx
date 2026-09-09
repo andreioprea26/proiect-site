@@ -7,10 +7,13 @@ import { EmptyState } from "./empty-state";
 export function TaxonomyGrid({
   items,
   kind,
+  headingLevel = 3,
 }: {
   items: StorefrontTaxonomy[];
   kind: "categories" | "collections";
+  headingLevel?: 2 | 3;
 }) {
+  const Heading = headingLevel === 2 ? "h2" : "h3";
   if (items.length === 0) {
     return (
       <EmptyState
@@ -39,9 +42,9 @@ export function TaxonomyGrid({
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-800">
             {kind === "categories" ? "Categorie" : "Colecție"}
           </p>
-          <h3 className="mt-3 text-xl font-semibold text-stone-950 group-hover:text-emerald-900">
+          <Heading className="mt-3 text-xl font-semibold text-stone-950 group-hover:text-emerald-900">
             {item.name}
-          </h3>
+          </Heading>
           <p className="mt-2 line-clamp-3 text-sm leading-6 text-stone-600">
             {item.description ??
               (kind === "categories"

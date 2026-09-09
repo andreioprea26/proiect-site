@@ -8,8 +8,9 @@ import { ProductGrid } from "../_components/product-grid";
 import { ShopFilters } from "../_components/shop-filters";
 
 export const metadata: Metadata = {
-  title: "Magazin | Brand Handmade",
+  title: "Magazin",
   description: "Explorează produsele handmade publicate în magazin.",
+  alternates: { canonical: "/shop" },
 };
 
 export default async function ShopPage({

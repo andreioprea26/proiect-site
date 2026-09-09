@@ -8,14 +8,11 @@ test("paginile publice rămân accesibile fără sesiune după reload", async ({
     page.getByRole("link", { name: "Autentificare" }),
   ).toBeVisible();
 
-  await page.reload();
+  const reloadResponse = await page.reload();
 
-  await expect(
-    page.getByRole("heading", {
-      level: 1,
-      name: "Obiecte handmade pentru gesturi care rămân.",
-    }),
-  ).toBeVisible();
+  expect(reloadResponse?.ok()).toBe(true);
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
   await expect(
     page.getByRole("link", { name: "Autentificare" }),
   ).toBeVisible();
