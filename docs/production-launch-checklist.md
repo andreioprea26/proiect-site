@@ -261,3 +261,52 @@ ziua aprobării. Niciun upgrade sau serviciu nou nu a fost activat în Faza 9C.
 - Comanda Stripe Sandbox `CMD-2026-00001191`, creată controlat în verificarea 9B,
   rămâne intenționat ca dovadă de audit în Development; nu este Production.
 - Production Supabase, Vercel, Stripe și Resend au rămas neatinse.
+
+## Validarea finală 9C — 14 septembrie 2026
+
+- Auth Preview: confirmarea contului, primirea e-mailurilor, resetarea parolei
+  și autentificarea cu parola nouă au fost confirmate manual de proprietar.
+  Aceste rezultate nu sunt deduse din testele automate sau din simpla
+  configurare a redirect-urilor.
+- Development `bdyocajhhylvasfhmnal` permite explicit cele două callback-uri:
+  `https://proiect-site-git-task-e5c491-andreioprea26x-gmailcoms-projects.vercel.app/auth/confirm`
+  și `https://proiect-site-git-task-e5c491-andreioprea26x-gmailcoms-projects.vercel.app/auth/reset-password`.
+  Site URL rămâne `http://localhost:3000`; aplicația furnizează redirect-ul
+  explicit. Fluxurile PKCE trebuie începute și finalizate în același browser.
+- Limitări UX cunoscute, neblocante pentru fluxul validat: deschiderea linkului
+  de confirmare în alt browser poate afișa eroare după confirmarea adresei;
+  reutilizarea parolei curente afișează un mesaj generic care cere incorect un
+  link nou. Nu s-a modificat implementarea pentru aceste cazuri.
+- Webhook-ul existent Stripe Sandbox `we_1UAbf6Dxyx762at3Jt8e2OFX` a fost mutat
+  de la Preview-ul `task-735245` către
+  `https://proiect-site-git-task-e5c491-andreioprea26x-gmailcoms-projects.vercel.app/api/stripe/webhook`.
+  Cele cinci evenimente, identitatea endpoint-ului și secretul existent au
+  rămas neschimbate. Preview-ul vechi nu mai primește acest webhook.
+- Stripe Sandbox 9C: plata interactivă cu date exclusiv fictive a trecut pe
+  implementarea `909c33f`; comanda **CMD-2026-00001285**, total 108,90 RON,
+  `livemode: false`, Checkout Session `complete`, payment `paid`.
+- Evenimentul `evt_1UFdBVDxyx762at3KZGMzvS5` (`checkout.session.completed`) a
+  fost livrat automat către Preview 9C cu HTTP 200, `classification: processed`.
+  Auditul Development indică `action: confirmed`; comanda are `status: paid`
+  și `payment_status: paid`, iar rezervarea de o unitate este `consumed`.
+- Inventar verificat înainte/după: 10 → 9 pentru produsul demo. Există exact
+  o mișcare asociată comenzii, delta -1, sursa `confirm_card_payment`.
+  Coșul a trecut de la un articol la zero după confirmarea internă.
+- Success page nu confirmă plata: citește starea internă prin
+  `getOrderConfirmation`; parametrii `checkout`/`session_id` nu produc un
+  write. Evenimentul semnat și tranzacția DB sunt sursa confirmării.
+- Comanda, plata, rezervarea consumată și mișcarea de inventar sunt păstrate
+  intenționat pentru audit Sandbox. Nu s-a șters istoric și nu s-a restocat
+  artificial produsul; nu s-au creat produse sau metode de livrare noi.
+- Revalidare din 14 septembrie: Chromium complet 168 PASS / 0 FAILED /
+  0 NOT RUN; ESLint și TypeScript PASS. Build-ul anterior rămâne valid:
+  nu există schimbări de cod, doar configurare Sandbox și documentație.
+- După plata manuală: regresie focalizată Auth/Stripe 44 PASS / 0 FAILED /
+  0 NOT RUN (login, register, email-confirmation, password-reset,
+  session-persistence, stripe-checkout, stripe-concurrency). Suita completă
+  de mai sus a rulat înainte de plata manuală; mediul automat își izolează
+  valorile Stripe/Resend și nu folosește webhook-ul Preview.
+- Production și `main` neatinse; fără secrete în documentație, dependențe,
+  servicii sau costuri noi. Fără PR/merge și fără începerea Fazei 10.
+- Verdict checkpoint 9C: **PASS**, cu limitările UX documentate mai sus.
+  Aprobarea și executarea merge-ului rămân etape separate.
