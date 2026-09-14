@@ -1,5 +1,5 @@
+import { getPublicStoreSettings } from "@/lib/store-settings/server";
 import type { Metadata } from "next";
-import { STORE_CONFIG } from "@/lib/config/store";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -22,6 +22,7 @@ type ProductPageProps = { params: Promise<{ slug: string }> };
 export async function generateMetadata({
   params,
 }: ProductPageProps): Promise<Metadata> {
+  const store = await getPublicStoreSettings();
   const { slug } = await params;
   const product = await getPublicProductBySlug(slug);
 
@@ -40,7 +41,7 @@ export async function generateMetadata({
     alternates: { canonical: `/products/${product.slug}` },
     openGraph: {
       type: "website",
-      siteName: STORE_CONFIG.name,
+      siteName: store.name,
       title: product.name,
       description:
         product.description?.slice(0, 160) ??

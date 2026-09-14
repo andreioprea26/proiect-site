@@ -8,6 +8,8 @@ export type PublicStoreConfig = {
   readonly description: string;
   readonly seoDescription: string;
   readonly footerDescription: string;
+  readonly contact: { readonly email: string | null; readonly phone: string | null; readonly whatsapp: string | null };
+  readonly social: { readonly instagram: string | null; readonly facebook: string | null; readonly tiktok: string | null };
   readonly market: { readonly locale: "ro-RO"; readonly country: "RO"; readonly currency: "RON"; readonly timeZone: "Europe/Bucharest" };
   readonly assets: { readonly ogImage: `/${string}` | null };
   readonly copy: {
@@ -36,6 +38,8 @@ export const STORE_CONFIG: PublicStoreConfig = {
   footerDescription: "Explorează produsele și colecțiile noastre. Pentru întrebări, folosește pagina de contact.",
   market: { locale: "ro-RO", country: "RO", currency: "RON", timeZone: "Europe/Bucharest" },
   assets: { ogImage: null },
+  contact: { email: null, phone: null, whatsapp: null },
+  social: { instagram: null, facebook: null, tiktok: null },
   copy: {
     heroTitle: "Descoperă produsele potrivite pentru tine.",
     productsEyebrow: "În magazin",

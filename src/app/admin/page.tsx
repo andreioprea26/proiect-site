@@ -1,10 +1,11 @@
-import { STORE_CONFIG } from "@/lib/config/store";
+import { getPublicStoreSettings } from "@/lib/store-settings/server";
 import Link from "next/link";
 
 import { getAdminDashboardData } from "@/lib/admin/dashboard";
 import { ORDER_STATUS_LABELS, type OrderStatus } from "@/lib/admin/order-model";
 
 const sections = [
+  { href: "/admin/settings", title: "Store Settings", description: "Editează identitatea și datele publice ale magazinului." },
   { href: "/admin/orders", title: "Comenzi", description: "Procesează comenzile și urmărește istoricul statusurilor." },
   { href: "/admin/products", title: "Produse", description: "Creează, editează, publică și arhivează produse." },
   { href: "/admin/categories", title: "Categorii", description: "Organizează produsele în categorii." },
@@ -16,11 +17,12 @@ const sections = [
 const dateFormatter = new Intl.DateTimeFormat("ro-RO", { dateStyle: "medium", timeStyle: "short", timeZone: "Europe/Bucharest" });
 
 export default async function AdminPage() {
+  const store = await getPublicStoreSettings();
   const dashboard = await getAdminDashboardData();
   return (
     <div>
       <section className="max-w-2xl">
-        <p className="text-sm font-medium text-emerald-400">{STORE_CONFIG.name}</p>
+        <p className="text-sm font-medium text-emerald-400">{store.name}</p>
         <h1 className="mt-2 text-3xl font-semibold tracking-tight">Admin</h1>
         <p className="mt-3 text-sm leading-6 text-stone-300">
           Administrează catalogul magazinului din secțiunile de mai jos.

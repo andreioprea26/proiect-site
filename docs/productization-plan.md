@@ -8,7 +8,12 @@ din România. Fără SaaS, multi-tenancy, `tenant_id`, login comun sau resurse c
 Actualizare 15 septembrie 2026: **10B.2a implementat și validat pe branch separat**.
 Config public central, branding, copy neutru și regresie 170/170 sunt documentate în
 [checkpoint-ul 10B.2a](10b2a-public-store-config.md). Inventarul de mai jos rămâne
-fotografia auditului 10B.1, nu este rescris retroactiv. 10B.2b nu este început.
+fotografia auditului 10B.1, nu este rescris retroactiv.
+
+Actualizare 10B.2b: singleton-ul public `store_settings`, RPC-urile restrictive,
+pagina `/admin/settings` și integrarea request-scoped a brandingului sunt implementate.
+Configul versionat rămâne fallback; detalii și rezultate în
+[checkpoint-ul 10B.2b](10b2b-admin-store-settings.md). Nu include 10B.2c sau lansare Production.
 
 ## 1. Baza auditului și limitele dovezilor
 

@@ -828,6 +828,19 @@ inactiv și formulele agregărilor financiare și operaționale.
 
 ## Reconcilierea istoricului Supabase CLI
 
+### Aplicare aditivă 10B.2b — 2026-09-15
+
+`20260915120000_public_store_settings.sql` — **Aplicată și validată în Development**,
+project ref `bdyocajhhylvasfhmnal`. Înainte: 27/27 Local/Remote; dry-run-ul linked
+a enumerat exclusiv această migrare, fără seeds/roluri. Aplicare prin
+`supabase db push --linked --yes`, fără reset/repair/pull/diff.
+După: 28/28 Local/Remote și dry-run final `upToDate: true`, liste goale.
+`supabase/tests/public_store_settings.sql`: **53/53 PASS**, transaction + rollback.
+Regresiile `security_data_integrity`, `homepage_admin_stats` și
+`operational_notifications_cod` au trecut cu rollback. Allowlist-ul explicit al
+testului de securitate include noul RPC public auditat, nu RPC-ul de salvare.
+Nicio modificare a tabelelor/RPC-urilor comerciale și nicio operație Production.
+
 Istoricul proiectului Supabase Development/Test cu project ref
 `bdyocajhhylvasfhmnal` a fost reconciliat controlat la 2026-09-04. Înainte de
 reconciliere, toate cele 24 de migrări locale erau deja aplicate manual, iar

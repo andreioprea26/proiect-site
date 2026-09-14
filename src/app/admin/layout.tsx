@@ -1,4 +1,5 @@
-import { STORE_CONFIG, storeTitle } from "@/lib/config/store";
+import { getPublicStoreSettings } from "@/lib/store-settings/server";
+import { storeTitle } from "@/lib/config/store";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -7,13 +8,17 @@ import { isCurrentUserAdmin } from "@/lib/auth/authorization";
 import { getAuthenticatedUser } from "@/lib/auth/user";
 import { PRIVATE_ROBOTS } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: storeTitle("Admin"),
-  description: "Zonă administrativă protejată.",
-  robots: PRIVATE_ROBOTS,
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const store = await getPublicStoreSettings();
+  return {
+    title: storeTitle("Admin", store),
+    description: "Zonă administrativă protejată.",
+    robots: PRIVATE_ROBOTS,
+  };
+}
 
 export default async function AdminLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const store = await getPublicStoreSettings();
   const user = await getAuthenticatedUser();
   if (!user) redirect("/login");
   if (!(await isCurrentUserAdmin())) redirect("/");
@@ -22,8 +27,9 @@ export default async function AdminLayout({ children }: Readonly<{ children: Rea
     <div className="min-h-screen bg-stone-950 text-stone-100">
       <header className="border-b border-stone-800 bg-stone-900">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-4">
-          <Link className="font-semibold text-emerald-400" href="/admin">{STORE_CONFIG.name} — Admin</Link>
+          <Link className="font-semibold text-emerald-400" href="/admin">{store.name} — Admin</Link>
           <nav aria-label="Navigare administrare" className="site-navigation flex flex-wrap items-center gap-4 text-sm text-stone-300">
+            <Link href="/admin/settings">Store Settings</Link>
             <Link href="/admin/orders">Comenzi</Link>
             <Link href="/admin/products">Produse</Link>
             <Link href="/admin/categories">Categorii</Link>

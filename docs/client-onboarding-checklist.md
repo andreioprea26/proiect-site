@@ -6,6 +6,26 @@ Vercel, domeniu, utilizatori și date. Fără SaaS/multi-tenancy/shared DB.
 Vezi [auditul și matricea](productization-plan.md) pentru capabilitățile încă lipsă.
 Nicio bifă de mai jos nu reprezintă muncă efectuată în 10B.1.
 
+Actualizare 10B.2b: există acum `/admin/settings` pentru identitatea publică minimală.
+Configul versionat `src/lib/config/store.ts` rămâne fallback; această disponibilitate
+nu înseamnă că onboarding-ul unui client nou sau lansarea Production au fost executate.
+
+### Identitate publică — verificări pentru fiecare instalare
+
+- [ ] Admin setează nume, tagline, descrieri și date publice de contact în Store Settings.
+- [ ] Linkurile sociale sunt HTTPS, pe Instagram/Facebook/TikTok aprobate; fără query,
+  fragment, port, credentials sau destinații arbitrare. Telefon/WhatsApp: 7–15 cifre,
+  opțional `+`. Numai text simplu, cu limite de lungime, fără HTML.
+- [ ] Câmp gol → fallback din cod; clientul aprobă inclusiv fallback-urile și copy-ul
+  editorial homepage, care are administrare separată.
+- [ ] După Save, verifică nume în admin/storefront/Auth/account, footer și metadata;
+  confirmă că emailurile operaționale folosesc aceeași identitate textuală.
+- [ ] Public email nu este sender/reply-to automat. APP_URL, chei, SMTP/Resend, roluri,
+  plăți și infrastructură rămân în env/dashboard tehnic, niciodată în Store Settings.
+- [ ] Assets/RO/defaults rămân versionate; fără logo/upload/theme editor în 10B.2b.
+- [ ] SQL Settings și regresia de securitate trec cu rollback. Testele care schimbă
+  identitatea rulează izolat și restaurează valorile inițiale.
+
 ## 0. Fișa instalării și aprobări — manual
 
 - [ ] Identificator client ne-secret, responsabil tehnic și proprietar business.

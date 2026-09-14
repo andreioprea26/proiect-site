@@ -47,6 +47,7 @@ begin
       'get_approved_product_reviews',
       'get_order_confirmation',
       'get_public_homepage_blocks',
+      'get_public_store_settings', -- 10B.2b: audited projection, no internal columns
       'place_cod_order',
       'quote_checkout',
       'submit_contact_request',

@@ -24,7 +24,14 @@ export default defineConfig({
   },
   projects: [
     {
+      name: "store-settings",
+      testMatch: "**/store-settings.spec.ts",
+      use: { ...devices["Desktop Chrome"] },
+    },
+    {
       name: "chromium",
+      testIgnore: "**/store-settings.spec.ts",
+      dependencies: ["store-settings"],
       use: { ...devices["Desktop Chrome"] },
     },
   ],

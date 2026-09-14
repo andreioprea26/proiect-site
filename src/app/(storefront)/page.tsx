@@ -1,3 +1,4 @@
+import { getPublicStoreSettings } from "@/lib/store-settings/server";
 import { STORE_CONFIG } from "@/lib/config/store";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -10,12 +11,16 @@ import { TaxonomyGrid } from "./_components/taxonomy-grid";
 
 type HomePageProps = { searchParams: Promise<{ logout?: string | string[] }> };
 
-export const metadata: Metadata = {
-  description: STORE_CONFIG.seoDescription,
-  alternates: { canonical: "/" },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const store = await getPublicStoreSettings();
+  return {
+    description: store.seoDescription,
+    alternates: { canonical: "/" },
+  };
+}
 
 export default async function Home({ searchParams }: HomePageProps) {
+  const store = await getPublicStoreSettings();
   const [{ logout }, { products, categories, collections }, blocks] = await Promise.all([
     searchParams,
     getStorefrontHomeData(),
@@ -25,7 +30,7 @@ export default async function Home({ searchParams }: HomePageProps) {
 
   return (
     <main>
-      {!heroIsActive ? <h1 className="sr-only">{STORE_CONFIG.name}</h1> : null}
+      {!heroIsActive ? <h1 className="sr-only">{store.name}</h1> : null}
       {logout === "error" ? <p className="mx-auto mt-5 max-w-7xl rounded-xl bg-red-50 p-3 text-sm text-red-800" role="alert">Deconectarea nu a putut fi finalizată. Încearcă din nou.</p> : null}
       {blocks.filter((block) => block.isActive).map((block) => {
         if (block.slot === "hero") return <HeroBlock block={block} key={block.slot} />;
