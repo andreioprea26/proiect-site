@@ -1,8 +1,9 @@
+import { STORE_CONFIG } from "@/lib/config/store";
 import type { Metadata } from "next";
 import { getAccountContext } from "@/lib/account/server";
 import { CustomRequestForm } from "./custom-request-form";
 
-export const metadata: Metadata = { title: "Comenzi personalizate", description: "Trimite o cerere pentru o creație handmade specială.", alternates: { canonical: "/custom-orders" } };
+export const metadata: Metadata = { title: "Comenzi personalizate", description: STORE_CONFIG.copy.customOrdersDescription, alternates: { canonical: "/custom-orders" } };
 
 export default async function CustomOrdersPage() {
   const context = await getAccountContext();

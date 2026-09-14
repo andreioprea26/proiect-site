@@ -4,14 +4,19 @@ Repository-ul conține proiectul unui magazin online pentru produse handmade, de
 
 ## Stadiul proiectului
 
-Proiectul se află în Etapa 5 — Implementarea ghidată cu Codex, Faza 1 — Pregătirea proiectului. Aplicația Next.js de bază este inițializată, iar pagina principală confirmă că magazinul este în pregătire.
+Fazele 1–9 sunt validate și integrate în `develop`: storefront, catalog și administrare,
+Auth, coș, checkout COD/Stripe Sandbox, comenzi, notificări și conținut administrabil.
+Productizarea 10B este în desfășurare. Acest lucru nu reprezintă aprobarea lansării Production
+sau activarea Stripe Live. Starea finală a Fazei 9 este păstrată în tag-ul `phase-9-final`
+și branch-ul `archive/phase-9-final`.
 
-## Tehnologii planificate
+## Tehnologii folosite
 
 - Next.js, React și TypeScript;
-- Tailwind CSS și shadcn/ui;
+- Tailwind CSS;
 - Supabase pentru PostgreSQL, autentificare și storage;
 - Stripe Checkout pentru plăți online;
+- Resend pentru notificări operaționale;
 - Vercel pentru hosting și Preview deployments;
 - Playwright pentru testarea fluxurilor critice;
 - GitHub pentru versionare.
@@ -44,6 +49,8 @@ npm run build
 npm run check
 npm run test:e2e
 npm run test:e2e:headed
+npm run test:config
+npm run test:email
 ```
 
 - `npm run dev` pornește serverul local de dezvoltare.
@@ -100,8 +107,42 @@ Clienții pentru browser și server sunt separați în `src/lib/supabase`.
 Fluxul curent pentru aplicarea și verificarea manuală a migrațiilor Development
 este documentat în [Migrații Supabase Development](docs/supabase-development-migrations.md).
 
-Secțiunile pentru Stripe, e-mail și livrare sunt doar pregătitoare; aceste
-servicii nu sunt încă configurate.
+Stripe Sandbox și notificările operaționale sunt implementate. Mediul de test
+controlează explicit cheile placeholder Stripe și dezactivează Resend; nu reutiliza
+configurația de test pentru plăți reale. Pentru statusul și limitele integrărilor,
+consultă [checklist-ul de lansare](docs/production-launch-checklist.md).
+
+## Store identity configuration
+
+Identitatea publică se configurează în `src/lib/config/store.ts`, contractul tipat
+`PublicStoreConfig`, versiunea 1. Schimbă `STORE_CONFIG.name` într-un singur loc pentru
+brandingul storefront/Auth/account/admin, titluri SEO și emailuri. Tagline-ul,
+descrierile, footer-ul și `copy` sunt texte publice editabile în cod. Schimbările
+necesită build și deployment; nu există încă Admin Store Settings.
+
+Fallback-urile homepage se folosesc când sloturile nu sunt configurate. Conținutul
+editorial deja salvat în administrarea homepage are prioritate și nu este rescris
+la schimbarea configului. Datele produselor rămân sursa metadatelor dinamice.
+
+`assets.ogImage` acceptă o cale statică locală, de exemplu `/store-og.png`, cu fișierul
+în `public`; `null` nu inventează o imagine. Brandingul vizibil rămâne text (nu există
+logo real sau upload). Favicon-ul existent rămâne `src/app/favicon.ico`, conform
+convenției Next.js; logo/favicon/theme avansat sunt rezervate 10B.2c. Nu există încă
+adrese publice de contact sau rețele sociale configurate: pagina `/contact` rămâne
+canalul existent, fără date fictive afișate clienților.
+
+Configul este public și poate intra în bundle-ul browserului. NU include chei,
+parole, service role, roluri admin, RLS, reguli financiare, stocuri sau infrastructură.
+Secretele rămân exclusiv în env; `APP_URL`, `RESEND_FROM_EMAIL` și
+`RESEND_REPLY_TO_EMAIL` rămân tot în env. Contractul RO/ro-RO/RON/Europe/Bucharest
+este declarativ, nu un mecanism i18n sau multi-currency. Cheile browserului pentru
+coș și checkout nu se redenumesc odată cu brandul.
+
+`npm run test:config` verifică două branduri fictive doar în teste, metadata,
+copy/Auth, toate cele opt emailuri, escaping, independența de DB/env și cheile browserului.
+Importul explicit `.ts` permite testarea acelorași module direct în Node fără loader
+nou; `allowImportingTsExtensions` este folosit împreună cu `noEmit`, compilarea aplicației
+rămânând în responsabilitatea Next.js.
 
 ## Structura proiectului
 

@@ -1,3 +1,4 @@
+import { STORE_CONFIG } from "@/lib/config/store";
 import Link from "next/link";
 
 import { getAdminDashboardData } from "@/lib/admin/dashboard";
@@ -19,7 +20,7 @@ export default async function AdminPage() {
   return (
     <div>
       <section className="max-w-2xl">
-        <p className="text-sm font-medium text-emerald-400">Brand Handmade</p>
+        <p className="text-sm font-medium text-emerald-400">{STORE_CONFIG.name}</p>
         <h1 className="mt-2 text-3xl font-semibold tracking-tight">Admin</h1>
         <p className="mt-3 text-sm leading-6 text-stone-300">
           Administrează catalogul magazinului din secțiunile de mai jos.

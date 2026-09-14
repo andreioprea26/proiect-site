@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { STORE_CONFIG } from "../../src/lib/config/store";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
 const adminEmail = process.env.E2E_ADMIN_EMAIL ?? "";
@@ -61,7 +62,7 @@ test.describe.serial("8C homepage administrabil și statistici", () => {
 
   test("homepage-ul folosește fallback-ul când slotul nu este configurat", async ({ page }) => {
     await page.goto("/");
-    await expect(page.getByRole("heading", { level: 1, name: "Obiecte handmade pentru gesturi care rămân." })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: STORE_CONFIG.copy.heroTitle })).toBeVisible();
   });
 
   test("anon și customer nu pot accesa administrarea", async ({ page }) => {

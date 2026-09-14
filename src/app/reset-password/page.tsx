@@ -1,3 +1,4 @@
+import { STORE_CONFIG, storeTitle } from "@/lib/config/store";
 import type { Metadata } from "next";
 import Link from "next/link";
 
@@ -8,7 +9,7 @@ import { PRIVATE_ROBOTS } from "@/lib/seo";
 import { ResetPasswordForm } from "./reset-password-form";
 
 export const metadata: Metadata = {
-  title: "Parolă nouă | Brand Handmade",
+  title: storeTitle("Parolă nouă"),
   description: "Alege o parolă nouă pentru contul tău.",
   robots: PRIVATE_ROBOTS,
 };
@@ -30,7 +31,7 @@ export default async function ResetPasswordPage() {
   return (
     <main className="flex min-h-screen items-center justify-center bg-amber-50 px-6 py-12 text-stone-800">
       <section className="w-full max-w-md rounded-2xl border border-stone-200 bg-white p-6 shadow-sm sm:p-8">
-        <p className="text-sm font-medium text-emerald-800">Brand Handmade</p>
+        <p className="text-sm font-medium text-emerald-800">{STORE_CONFIG.name}</p>
         <h1 className="mt-2 text-3xl font-semibold tracking-tight">
           Alege o parolă nouă
         </h1>

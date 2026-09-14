@@ -1,3 +1,4 @@
+import { STORE_CONFIG } from "@/lib/config/store";
 import type { Metadata } from "next";
 import Link from "next/link";
 
@@ -10,7 +11,7 @@ import { TaxonomyGrid } from "./_components/taxonomy-grid";
 type HomePageProps = { searchParams: Promise<{ logout?: string | string[] }> };
 
 export const metadata: Metadata = {
-  description: "Descoperă produse handmade, unicate și creații realizate la comandă în România.",
+  description: STORE_CONFIG.seoDescription,
   alternates: { canonical: "/" },
 };
 
@@ -24,7 +25,7 @@ export default async function Home({ searchParams }: HomePageProps) {
 
   return (
     <main>
-      {!heroIsActive ? <h1 className="sr-only">Brand Handmade</h1> : null}
+      {!heroIsActive ? <h1 className="sr-only">{STORE_CONFIG.name}</h1> : null}
       {logout === "error" ? <p className="mx-auto mt-5 max-w-7xl rounded-xl bg-red-50 p-3 text-sm text-red-800" role="alert">Deconectarea nu a putut fi finalizată. Încearcă din nou.</p> : null}
       {blocks.filter((block) => block.isActive).map((block) => {
         if (block.slot === "hero") return <HeroBlock block={block} key={block.slot} />;
@@ -48,8 +49,8 @@ function HeroBlock({ block }: { block: HomepageBlock }) {
           {block.ctaLabel && block.ctaHref ? <div className="mt-8 flex flex-wrap gap-3"><Link className="rounded-full bg-emerald-900 px-6 py-3 font-semibold text-white transition hover:bg-emerald-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-800" href={block.ctaHref}>{block.ctaLabel}</Link><Link className="rounded-full border border-stone-300 bg-white/70 px-6 py-3 font-semibold text-stone-800 transition hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-800" href="/categories">Vezi categoriile</Link></div> : null}
         </div>
         <div className="rounded-[2rem] border border-white/70 bg-white/65 p-6 shadow-xl shadow-emerald-950/5 backdrop-blur sm:p-8">
-          <p className="text-sm font-semibold text-emerald-900">De ce handmade?</p>
-          <ul className="mt-5 grid gap-4 text-stone-700"><li className="rounded-2xl bg-white px-5 py-4">Lucrat cu atenție, nu în serie industrială</li><li className="rounded-2xl bg-white px-5 py-4">Opțiuni unicat și realizate la comandă</li><li className="rounded-2xl bg-white px-5 py-4">Livrare oriunde în România</li></ul>
+          <p className="text-sm font-semibold text-emerald-900">{STORE_CONFIG.copy.highlightsTitle}</p>
+          <ul className="mt-5 grid gap-4 text-stone-700">{STORE_CONFIG.copy.highlights.map((text) => <li className="rounded-2xl bg-white px-5 py-4" key={text}>{text}</li>)}</ul>
         </div>
       </div>
     </section>

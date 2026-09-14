@@ -1,4 +1,5 @@
 import { expect, type APIRequestContext, type Page, test } from "@playwright/test";
+import { storeTitle } from "../../src/lib/config/store";
 
 type PublicProduct = { name: string; slug: string };
 
@@ -118,7 +119,7 @@ test("navigarea și listele admin rămân utilizabile pe mobil și desktop", asy
 
 test("metadata publică și paginile private folosesc regulile SEO corecte", async ({ page }) => {
   await page.goto("/shop?sort=price_asc");
-  await expect(page).toHaveTitle("Magazin | Brand Handmade");
+  await expect(page).toHaveTitle(storeTitle("Magazin"));
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     "href",
     "http://127.0.0.1:3100/shop",

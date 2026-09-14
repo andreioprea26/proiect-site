@@ -1,3 +1,4 @@
+import { STORE_CONFIG } from "@/lib/config/store";
 import type { Metadata } from "next";
 
 import { getCollections } from "@/lib/storefront/catalog";
@@ -6,7 +7,7 @@ import { TaxonomyGrid } from "../_components/taxonomy-grid";
 
 export const metadata: Metadata = {
   title: "Colecții",
-  description: "Explorează selecțiile și colecțiile handmade publicate.",
+  description: STORE_CONFIG.copy.collectionsDescription,
   alternates: { canonical: "/collections" },
 };
 
