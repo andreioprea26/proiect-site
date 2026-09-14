@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { STORE_CONFIG } from "../../src/lib/config/store";
 
 test("homepage-ul public afișează storefront-ul și navigarea", async ({ page }) => {
   test.setTimeout(60_000);
@@ -10,7 +11,7 @@ test("homepage-ul public afișează storefront-ul și navigarea", async ({ page 
   await expect(
     page.getByRole("heading", {
       level: 1,
-      name: "Obiecte handmade pentru gesturi care rămân.",
+      name: STORE_CONFIG.copy.heroTitle,
     }),
   ).toBeVisible();
   await expect(

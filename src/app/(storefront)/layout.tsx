@@ -1,3 +1,4 @@
+import { STORE_CONFIG, storeText } from "@/lib/config/store";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { listPublishedContentPages } from "@/lib/content/server";
@@ -9,8 +10,8 @@ import { NewsletterForm } from "./_components/newsletter-form";
 
 export const metadata: Metadata = {
   title: {
-    default: "Brand Handmade | Produse lucrate manual",
-    template: "%s | Brand Handmade",
+    default: storeText().defaultTitle,
+    template: storeText().titleTemplate,
   },
 };
 
@@ -27,7 +28,7 @@ export default async function StorefrontLayout({
             className="text-lg font-semibold tracking-tight text-emerald-950 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-emerald-800"
             href="/"
           >
-            Brand Handmade
+            {STORE_CONFIG.name}
           </Link>
           <nav
             aria-label="Navigare principală"
@@ -62,10 +63,9 @@ export default async function StorefrontLayout({
       <footer className="mt-20 border-t border-stone-200 bg-emerald-950 text-emerald-50">
         <div className="mx-auto grid max-w-7xl gap-8 px-5 py-10 sm:px-8 md:grid-cols-2 lg:grid-cols-4">
           <div>
-            <p className="font-semibold">Brand Handmade</p>
+            <p className="font-semibold">{STORE_CONFIG.name}</p>
             <p className="mt-2 max-w-sm text-sm leading-6 text-emerald-100/80">
-              Produse lucrate cu grijă, în serii mici, pentru daruri și momente
-              cu sens.
+              {STORE_CONFIG.footerDescription}
             </p>
           </div>
           <nav aria-label="Navigare footer magazin" className="site-navigation text-sm">

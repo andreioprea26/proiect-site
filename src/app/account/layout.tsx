@@ -1,3 +1,4 @@
+import { STORE_CONFIG, storeTitle } from "@/lib/config/store";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -8,7 +9,7 @@ import { PRIVATE_ROBOTS } from "@/lib/seo";
 import { logout } from "../login/actions";
 
 export const metadata: Metadata = {
-  title: "Contul meu | Brand Handmade",
+  title: storeTitle("Contul meu"),
   description: "Zona contului de client.",
   robots: PRIVATE_ROBOTS,
 };
@@ -27,7 +28,7 @@ export default async function AccountLayout({
       <header className="border-b border-stone-200 bg-white">
         <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4 px-6 py-4">
           <Link className="font-semibold text-emerald-800" href="/">
-            Brand Handmade
+            {STORE_CONFIG.name}
           </Link>
           <nav aria-label="Navigare cont" className="site-navigation flex flex-wrap items-center gap-4 text-sm">
             <Link href="/account">Cont</Link>

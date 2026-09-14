@@ -1,3 +1,4 @@
+import { STORE_CONFIG } from "@/lib/config/store";
 import type { Metadata } from "next";
 
 import { getCategories } from "@/lib/storefront/catalog";
@@ -6,7 +7,7 @@ import { TaxonomyGrid } from "../_components/taxonomy-grid";
 
 export const metadata: Metadata = {
   title: "Categorii",
-  description: "Explorează produsele handmade după categorie.",
+  description: STORE_CONFIG.copy.categoriesDescription,
   alternates: { canonical: "/categories" },
 };
 

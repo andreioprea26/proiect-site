@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: CollectionPageProps): Promise
   return result
     ? {
         title: result.taxonomy.name,
-        description: result.taxonomy.description?.slice(0, 160) ?? `Descoperă colecția handmade ${result.taxonomy.name}.`,
+        description: result.taxonomy.description?.slice(0, 160) ?? `Descoperă colecția ${result.taxonomy.name}.`,
         alternates: { canonical: `/collections/${result.taxonomy.slug}` },
       }
     : { title: "Colecție indisponibilă", robots: { index: false, follow: false } };

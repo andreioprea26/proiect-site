@@ -11,7 +11,8 @@
     "check": "npm run lint && npm run typecheck && npm run build",
     "test:e2e": "npm run build && playwright test",
     "test:e2e:headed": "npm run build && playwright test --headed",
-    "test:email": "node --test --experimental-strip-types tests/unit/email-notifications.test.mjs"
+    "test:email": "node --test --experimental-strip-types tests/unit/email-notifications.test.mjs",
+    "test:config": "node --test --experimental-strip-types tests/unit/store-config.test.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.4",

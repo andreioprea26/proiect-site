@@ -5,6 +5,11 @@ certificare că template-ul se poate instala sau lansa deja fără intervenție.
 Scope: template master → repository și deployment separat pentru fiecare business
 din România. Fără SaaS, multi-tenancy, `tenant_id`, login comun sau resurse create.
 
+Actualizare 15 septembrie 2026: **10B.2a implementat și validat pe branch separat**.
+Config public central, branding, copy neutru și regresie 170/170 sunt documentate în
+[checkpoint-ul 10B.2a](10b2a-public-store-config.md). Inventarul de mai jos rămâne
+fotografia auditului 10B.1, nu este rescris retroactiv. 10B.2b nu este început.
+
 ## 1. Baza auditului și limitele dovezilor
 
 - Plecare: `develop` / `origin/develop`, commit

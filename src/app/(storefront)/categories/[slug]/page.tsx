@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
   return result
     ? {
         title: result.taxonomy.name,
-        description: result.taxonomy.description?.slice(0, 160) ?? `Produse handmade din categoria ${result.taxonomy.name}.`,
+        description: result.taxonomy.description?.slice(0, 160) ?? `Produse din categoria ${result.taxonomy.name}.`,
         alternates: { canonical: `/categories/${result.taxonomy.slug}` },
       }
     : { title: "Categorie indisponibilă", robots: { index: false, follow: false } };

@@ -1,12 +1,12 @@
+import { STORE_CONFIG } from "@/lib/config/store";
 import "server-only";
 
 import type { Metadata } from "next";
 
 import { getAppUrl } from "@/lib/config/env";
 
-export const SITE_NAME = "Brand Handmade";
-export const SITE_DESCRIPTION =
-  "Produse handmade, unicate și creații realizate la comandă, cu livrare în România.";
+export const SITE_NAME = STORE_CONFIG.name;
+export const SITE_DESCRIPTION = STORE_CONFIG.seoDescription;
 
 export const PRIVATE_ROBOTS: Metadata["robots"] = {
   index: false,

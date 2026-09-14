@@ -1,5 +1,7 @@
 "use client";
 
+import { STORE_CONFIG } from "@/lib/config/store";
+
 import Image from "next/image";
 import Link from "next/link";
 
@@ -35,7 +37,7 @@ export function CartPageClient() {
       <div className="mt-10 rounded-3xl border border-dashed border-stone-300 bg-white/70 px-6 py-12 text-center">
         <h2 className="text-2xl font-semibold text-stone-900">Coșul este gol</h2>
         <p className="mx-auto mt-3 max-w-xl text-stone-600">
-          Descoperă produsele handmade și configurează varianta potrivită.
+          {STORE_CONFIG.copy.emptyCart}
         </p>
         <Link
           className="mt-6 inline-flex rounded-full bg-emerald-900 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-800"

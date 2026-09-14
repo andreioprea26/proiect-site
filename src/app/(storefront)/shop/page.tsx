@@ -1,3 +1,4 @@
+import { STORE_CONFIG } from "@/lib/config/store";
 import type { Metadata } from "next";
 
 import { getShopData } from "@/lib/storefront/catalog";
@@ -9,7 +10,7 @@ import { ShopFilters } from "../_components/shop-filters";
 
 export const metadata: Metadata = {
   title: "Magazin",
-  description: "Explorează produsele handmade publicate în magazin.",
+  description: STORE_CONFIG.copy.shopDescription,
   alternates: { canonical: "/shop" },
 };
 

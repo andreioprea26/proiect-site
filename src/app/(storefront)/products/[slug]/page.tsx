@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { STORE_CONFIG } from "@/lib/config/store";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -35,14 +36,15 @@ export async function generateMetadata({
     title: product.name,
     description:
       product.description?.slice(0, 160) ??
-      `Descoperă produsul handmade ${product.name}.`,
+      `Descoperă produsul ${product.name}.`,
     alternates: { canonical: `/products/${product.slug}` },
     openGraph: {
       type: "website",
+      siteName: STORE_CONFIG.name,
       title: product.name,
       description:
         product.description?.slice(0, 160) ??
-        `Descoperă produsul handmade ${product.name}.`,
+        `Descoperă produsul ${product.name}.`,
       url: `/products/${product.slug}`,
       images: product.image
         ? [{ url: product.image.url, alt: product.image.altText ?? product.name }]

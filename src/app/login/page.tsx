@@ -1,3 +1,4 @@
+import { STORE_CONFIG, storeText, storeTitle } from "@/lib/config/store";
 import type { Metadata } from "next";
 import Link from "next/link";
 
@@ -5,8 +6,8 @@ import { LoginForm } from "./login-form";
 import { PRIVATE_ROBOTS } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "Autentificare | Brand Handmade",
-  description: "Autentifică-te în contul tău Brand Handmade.",
+  title: storeTitle("Autentificare"),
+  description: storeText().loginDescription,
   robots: PRIVATE_ROBOTS,
 };
 
@@ -21,7 +22,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
   return (
     <main className="flex min-h-screen items-center justify-center bg-amber-50 px-6 py-12 text-stone-800">
       <section className="w-full max-w-md rounded-2xl border border-stone-200 bg-white p-6 shadow-sm sm:p-8">
-        <p className="text-sm font-medium text-emerald-800">Brand Handmade</p>
+        <p className="text-sm font-medium text-emerald-800">{STORE_CONFIG.name}</p>
         <h1 className="mt-2 text-3xl font-semibold tracking-tight">
           Autentificare
         </h1>

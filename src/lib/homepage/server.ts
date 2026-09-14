@@ -1,3 +1,4 @@
+import { STORE_CONFIG } from "@/lib/config/store";
 import "server-only";
 
 import { requireAdminContext } from "@/lib/admin/server";
@@ -28,9 +29,9 @@ export type HomepageBlock = {
 export const HOMEPAGE_DEFAULTS: Record<HomepageSlot, HomepageBlock> = {
   hero: {
     slot: "hero",
-    eyebrow: "Lucrat manual în România",
-    title: "Obiecte handmade pentru gesturi care rămân.",
-    subtitle: "Descoperă produse realizate în serii mici, unicate și creații pregătite special la comandă.",
+    eyebrow: STORE_CONFIG.tagline,
+    title: STORE_CONFIG.copy.heroTitle,
+    subtitle: STORE_CONFIG.description,
     ctaLabel: "Descoperă Magazinul",
     ctaHref: "/shop",
     isActive: true,
@@ -50,7 +51,7 @@ export const HOMEPAGE_DEFAULTS: Record<HomepageSlot, HomepageBlock> = {
   },
   products: {
     slot: "products",
-    eyebrow: "Din atelier",
+    eyebrow: STORE_CONFIG.copy.productsEyebrow,
     title: "Produse publicate recent",
     subtitle: null,
     ctaLabel: "Vezi Magazinul",
@@ -72,9 +73,9 @@ export const HOMEPAGE_DEFAULTS: Record<HomepageSlot, HomepageBlock> = {
   },
   promo: {
     slot: "promo",
-    eyebrow: "Din atelierul nostru",
-    title: "Cauți ceva creat special pentru tine?",
-    subtitle: "Spune-ne ce îți imaginezi, iar noi îți răspundem cu opțiunile potrivite.",
+    eyebrow: STORE_CONFIG.copy.promoEyebrow,
+    title: STORE_CONFIG.copy.promoTitle,
+    subtitle: STORE_CONFIG.copy.promoDescription,
     ctaLabel: "Trimite o cerere",
     ctaHref: "/custom-orders",
     isActive: false,
