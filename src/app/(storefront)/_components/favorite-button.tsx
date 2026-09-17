@@ -25,7 +25,7 @@ export function FavoriteButton({
 
   if (!authenticated) {
     return (
-      <Link className="inline-flex rounded-full border border-emerald-800 px-4 py-2 text-sm font-semibold text-emerald-900" href="/login">
+      <Link className="inline-flex rounded-full border border-brand px-4 py-2 text-sm font-semibold text-brand" href="/login">
         ♡ Autentifică-te pentru favorite
       </Link>
     );
@@ -39,14 +39,14 @@ export function FavoriteButton({
         <input name="desired" type="hidden" value={String(!state.isFavorite)} />
         <button
           aria-pressed={state.isFavorite}
-          className="rounded-full border border-emerald-800 px-4 py-2 text-sm font-semibold text-emerald-900 disabled:opacity-60"
+          className="rounded-full border border-brand px-4 py-2 text-sm font-semibold text-brand disabled:opacity-60"
           disabled={pending}
           type="submit"
         >
           {pending ? "Se actualizează…" : state.isFavorite ? "♥ În favorite" : "♡ Adaugă la favorite"}
         </button>
       </form>
-      {state.message ? <p aria-live="polite" className="mt-2 text-xs text-stone-600">{state.message}</p> : null}
+      {state.message ? <p aria-live="polite" className="mt-2 text-xs text-brand-muted">{state.message}</p> : null}
     </div>
   );
 }

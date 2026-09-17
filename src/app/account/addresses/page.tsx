@@ -18,7 +18,7 @@ export default async function AddressesPage() {
 
   return (
     <section>
-      <p className="text-sm font-medium text-emerald-800">Cont client</p>
+      <p className="text-sm font-medium text-brand">Cont client</p>
       <h1 className="mt-2 text-3xl font-semibold">Adresele mele</h1>
       <p className="mt-3 text-stone-600">Adaugă și actualizează adresele folosite pentru livrare.</p>
 

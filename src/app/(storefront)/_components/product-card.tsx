@@ -1,3 +1,4 @@
+/** @jsxImportSource react */
 import Image from "next/image";
 import Link from "next/link";
 
@@ -30,15 +31,15 @@ export function ProductCard({
 
   return (
     <article
-      className="group overflow-hidden rounded-3xl border border-stone-200 bg-white shadow-sm"
+      className="group overflow-hidden rounded-3xl border border-brand-border/25 bg-brand-surface shadow-sm"
       data-testid="product-card"
     >
       <Link
         aria-label={`Vezi produsul ${product.name}`}
-        className="block focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-800"
+        className="block focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-focus"
         href={`/products/${product.slug}`}
       >
-      <div className="relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-amber-100 via-rose-50 to-emerald-50">
+      <div className="relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-brand-accent via-brand-background to-brand-tint">
         {product.image ? (
           <Image
             alt={product.image.altText ?? product.name}
@@ -66,13 +67,13 @@ export function ProductCard({
             ))}
           </div>
         ) : null}
-        <Heading className="text-lg font-semibold text-stone-950">{product.name}</Heading>
+        <Heading className="text-lg font-semibold text-brand-text">{product.name}</Heading>
         <div className="mt-3 flex items-end justify-between gap-4">
-          <p className="font-semibold text-emerald-900">
+          <p className="font-semibold text-brand">
             {product.hasVariantPricing ? "De la " : ""}
             {currency.format(product.displayPrice)}
           </p>
-          <p className="text-right text-sm text-stone-600">
+          <p className="text-right text-sm text-brand-muted">
             {AVAILABILITY_STATUS_LABELS[product.availabilityStatus]}
           </p>
         </div>

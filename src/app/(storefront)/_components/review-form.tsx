@@ -23,7 +23,7 @@ export function ReviewForm({ productId, productSlug }: { productId: string; prod
         <textarea className="mt-2 min-h-32 w-full rounded-lg border border-stone-300 px-3 py-2" id="review-text" maxLength={2000} minLength={10} name="reviewText" required />
       </div>
       {state.message ? <p aria-live="polite" className={`rounded-lg p-3 text-sm ${state.success ? "bg-emerald-50 text-emerald-800" : "bg-red-50 text-red-800"}`}>{state.message}</p> : null}
-      {!state.success ? <button className="w-fit rounded-full bg-emerald-900 px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-60" disabled={pending} type="submit">{pending ? "Se trimite…" : "Trimite recenzia"}</button> : null}
+      {!state.success ? <button className="w-fit rounded-full bg-brand px-5 py-2.5 text-sm font-semibold text-brand-foreground disabled:opacity-60" disabled={pending} type="submit">{pending ? "Se trimite…" : "Trimite recenzia"}</button> : null}
     </form>
   );
 }

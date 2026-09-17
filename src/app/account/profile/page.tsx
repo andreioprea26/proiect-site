@@ -16,9 +16,9 @@ export default async function ProfilePage() {
 
   return (
     <section className="max-w-2xl">
-      <p className="text-sm font-medium text-emerald-800">Cont client</p>
+      <p className="text-sm font-medium text-brand">Cont client</p>
       <h1 className="mt-2 text-3xl font-semibold">Profilul meu</h1>
-      <p className="mt-3 text-stone-600">Actualizează datele folosite pentru contul tău.</p>
+      <p className="mt-3 text-brand-muted">Actualizează datele folosite pentru contul tău.</p>
       <ProfileForm
         email={context.user.email ?? ""}
         firstName={profile?.first_name ?? ""}

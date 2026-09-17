@@ -24,10 +24,10 @@ export default async function AdminLayout({ children }: Readonly<{ children: Rea
   if (!(await isCurrentUserAdmin())) redirect("/");
 
   return (
-    <div className="min-h-screen bg-stone-950 text-stone-100">
+    <div className="brand-inverse min-h-screen bg-stone-950 text-stone-100">
       <header className="border-b border-stone-800 bg-stone-900">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-4">
-          <Link className="font-semibold text-emerald-400" href="/admin">{store.name} — Admin</Link>
+          <Link className="font-semibold text-brand-on-strong" href="/admin">{store.name} — Admin</Link>
           <nav aria-label="Navigare administrare" className="site-navigation flex flex-wrap items-center gap-4 text-sm text-stone-300">
             <Link href="/admin/settings">Store Settings</Link>
             <Link href="/admin/orders">Comenzi</Link>

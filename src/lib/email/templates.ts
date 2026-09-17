@@ -1,4 +1,5 @@
 import { STORE_CONFIG, type PublicStoreConfig } from "../config/store.ts";
+import { getTheme } from "../config/theme.ts";
 
 export const NOTIFICATION_TYPES = [
   "order_confirmation",
@@ -70,6 +71,7 @@ export function renderOperationalEmail(
   config: PublicStoreConfig = STORE_CONFIG,
 ): RenderedOperationalEmail {
   const title = TITLES[type];
+  const brandColor = getTheme(config.theme).primary;
   const subject = `${title} · ${order.publicNumber}`;
   const payment = order.paymentMethod === "cash_on_delivery" ? "ramburs" : "card online";
   const itemText = order.items
@@ -101,7 +103,7 @@ export function renderOperationalEmail(
   const itemsHtml = type === "order_confirmation"
     ? `<h2 style="font-size:16px">Produse</h2><ul>${order.items.map((item) => `<li>${escapeHtml(item.productName)} × ${item.quantity} — ${escapeHtml(money(item.lineSubtotalMinor, order.currency))}</li>`).join("")}</ul>`
     : "";
-  const html = `<!doctype html><html><body style="margin:0;background:#fafaf9;color:#1c1917;font-family:Arial,sans-serif"><main style="max-width:600px;margin:auto;padding:32px 20px"><p style="color:#047857;font-weight:700">${escapeHtml(config.name)}</p><h1 style="font-size:24px">${escapeHtml(title)}</h1><p>Bună, ${escapeHtml(order.recipientName || "client")}!</p><p>${escapeHtml(INTRO[type])}</p><div style="padding:16px;background:#fff;border:1px solid #e7e5e4;border-radius:10px"><strong>${escapeHtml(order.publicNumber)}</strong><br>Status: ${escapeHtml(order.statusLabel)}<br>Plată: ${escapeHtml(payment)}<br>Livrare: ${escapeHtml(order.shippingMethodName)} · ${escapeHtml(order.city)}, ${escapeHtml(order.county)}<br>Total: <strong>${escapeHtml(money(order.totalMinor, order.currency))}</strong></div>${shipmentHtml}${itemsHtml}<p style="margin-top:24px"><a href="${escapeHtml(order.confirmationUrl)}" style="color:#047857">Vezi detaliile comenzii</a></p></main></body></html>`;
+  const html = `<!doctype html><html><body style="margin:0;background:#fafaf9;color:#1c1917;font-family:Arial,sans-serif"><main style="max-width:600px;margin:auto;padding:32px 20px"><p style="color:${brandColor};font-weight:700">${escapeHtml(config.name)}</p><h1 style="font-size:24px">${escapeHtml(title)}</h1><p>Bună, ${escapeHtml(order.recipientName || "client")}!</p><p>${escapeHtml(INTRO[type])}</p><div style="padding:16px;background:#fff;border:1px solid #e7e5e4;border-radius:10px"><strong>${escapeHtml(order.publicNumber)}</strong><br>Status: ${escapeHtml(order.statusLabel)}<br>Plată: ${escapeHtml(payment)}<br>Livrare: ${escapeHtml(order.shippingMethodName)} · ${escapeHtml(order.city)}, ${escapeHtml(order.county)}<br>Total: <strong>${escapeHtml(money(order.totalMinor, order.currency))}</strong></div>${shipmentHtml}${itemsHtml}<p style="margin-top:24px"><a href="${escapeHtml(order.confirmationUrl)}" style="color:${brandColor}">Vezi detaliile comenzii</a></p></main></body></html>`;
   return { subject, html, text };
 }
 

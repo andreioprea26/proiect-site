@@ -25,9 +25,9 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
   const passwordWasReset = passwordReset === "success";
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-amber-50 px-6 py-12 text-stone-800">
+    <main className="flex min-h-screen items-center justify-center bg-brand-background px-6 py-12 text-brand-text">
       <section className="w-full max-w-md rounded-2xl border border-stone-200 bg-white p-6 shadow-sm sm:p-8">
-        <p className="text-sm font-medium text-emerald-800">{store.name}</p>
+        <p className="text-sm font-medium text-brand">{store.name}</p>
         <h1 className="mt-2 text-3xl font-semibold tracking-tight">
           Autentificare
         </h1>
@@ -45,7 +45,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
         <LoginForm />
         <p className="mt-4 text-center text-sm">
           <Link
-            className="font-medium text-emerald-800 underline-offset-4 hover:underline"
+            className="font-medium text-brand underline-offset-4 hover:underline"
             href="/forgot-password"
           >
             Ai uitat parola?
@@ -54,7 +54,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
         <p className="mt-6 text-center text-sm text-stone-600">
           Nu ai cont?{" "}
           <Link
-            className="font-medium text-emerald-800 underline-offset-4 hover:underline"
+            className="font-medium text-brand underline-offset-4 hover:underline"
             href="/register"
           >
             Creează unul

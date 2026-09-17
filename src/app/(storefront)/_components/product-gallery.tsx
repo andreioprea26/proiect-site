@@ -19,7 +19,7 @@ export function ProductGallery({
 
   if (images.length === 0) {
     return (
-      <div className="flex aspect-square items-center justify-center rounded-[2rem] bg-gradient-to-br from-amber-100 via-rose-50 to-emerald-50 px-8 text-center font-medium text-stone-500">
+      <div className="flex aspect-square items-center justify-center rounded-[2rem] bg-gradient-to-br from-brand-accent via-brand-background to-brand-tint px-8 text-center font-medium text-stone-500">
         Imagine în pregătire
       </div>
     );
@@ -45,7 +45,7 @@ export function ProductGallery({
             <button
               aria-label={`Afișează imaginea ${index + 1}`}
               aria-pressed={activeIndex === index}
-              className="relative aspect-square overflow-hidden rounded-xl border-2 border-transparent bg-stone-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-800 aria-pressed:border-emerald-800"
+              className="relative aspect-square overflow-hidden rounded-xl border-2 border-transparent bg-stone-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-focus aria-pressed:border-brand"
               key={`${image.url}-${index}`}
               onClick={() => setActiveIndex(index)}
               type="button"

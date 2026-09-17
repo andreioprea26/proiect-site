@@ -22,7 +22,7 @@ export default async function AdminPage() {
   return (
     <div>
       <section className="max-w-2xl">
-        <p className="text-sm font-medium text-emerald-400">{store.name}</p>
+        <p className="text-sm font-medium text-brand-on-strong">{store.name}</p>
         <h1 className="mt-2 text-3xl font-semibold tracking-tight">Admin</h1>
         <p className="mt-3 text-sm leading-6 text-stone-300">
           Administrează catalogul magazinului din secțiunile de mai jos.
@@ -30,7 +30,7 @@ export default async function AdminPage() {
       </section>
       <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {sections.map((section) => (
-          <Link className="rounded-2xl border border-stone-800 bg-stone-900 p-6 transition hover:border-emerald-700" href={section.href} key={section.href}>
+          <Link className="rounded-2xl border border-stone-800 bg-stone-900 p-6 transition hover:border-brand" href={section.href} key={section.href}>
             <h2 className="text-xl font-semibold">{section.title}</h2>
             <p className="mt-2 text-sm leading-6 text-stone-300">{section.description}</p>
           </Link>
@@ -38,7 +38,7 @@ export default async function AdminPage() {
       </div>
       <section className="mt-10" data-testid="admin-statistics-dashboard">
         <div>
-          <p className="text-sm font-medium text-emerald-400">Statistici MVP</p>
+          <p className="text-sm font-medium text-brand-on-strong">Statistici MVP</p>
           <h2 className="mt-1 text-2xl font-semibold">Imagine de ansamblu</h2>
           <p className="mt-2 text-xs text-stone-500">Comenzile recente acoperă ultimele {dashboard.stats.periodDays} de zile; valorile financiare sunt totaluri confirmate, separate după metoda de încasare.</p>
         </div>
@@ -63,7 +63,7 @@ export default async function AdminPage() {
         </div>
       </section>
       <section className="mt-10" data-testid="admin-operations-dashboard">
-        <div className="flex flex-wrap items-end justify-between gap-3"><div><p className="text-sm font-medium text-emerald-400">Operațiuni Faza 7</p><h2 className="mt-1 text-2xl font-semibold">Dashboard operațional</h2></div><p className="text-xs text-stone-500">Stoc disponibil = fizic − rezervări active neexpirate</p></div>
+        <div className="flex flex-wrap items-end justify-between gap-3"><div><p className="text-sm font-medium text-brand-on-strong">Operațiuni Faza 7</p><h2 className="mt-1 text-2xl font-semibold">Dashboard operațional</h2></div><p className="text-xs text-stone-500">Stoc disponibil = fizic − rezervări active neexpirate</p></div>
         <div className="mt-5 grid gap-5 lg:grid-cols-3">
           <DashboardCard count={dashboard.newOrderCount} title="Comenzi noi">
             {dashboard.newOrders.map((order) => <OrderLink key={order.id} order={order} />)}
@@ -85,6 +85,6 @@ export default async function AdminPage() {
 
 function DashboardCard({ children, count, title }: { children: React.ReactNode; count: number; title: string }) { return <article className="rounded-2xl border border-stone-800 bg-stone-900 p-5"><div className="flex items-center justify-between gap-3"><h3 className="font-semibold">{title}</h3><span className="rounded-full bg-emerald-950 px-3 py-1 text-sm font-semibold text-emerald-200">{count}</span></div><div className="mt-4 grid gap-2">{children}</div></article>; }
 function OrderLink({ order }: { order: { id: string; publicNumber: string; createdAt: string } }) { return <Link className="block rounded-lg bg-stone-950 p-3 text-sm hover:bg-stone-800" href={`/admin/orders/${order.id}`}><span className="font-semibold">{order.publicNumber}</span><span className="mt-1 block text-xs text-stone-500">{dateFormatter.format(new Date(order.createdAt))}</span></Link>; }
-function FooterLink({ children, href }: { children: React.ReactNode; href: string }) { return <Link className="mt-2 text-sm font-semibold text-emerald-400 underline-offset-4 hover:underline" href={href}>{children} →</Link>; }
+function FooterLink({ children, href }: { children: React.ReactNode; href: string }) { return <Link className="mt-2 text-sm font-semibold text-brand-on-strong underline-offset-4 hover:underline" href={href}>{children} →</Link>; }
 function Metric({ id, label, value }: { id: string; label: string; value: number | string }) { return <article className="rounded-2xl border border-stone-800 bg-stone-900 p-5" data-metric={id}><p className="text-xs font-medium uppercase tracking-wide text-stone-500">{label}</p><p className="mt-2 text-2xl font-semibold text-stone-100">{value}</p></article>; }
 function money(value: number, currency: string) { return new Intl.NumberFormat("ro-RO", { style: "currency", currency }).format(value / 100); }

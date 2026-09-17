@@ -28,6 +28,29 @@ nu înseamnă că onboarding-ul unui client nou sau lansarea Production au fost 
 
 ## 0. Fișa instalării și aprobări — manual
 
+### Branding versionat — 10B.2c
+
+- [ ] În `src/lib/config/store.ts`, setează `theme`: `evergreen`, `plum` sau `terracotta`.
+  Palete noi sunt schimbări de cod în `theme.ts`, cu teste de contrast obligatorii.
+- [ ] Copiază logo-ul revizuit în `public/branding/logo-vN.svg` (sau PNG/JPEG/WebP),
+  apoi setează `assets.logo` la `/branding/logo-vN.svg`; `null` folosește numele.
+  SVG numai din sursă de încredere, fără script/event handlers/foreignObject/URL extern.
+  Verifică legibilitatea în slotul 192×48, inclusiv la 320px și pe fundal alb.
+- [ ] Favicon: `assets.icon` → `/branding/icon-vN.svg`/PNG/ICO; `null` folosește
+  iconul generic. Fără icon convention în `src/app`, care ar suprascrie metadata.
+- [ ] OG brand: imagine 1200×630 PNG/JPEG/WebP în `public/branding`, setează
+  `assets.ogImage`; `null` folosește PNG-ul generic static `/brand-og`.
+  Imaginile produselor păstrează prioritatea. APP_URL rămâne în env.
+- [ ] Folosește nume versionate noi când schimbi asset-uri; browserul și platformele
+  sociale pot păstra favicon/OG în cache. Verifică după release și refresh cache.
+- [ ] Rulează `npm run test:theme`, testele config/email și Chromium; verifică
+  logo, fallback, focus/contrast, mobile, metadata și fiecare fișier configurat.
+- [ ] Proprietarul schimbă texte/contact/social din Admin. Paleta, logo, favicon,
+  OG și fontul comun necesită developer/release. Fără upload, CSS sau fonturi externe.
+- [ ] Revalidarea după Save păstrează paleta/assets din cod; editorialul homepage
+  salvat separat nu este rescris automat la schimbarea numelui.
+
+
 - [ ] Identificator client ne-secret, responsabil tehnic și proprietar business.
 - [ ] Tag/commit master aprobat, versiune schemă și customizări documentate.
 - [ ] Nume magazin, logo/assets/licențe, paletă și descriere acceptate.

@@ -27,7 +27,7 @@ export function ResetPasswordForm() {
           {state.message}
         </p>
         <Link
-          className="mt-5 inline-flex min-h-11 w-full items-center justify-center rounded-lg bg-emerald-800 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-900"
+          className="mt-5 inline-flex min-h-11 w-full items-center justify-center rounded-lg bg-brand px-5 py-3 text-sm font-semibold text-brand-foreground transition hover:bg-brand-hover"
           href="/login"
         >
           Mergi la autentificare
@@ -50,7 +50,7 @@ export function ResetPasswordForm() {
           }
           aria-invalid={Boolean(state.fieldErrors.password)}
           autoComplete="new-password"
-          className="mt-2 w-full rounded-lg border border-stone-300 bg-white px-3 py-2 outline-none focus:border-emerald-700 focus:ring-2 focus:ring-emerald-100"
+          className="mt-2 w-full rounded-lg border border-brand-border bg-brand-surface px-3 py-2 outline-none focus:border-brand-focus focus:ring-2 focus:ring-brand-focus/25"
           id="password"
           minLength={MINIMUM_PASSWORD_LENGTH}
           name="password"
@@ -78,7 +78,7 @@ export function ResetPasswordForm() {
           }
           aria-invalid={Boolean(state.fieldErrors.confirmPassword)}
           autoComplete="new-password"
-          className="mt-2 w-full rounded-lg border border-stone-300 bg-white px-3 py-2 outline-none focus:border-emerald-700 focus:ring-2 focus:ring-emerald-100"
+          className="mt-2 w-full rounded-lg border border-brand-border bg-brand-surface px-3 py-2 outline-none focus:border-brand-focus focus:ring-2 focus:ring-brand-focus/25"
           id="confirm-password"
           name="confirmPassword"
           type="password"
@@ -101,7 +101,7 @@ export function ResetPasswordForm() {
       ) : null}
 
       <button
-        className="w-full rounded-lg bg-emerald-800 px-4 py-2.5 font-medium text-white transition hover:bg-emerald-900 disabled:cursor-not-allowed disabled:opacity-60"
+        className="w-full rounded-lg bg-brand px-4 py-2.5 font-medium text-brand-foreground transition hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-60"
         disabled={isPending}
         type="submit"
       >
