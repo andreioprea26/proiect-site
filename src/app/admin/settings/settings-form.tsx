@@ -14,6 +14,6 @@ export function SettingsForm({ values }: { values: SettingsValues }) {
     </div>)}
     <p className="text-sm text-stone-400">Câmp gol = fallback versionat (sau link/date de contact ascunse dacă fallback-ul este gol). Telefon/WhatsApp: cifre, opțional + la început. Numai text simplu; fără HTML sau secrete. Emailul public nu schimbă expeditorul mesajelor.</p>
     {state.message ? <p role={state.success ? "status" : "alert"}>{state.message}</p> : null}
-    <button className="min-h-11 rounded-lg bg-emerald-700 px-5 py-3 font-semibold text-white disabled:opacity-60" disabled={pending} type="submit">{pending ? "Se salvează…" : "Salvează setările"}</button>
+    <button className="min-h-11 rounded-lg bg-brand px-5 py-3 font-semibold text-white disabled:opacity-60" disabled={pending} type="submit">{pending ? "Se salvează…" : "Salvează setările"}</button>
   </form>;
 }

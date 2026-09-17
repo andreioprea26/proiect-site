@@ -34,15 +34,15 @@ export default async function ResetPasswordPage() {
   const canResetPassword = await hasRecoverySession();
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-amber-50 px-6 py-12 text-stone-800">
-      <section className="w-full max-w-md rounded-2xl border border-stone-200 bg-white p-6 shadow-sm sm:p-8">
-        <p className="text-sm font-medium text-emerald-800">{store.name}</p>
+    <main className="flex min-h-screen items-center justify-center bg-brand-background px-6 py-12 text-brand-text">
+      <section className="w-full max-w-md rounded-2xl border border-brand-border/25 bg-brand-surface p-6 shadow-sm sm:p-8">
+        <p className="text-sm font-medium text-brand">{store.name}</p>
         <h1 className="mt-2 text-3xl font-semibold tracking-tight">
           Alege o parolă nouă
         </h1>
         {canResetPassword ? (
           <>
-            <p className="mt-3 text-sm leading-6 text-stone-600">
+            <p className="mt-3 text-sm leading-6 text-brand-muted">
               Introdu și confirmă noua parolă a contului tău.
             </p>
             <ResetPasswordForm />
@@ -56,7 +56,7 @@ export default async function ResetPasswordPage() {
               Linkul de resetare este invalid sau a expirat. Solicită un link nou.
             </p>
             <Link
-              className="mt-5 inline-flex min-h-11 w-full items-center justify-center rounded-lg bg-emerald-800 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-900"
+              className="mt-5 inline-flex min-h-11 w-full items-center justify-center rounded-lg bg-brand px-5 py-3 text-sm font-semibold text-brand-foreground transition hover:bg-brand-hover"
               href="/forgot-password"
             >
               Solicită un link nou

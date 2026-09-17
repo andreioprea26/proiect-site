@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { brandAsset, type ThemeName } from "./theme.ts";
 
 /** Public, serializable identity only. Safe to import from client/error components. */
 export type PublicStoreConfig = {
@@ -11,7 +12,8 @@ export type PublicStoreConfig = {
   readonly contact: { readonly email: string | null; readonly phone: string | null; readonly whatsapp: string | null };
   readonly social: { readonly instagram: string | null; readonly facebook: string | null; readonly tiktok: string | null };
   readonly market: { readonly locale: "ro-RO"; readonly country: "RO"; readonly currency: "RON"; readonly timeZone: "Europe/Bucharest" };
-  readonly assets: { readonly ogImage: `/${string}` | null };
+  readonly theme: ThemeName;
+  readonly assets: { readonly logo: `/${string}` | null; readonly icon: `/${string}` | null; readonly ogImage: `/${string}` | null };
   readonly copy: {
     readonly heroTitle: string;
     readonly productsEyebrow: string;
@@ -37,7 +39,8 @@ export const STORE_CONFIG: PublicStoreConfig = {
   seoDescription: "Descoperă produsele, categoriile și colecțiile disponibile în magazinul nostru online.",
   footerDescription: "Explorează produsele și colecțiile noastre. Pentru întrebări, folosește pagina de contact.",
   market: { locale: "ro-RO", country: "RO", currency: "RON", timeZone: "Europe/Bucharest" },
-  assets: { ogImage: null },
+  theme: "evergreen",
+  assets: { logo: null, icon: null, ogImage: null },
   contact: { email: null, phone: null, whatsapp: null },
   social: { instagram: null, facebook: null, tiktok: null },
   copy: {
@@ -73,12 +76,18 @@ export function storeText(config: PublicStoreConfig = STORE_CONFIG) {
 
 /** Origin remains infrastructure-owned; no env or database reads here. */
 export function storeMetadata(config: PublicStoreConfig = STORE_CONFIG): Metadata {
-  const images = config.assets.ogImage ? [config.assets.ogImage] : undefined;
+  const images = [storeOgImage(config)];
   return {
     title: config.name,
     description: config.seoDescription,
     applicationName: config.name,
+    icons: { icon: brandAsset(config.assets.icon, "icon") ?? "/branding/icon.svg" },
     openGraph: { type: "website", locale: "ro_RO", siteName: config.name, title: config.name, description: config.seoDescription, url: "/", ...(images ? { images } : {}) },
-    twitter: { card: "summary", title: config.name, description: config.seoDescription, ...(images ? { images } : {}) },
+    twitter: { card: "summary_large_image", title: config.name, description: config.seoDescription, images },
   };
+}
+
+/** Resource URLs already pass the catalog's image contract; branding stays local. */
+export function storeOgImage(config: PublicStoreConfig = STORE_CONFIG, resourceImage?: string | null) {
+  return resourceImage || brandAsset(config.assets.ogImage, "ogImage") || "/brand-og";
 }

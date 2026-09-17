@@ -11,6 +11,7 @@ import { getPublicProductBySlug } from "@/lib/storefront/catalog";
 import { getFavoriteState } from "@/lib/account/favorites";
 import { getCustomerReviewState, getPublicProductReviews } from "@/lib/reviews/server";
 import { absoluteUrl } from "@/lib/seo";
+import { storeOgImage } from "@/lib/config/store";
 
 import { FavoriteButton } from "../../_components/favorite-button";
 import { ProductConfigurator } from "../../_components/product-configurator";
@@ -39,6 +40,12 @@ export async function generateMetadata({
       product.description?.slice(0, 160) ??
       `Descoperă produsul ${product.name}.`,
     alternates: { canonical: `/products/${product.slug}` },
+    twitter: {
+      card: "summary_large_image",
+      title: product.name,
+      description: product.description?.slice(0, 160) ?? `Descoperă produsul ${product.name}.`,
+      images: [storeOgImage(store, product.image?.url)],
+    },
     openGraph: {
       type: "website",
       siteName: store.name,
@@ -49,7 +56,7 @@ export async function generateMetadata({
       url: `/products/${product.slug}`,
       images: product.image
         ? [{ url: product.image.url, alt: product.image.altText ?? product.name }]
-        : undefined,
+        : [{ url: storeOgImage(store), alt: store.name }],
     },
   };
 }
@@ -93,13 +100,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
       <script data-testid="product-structured-data" type="application/ld+json">
         {JSON.stringify(structuredData).replace(/</g, "\\u003c")}
       </script>
-      <Link className="text-sm font-semibold text-emerald-900 hover:underline" href="/shop">
+      <Link className="text-sm font-semibold text-brand hover:underline" href="/shop">
         ← Înapoi la Magazin
       </Link>
       <div className="mt-6 grid gap-10 lg:grid-cols-2 lg:items-start">
         <ProductGallery images={product.images} productName={product.name} />
         <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-800">
+          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-brand">
             {PRODUCT_TYPE_LABELS[product.productType]}
           </p>
           <h1 className="mt-3 text-4xl font-semibold tracking-tight text-stone-950 sm:text-5xl">
@@ -142,7 +149,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                   <h2 className="font-semibold text-stone-950">Categorii</h2>
                   <div className="mt-2 flex flex-wrap gap-2">
                     {product.categories.map((category) => (
-                      <Link className="rounded-full border border-stone-300 px-3 py-1.5 hover:border-emerald-700" href={`/categories/${category.slug}`} key={category.id}>{category.name}</Link>
+                      <Link className="rounded-full border border-brand-border px-3 py-1.5 hover:border-brand" href={`/categories/${category.slug}`} key={category.id}>{category.name}</Link>
                     ))}
                   </div>
                 </div>
@@ -152,7 +159,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                   <h2 className="font-semibold text-stone-950">Colecții</h2>
                   <div className="mt-2 flex flex-wrap gap-2">
                     {product.collections.map((collection) => (
-                      <Link className="rounded-full border border-stone-300 px-3 py-1.5 hover:border-emerald-700" href={`/collections/${collection.slug}`} key={collection.id}>{collection.name}</Link>
+                      <Link className="rounded-full border border-brand-border px-3 py-1.5 hover:border-brand" href={`/collections/${collection.slug}`} key={collection.id}>{collection.name}</Link>
                     ))}
                   </div>
                 </div>
@@ -167,7 +174,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
       </div>
       <section className="mt-16 border-t border-stone-200 pt-10" aria-labelledby="product-reviews">
         <div className="flex flex-wrap items-end justify-between gap-4">
-          <div><p className="text-sm font-semibold text-emerald-800">Păreri de la clienți</p><h2 className="mt-2 text-3xl font-semibold" id="product-reviews">Recenzii</h2></div>
+          <div><p className="text-sm font-semibold text-brand">Păreri de la clienți</p><h2 className="mt-2 text-3xl font-semibold" id="product-reviews">Recenzii</h2></div>
           <p className="text-sm text-stone-600">{publicReviews.averageRating === null ? "Nicio recenzie aprobată" : `${publicReviews.averageRating.toFixed(1)} / 5 · ${publicReviews.reviews.length} ${publicReviews.reviews.length === 1 ? "recenzie" : "recenzii"}`}</p>
         </div>
         {publicReviews.reviews.length ? <div className="mt-6 grid gap-4 md:grid-cols-2">{publicReviews.reviews.map((review) => <article className="rounded-2xl border border-stone-200 bg-white p-5" key={review.id}><div className="flex flex-wrap items-center justify-between gap-3"><p className="font-semibold">{review.rating}/5 · {review.authorDisplayName}</p>{review.verifiedPurchase ? <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-800">Achiziție verificată</span> : null}</div><p className="mt-4 whitespace-pre-line text-sm leading-6 text-stone-700">{review.text}</p><p className="mt-3 text-xs text-stone-500">{new Intl.DateTimeFormat("ro-RO", { dateStyle: "medium", timeZone: "Europe/Bucharest" }).format(new Date(review.createdAt))}</p></article>)}</div> : <p className="mt-6 rounded-xl border border-dashed border-stone-300 p-5 text-stone-600">Acest produs nu are încă recenzii publicate.</p>}

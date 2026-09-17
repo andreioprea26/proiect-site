@@ -34,7 +34,7 @@ const INITIAL_ADDRESS_STATE: AddressActionState = {
   success: false,
 };
 
-const inputClass = "mt-2 w-full rounded-lg border border-stone-300 bg-white px-3 py-2 outline-none focus:border-emerald-700 focus:ring-2 focus:ring-emerald-100";
+const inputClass = "mt-2 w-full rounded-lg border border-brand-border bg-brand-surface px-3 py-2 outline-none focus:border-brand-focus focus:ring-2 focus:ring-brand-focus/25";
 
 export function AddressForm({ addressId, initial = EMPTY_ADDRESS }: AddressFormProps) {
   const action = addressId ? updateAddress : createAddress;
@@ -58,7 +58,7 @@ export function AddressForm({ addressId, initial = EMPTY_ADDRESS }: AddressFormP
       </label>
       {state.message ? <ActionMessage state={state} /> : null}
       <div className="sm:col-span-2">
-        <button className="rounded-lg bg-emerald-800 px-5 py-2.5 font-medium text-white disabled:opacity-60" disabled={isPending} type="submit">
+        <button className="rounded-lg bg-brand px-5 py-2.5 font-medium text-brand-foreground disabled:opacity-60" disabled={isPending} type="submit">
           {isPending ? "Se salvează…" : addressId ? "Salvează adresa" : "Adaugă adresa"}
         </button>
       </div>

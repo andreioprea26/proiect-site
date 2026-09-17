@@ -22,13 +22,13 @@ export default async function CheckoutPage({
   return (
     <main className="mx-auto max-w-7xl px-5 py-12 sm:px-8 sm:py-16">
       <header className="max-w-3xl">
-        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-800">
+        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-brand">
           Checkout sigur
         </p>
         <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">
           Date pentru comandă
         </h1>
-        <p className="mt-5 text-lg leading-8 text-stone-600">
+        <p className="mt-5 text-lg leading-8 text-brand-muted">
           Completează datele, apoi verificăm pe server prețurile,
           personalizările, disponibilitatea și stocul înainte de înregistrarea
           atomică a comenzii și a stocului disponibil.

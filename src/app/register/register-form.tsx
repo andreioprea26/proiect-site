@@ -95,7 +95,7 @@ export function RegisterForm() {
           aria-describedby={fieldErrors.email ? "email-error" : undefined}
           aria-invalid={Boolean(fieldErrors.email)}
           autoComplete="email"
-          className="mt-2 w-full rounded-lg border border-stone-300 bg-white px-3 py-2 outline-none focus:border-emerald-700 focus:ring-2 focus:ring-emerald-100"
+          className="mt-2 w-full rounded-lg border border-brand-border bg-brand-surface px-3 py-2 outline-none focus:border-brand-focus focus:ring-2 focus:ring-brand-focus/25"
           id="email"
           name="email"
           type="email"
@@ -117,7 +117,7 @@ export function RegisterForm() {
           }
           aria-invalid={Boolean(fieldErrors.password)}
           autoComplete="new-password"
-          className="mt-2 w-full rounded-lg border border-stone-300 bg-white px-3 py-2 outline-none focus:border-emerald-700 focus:ring-2 focus:ring-emerald-100"
+          className="mt-2 w-full rounded-lg border border-brand-border bg-brand-surface px-3 py-2 outline-none focus:border-brand-focus focus:ring-2 focus:ring-brand-focus/25"
           id="password"
           minLength={MINIMUM_PASSWORD_LENGTH}
           name="password"
@@ -143,7 +143,7 @@ export function RegisterForm() {
           }
           aria-invalid={Boolean(fieldErrors.confirmPassword)}
           autoComplete="new-password"
-          className="mt-2 w-full rounded-lg border border-stone-300 bg-white px-3 py-2 outline-none focus:border-emerald-700 focus:ring-2 focus:ring-emerald-100"
+          className="mt-2 w-full rounded-lg border border-brand-border bg-brand-surface px-3 py-2 outline-none focus:border-brand-focus focus:ring-2 focus:ring-brand-focus/25"
           id="confirm-password"
           name="confirmPassword"
           type="password"
@@ -170,7 +170,7 @@ export function RegisterForm() {
       ) : null}
 
       <button
-        className="w-full rounded-lg bg-emerald-800 px-4 py-2.5 font-medium text-white transition hover:bg-emerald-900 disabled:cursor-not-allowed disabled:opacity-60"
+        className="w-full rounded-lg bg-brand px-4 py-2.5 font-medium text-brand-foreground transition hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-60"
         disabled={isSubmitting}
         type="submit"
       >

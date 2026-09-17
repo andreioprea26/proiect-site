@@ -105,21 +105,21 @@ export function ProductConfigurator({
 
   return (
     <div className="grid gap-8">
-      <div className="rounded-2xl bg-emerald-50 p-5" aria-live="polite">
-        <p className="text-sm font-medium text-emerald-900">Preț orientativ</p>
+      <div className="rounded-2xl bg-brand-tint p-5" aria-live="polite">
+        <p className="text-sm font-medium text-brand">Preț orientativ</p>
         <p
-          className="mt-1 text-3xl font-semibold text-emerald-950"
+          className="mt-1 text-3xl font-semibold text-brand-strong"
           data-testid="configured-price"
         >
           {formatMoney(configuredBasePriceMinor + additionalCostMinor)}
         </p>
         {additionalCostMinor > 0 ? (
-          <p className="mt-2 text-sm text-emerald-800">
+          <p className="mt-2 text-sm text-brand">
             Include {formatMoney(additionalCostMinor)} din personalizările
             selectate.
           </p>
         ) : null}
-        <p className="mt-2 text-xs leading-5 text-emerald-800/80">
+        <p className="mt-2 text-xs leading-5 text-brand/80">
           Prețul final, disponibilitatea și stocul vor fi recalculate și validate
           pe server la checkout.
         </p>
@@ -137,13 +137,13 @@ export function ProductConfigurator({
             <legend className="sr-only">Alege varianta produsului</legend>
             {product.variants.map((variant) => (
               <label
-                className="flex cursor-pointer items-start justify-between gap-4 rounded-2xl border border-stone-300 bg-white p-4 has-checked:border-emerald-800 has-checked:ring-2 has-checked:ring-emerald-100"
+                className="flex cursor-pointer items-start justify-between gap-4 rounded-2xl border border-brand-border bg-brand-surface p-4 has-checked:border-brand has-checked:ring-2 has-checked:ring-brand-tint"
                 key={variant.id}
               >
                 <span className="flex gap-3">
                   <input
                     checked={selectedVariantId === variant.id}
-                    className="mt-1 accent-emerald-800"
+                    className="mt-1 accent-brand"
                     name="product-variant"
                     onChange={() => {
                       setSelectedVariantId(variant.id);
@@ -165,7 +165,7 @@ export function ProductConfigurator({
                     </span>
                   </span>
                 </span>
-                <span className="whitespace-nowrap text-sm font-semibold text-emerald-900">
+                <span className="whitespace-nowrap text-sm font-semibold text-brand">
                   {formatMoney(toMinorUnits(variant.effectivePrice))}
                 </span>
               </label>
@@ -216,7 +216,7 @@ export function ProductConfigurator({
             <input
               aria-describedby={errors.quantity ? "quantity-error" : undefined}
               aria-invalid={Boolean(errors.quantity)}
-              className="mt-2 block w-28 rounded-xl border border-stone-300 px-3 py-2.5 outline-none focus:border-emerald-700 focus:ring-2 focus:ring-emerald-100"
+              className="mt-2 block w-28 rounded-xl border border-brand-border px-3 py-2.5 outline-none focus:border-brand-focus focus:ring-2 focus:ring-brand-focus/25"
               id="product-quantity"
               max={maximumQuantity}
               min="1"
@@ -256,7 +256,7 @@ export function ProductConfigurator({
       ) : null}
 
       <button
-        className="min-h-12 rounded-full bg-emerald-900 px-6 py-3 font-semibold text-white transition hover:bg-emerald-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-800 disabled:cursor-not-allowed disabled:bg-stone-300 disabled:text-stone-600"
+        className="min-h-12 rounded-full bg-brand px-6 py-3 font-semibold text-brand-foreground transition hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-focus disabled:cursor-not-allowed disabled:bg-stone-300 disabled:text-brand-muted"
         disabled={isUnavailable || Boolean(requiredImage)}
         onClick={addToCart}
         type="button"
@@ -317,7 +317,7 @@ function CustomizationControl({
         ) : (
           <span />
         )}
-        <span className="font-semibold text-emerald-900">{costLabel}</span>
+        <span className="font-semibold text-brand">{costLabel}</span>
       </div>
 
       {customization.optionType === "selection" ? (
@@ -326,7 +326,7 @@ function CustomizationControl({
           <select
             aria-describedby={error ? errorId : undefined}
             aria-invalid={Boolean(error)}
-            className="mt-2 w-full rounded-xl border border-stone-300 px-3 py-2.5 outline-none focus:border-emerald-700 focus:ring-2 focus:ring-emerald-100"
+            className="mt-2 w-full rounded-xl border border-brand-border px-3 py-2.5 outline-none focus:border-brand-focus focus:ring-2 focus:ring-brand-focus/25"
             id={id}
             onChange={(event) => onChange(event.target.value)}
             required={customization.isRequired}
@@ -349,7 +349,7 @@ function CustomizationControl({
             <textarea
               aria-describedby={error ? errorId : undefined}
               aria-invalid={Boolean(error)}
-              className="mt-2 w-full rounded-xl border border-stone-300 px-3 py-2.5 outline-none focus:border-emerald-700 focus:ring-2 focus:ring-emerald-100"
+              className="mt-2 w-full rounded-xl border border-brand-border px-3 py-2.5 outline-none focus:border-brand-focus focus:ring-2 focus:ring-brand-focus/25"
               id={id}
               maxLength={maxLength ?? undefined}
               minLength={minLength ?? undefined}
@@ -362,7 +362,7 @@ function CustomizationControl({
             <input
               aria-describedby={error ? errorId : undefined}
               aria-invalid={Boolean(error)}
-              className="mt-2 w-full rounded-xl border border-stone-300 px-3 py-2.5 outline-none focus:border-emerald-700 focus:ring-2 focus:ring-emerald-100"
+              className="mt-2 w-full rounded-xl border border-brand-border px-3 py-2.5 outline-none focus:border-brand-focus focus:ring-2 focus:ring-brand-focus/25"
               id={id}
               maxLength={maxLength ?? undefined}
               minLength={minLength ?? undefined}
@@ -388,7 +388,7 @@ function CustomizationControl({
             aria-describedby={error ? errorId : undefined}
             aria-invalid={Boolean(error)}
             checked={value === true}
-            className="size-4 accent-emerald-800"
+            className="size-4 accent-brand"
             id={id}
             onChange={(event) => onChange(event.target.checked)}
             type="checkbox"
@@ -408,7 +408,7 @@ function CustomizationControl({
               aria-describedby={error ? errorId : undefined}
               aria-invalid={Boolean(error)}
               checked={value === true}
-              className="size-4 accent-emerald-800"
+              className="size-4 accent-brand"
               disabled={customization.isRequired}
               id={id}
               onChange={(event) => onChange(event.target.checked)}

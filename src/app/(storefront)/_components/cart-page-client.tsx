@@ -26,7 +26,7 @@ export function CartPageClient() {
 
   if (!hydrated) {
     return (
-      <p aria-live="polite" className="mt-10 text-stone-600">
+      <p aria-live="polite" className="mt-10 text-brand-muted">
         Se încarcă coșul…
       </p>
     );
@@ -34,13 +34,13 @@ export function CartPageClient() {
 
   if (lines.length === 0) {
     return (
-      <div className="mt-10 rounded-3xl border border-dashed border-stone-300 bg-white/70 px-6 py-12 text-center">
-        <h2 className="text-2xl font-semibold text-stone-900">Coșul este gol</h2>
-        <p className="mx-auto mt-3 max-w-xl text-stone-600">
+      <div className="mt-10 rounded-3xl border border-dashed border-brand-border bg-brand-surface/70 px-6 py-12 text-center">
+        <h2 className="text-2xl font-semibold text-brand-text">Coșul este gol</h2>
+        <p className="mx-auto mt-3 max-w-xl text-brand-muted">
           {STORE_CONFIG.copy.emptyCart}
         </p>
         <Link
-          className="mt-6 inline-flex rounded-full bg-emerald-900 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-800"
+          className="mt-6 inline-flex rounded-full bg-brand px-5 py-2.5 text-sm font-semibold text-brand-foreground transition hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-focus"
           href="/shop"
         >
           Înapoi la Magazin
@@ -57,7 +57,7 @@ export function CartPageClient() {
             Produse ({itemCount})
           </h2>
           <button
-            className="rounded-full border border-stone-300 px-4 py-2 text-sm font-semibold text-stone-700 transition hover:border-red-300 hover:bg-red-50 hover:text-red-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-700"
+            className="rounded-full border border-brand-border px-4 py-2 text-sm font-semibold text-brand-muted transition hover:border-red-300 hover:bg-red-50 hover:text-red-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-700"
             onClick={clearCart}
             type="button"
           >
@@ -78,26 +78,26 @@ export function CartPageClient() {
         </div>
       </section>
 
-      <aside className="rounded-3xl border border-stone-200 bg-white p-6 shadow-sm">
+      <aside className="rounded-3xl border border-brand-border/25 bg-brand-surface p-6 shadow-sm">
         <h2 className="text-xl font-semibold">Sumar coș</h2>
-        <div className="mt-5 flex items-center justify-between gap-4 border-b border-stone-200 pb-5">
-          <span className="text-stone-600">Subtotal estimativ</span>
-          <strong className="text-xl text-emerald-900" data-testid="cart-subtotal">
+        <div className="mt-5 flex items-center justify-between gap-4 border-b border-brand-border/25 pb-5">
+          <span className="text-brand-muted">Subtotal estimativ</span>
+          <strong className="text-xl text-brand" data-testid="cart-subtotal">
             {formatMoney(subtotalMinor)}
           </strong>
         </div>
-        <p className="mt-5 text-sm leading-6 text-stone-600">
+        <p className="mt-5 text-sm leading-6 text-brand-muted">
           Produsele, configurațiile, prețurile, disponibilitatea și stocul vor fi
           validate din nou pe server la checkout. Transportul nu este inclus.
         </p>
         <Link
-          className="mt-6 flex min-h-12 w-full items-center justify-center rounded-full bg-emerald-900 px-5 py-3 font-semibold text-white transition hover:bg-emerald-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-800"
+          className="mt-6 flex min-h-12 w-full items-center justify-center rounded-full bg-brand px-5 py-3 font-semibold text-brand-foreground transition hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-focus"
           href="/checkout"
         >
           Continuă la checkout
         </Link>
         <Link
-          className="mt-4 flex justify-center text-sm font-semibold text-emerald-900 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-800"
+          className="mt-4 flex justify-center text-sm font-semibold text-brand hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-focus"
           href="/shop"
         >
           Continuă cumpărăturile
@@ -120,12 +120,12 @@ function CartLineCard({
 
   return (
     <article
-      className="grid gap-5 rounded-3xl border border-stone-200 bg-white p-5 shadow-sm sm:grid-cols-[8rem_minmax(0,1fr)]"
+      className="grid gap-5 rounded-3xl border border-brand-border/25 bg-brand-surface p-5 shadow-sm sm:grid-cols-[8rem_minmax(0,1fr)]"
       data-testid="cart-line"
     >
       <Link
         aria-label={`Vezi produsul ${line.name}`}
-        className="relative aspect-square overflow-hidden rounded-2xl bg-gradient-to-br from-amber-100 via-rose-50 to-emerald-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-800"
+        className="relative aspect-square overflow-hidden rounded-2xl bg-gradient-to-br from-brand-accent via-brand-background to-brand-tint focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-focus"
         href={`/products/${line.slug}`}
       >
         {line.image ? (
@@ -146,13 +146,13 @@ function CartLineCard({
       <div className="min-w-0">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <h3 className="text-lg font-semibold text-stone-950">
+            <h3 className="text-lg font-semibold text-brand-text">
               <Link className="hover:underline" href={`/products/${line.slug}`}>
                 {line.name}
               </Link>
             </h3>
             {line.variant ? (
-              <p className="mt-1 text-sm text-stone-600">
+              <p className="mt-1 text-sm text-brand-muted">
                 Variantă: <strong>{line.variant.title}</strong>
               </p>
             ) : null}
@@ -168,11 +168,11 @@ function CartLineCard({
         </div>
 
         {line.customizations.length > 0 ? (
-          <dl className="mt-4 grid gap-1 text-sm text-stone-600">
+          <dl className="mt-4 grid gap-1 text-sm text-brand-muted">
             {line.customizations.map((customization) => (
               <div className="flex flex-wrap gap-1" key={customization.id}>
                 <dt>{customization.name}:</dt>
-                <dd className="font-medium text-stone-800">
+                <dd className="font-medium text-brand-text">
                   {customization.displayValue}
                   {customization.additionalCostMinor > 0
                     ? ` (+ ${formatMoney(customization.additionalCostMinor)})`
@@ -191,7 +191,7 @@ function CartLineCard({
             <div className="flex items-center gap-2">
               <button
                 aria-label={`Scade cantitatea pentru ${line.name}`}
-                className="size-10 rounded-full border border-stone-300 font-semibold disabled:cursor-not-allowed disabled:opacity-40"
+                className="size-10 rounded-full border border-brand-border font-semibold disabled:cursor-not-allowed disabled:opacity-40"
                 disabled={line.quantity <= 1}
                 onClick={() => onUpdateQuantity(line.quantity - 1)}
                 type="button"
@@ -200,7 +200,7 @@ function CartLineCard({
               </button>
               <input
                 aria-label={`Cantitate pentru ${line.name}`}
-                className="h-10 w-16 rounded-xl border border-stone-300 text-center outline-none focus:border-emerald-700 focus:ring-2 focus:ring-emerald-100"
+                className="h-10 w-16 rounded-xl border border-brand-border text-center outline-none focus:border-brand-focus focus:ring-2 focus:ring-brand-focus/25"
                 max={maximum}
                 min="1"
                 onChange={(event) => {
@@ -213,7 +213,7 @@ function CartLineCard({
               />
               <button
                 aria-label={`Crește cantitatea pentru ${line.name}`}
-                className="size-10 rounded-full border border-stone-300 font-semibold disabled:cursor-not-allowed disabled:opacity-40"
+                className="size-10 rounded-full border border-brand-border font-semibold disabled:cursor-not-allowed disabled:opacity-40"
                 disabled={line.quantity >= maximum}
                 onClick={() => onUpdateQuantity(line.quantity + 1)}
                 type="button"
@@ -226,10 +226,10 @@ function CartLineCard({
             ) : null}
           </div>
           <div className="text-right">
-            <p className="text-sm text-stone-600">
+            <p className="text-sm text-brand-muted">
               {formatMoney(line.unitPriceMinor)} / buc.
             </p>
-            <p className="mt-1 font-semibold text-emerald-900" data-testid="line-subtotal">
+            <p className="mt-1 font-semibold text-brand" data-testid="line-subtotal">
               {formatMoney(line.unitPriceMinor * line.quantity)}
             </p>
           </div>

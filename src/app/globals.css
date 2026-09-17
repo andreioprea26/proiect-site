@@ -1,19 +1,44 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Safe fallback for the isolated global-error document. */
+  --brand-primary: #065f46;
+  --brand-hover: #064e3b;
+  --brand-foreground: #ffffff;
+  --brand-accent: #fef3c7;
+  --brand-background: #fbfaf6;
+  --brand-surface: #ffffff;
+  --brand-text: #1c1917;
+  --brand-muted: #57534e;
+  --brand-border: #78716c;
+  --brand-focus: #065f46;
+  --brand-tint: #ecfdf5;
+  --brand-strong: #022c22;
+  --brand-onStrong: #d1fae5;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: var(--brand-background);
+  --color-foreground: var(--brand-text);
+  --color-brand: var(--brand-primary);
+  --color-brand-hover: var(--brand-hover);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-brand-accent: var(--brand-accent);
+  --color-brand-background: var(--brand-background);
+  --color-brand-surface: var(--brand-surface);
+  --color-brand-text: var(--brand-text);
+  --color-brand-muted: var(--brand-muted);
+  --color-brand-border: var(--brand-border);
+  --color-brand-focus: var(--brand-focus);
+  --color-brand-tint: var(--brand-tint);
+  --color-brand-strong: var(--brand-strong);
+  --color-brand-on-strong: var(--brand-onStrong);
 }
 
 body {
   margin: 0;
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--brand-background);
+  color: var(--brand-text);
   font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -23,9 +48,12 @@ body {
 }
 
 :focus-visible {
-  outline: 2px solid #065f46;
+  outline: 2px solid var(--brand-focus);
   outline-offset: 3px;
 }
+
+/* Inverse surfaces need a light focus outline; status colors remain unrelated. */
+.brand-inverse { --brand-focus: var(--brand-onStrong); }
 
 .skip-link {
   position: fixed;
@@ -34,8 +62,8 @@ body {
   left: 0.75rem;
   transform: translateY(-200%);
   border-radius: 9999px;
-  background: #064e3b;
-  color: white;
+  background: var(--brand-strong);
+  color: var(--brand-foreground);
   padding: 0.75rem 1rem;
   font-weight: 700;
 }

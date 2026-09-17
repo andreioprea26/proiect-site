@@ -49,10 +49,10 @@ for (const config of brands) {
 test("public asset fallback and different brand outputs", () => {
   assert.notDeepEqual(storeText(brands[0]), storeText(brands[1]));
   assert.notDeepEqual(storeMetadata(brands[0]), storeMetadata(brands[1]));
-  assert.equal(storeMetadata().openGraph.images, undefined);
-  const metadata = storeMetadata({ ...brands[0], assets: { ogImage: "/demo-og.png" } });
-  assert.deepEqual(metadata.openGraph.images, ["/demo-og.png"]);
-  assert.deepEqual(metadata.twitter.images, ["/demo-og.png"]);
+  assert.deepEqual(storeMetadata().openGraph.images, ["/brand-og"]);
+  const metadata = storeMetadata({ ...brands[0], assets: { ...STORE_CONFIG.assets, ogImage: "/branding/demo-og.png" } });
+  assert.deepEqual(metadata.openGraph.images, ["/branding/demo-og.png"]);
+  assert.deepEqual(metadata.twitter.images, ["/branding/demo-og.png"]);
 });
 
 test("brand HTML is escaped, while plain text remains literal", () => {
@@ -69,7 +69,9 @@ test("config is versioned, serializable, DB/env independent and fixes the RO con
   assert.deepEqual(STORE_CONFIG.market, { locale: "ro-RO", country: "RO", currency: "RON", timeZone: "Europe/Bucharest" });
   const source = readFileSync(new URL("../../src/lib/config/store.ts", import.meta.url), "utf8");
   assert.doesNotMatch(source, /process\.env|fetch\(|supabase|stripe|resend|server-only/i);
-  assert.deepEqual(source.match(/^import .*$/gm), ['import type { Metadata } from "next";']);
+  assert.deepEqual(source.match(/^import .*$/gm), ['import type { Metadata } from "next";', 'import { brandAsset, type ThemeName } from "./theme.ts";']);
+  const theme = readFileSync(new URL("../../src/lib/config/theme.ts", import.meta.url), "utf8");
+  assert.doesNotMatch(theme, /^import |process\.env|fetch\(|supabase|stripe|resend|server-only/im);
 });
 
 test("rebranding preserves historical cart and checkout browser keys", () => {

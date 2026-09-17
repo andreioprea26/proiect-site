@@ -51,6 +51,7 @@ npm run test:e2e
 npm run test:e2e:headed
 npm run test:config
 npm run test:email
+npm run test:theme
 ```
 
 - `npm run dev` pornește serverul local de dezvoltare.
@@ -135,12 +136,19 @@ Fallback-urile homepage se folosesc când sloturile nu sunt configurate. Conțin
 editorial deja salvat în administrarea homepage are prioritate și nu este rescris
 la schimbarea configului. Datele produselor rămân sursa metadatelor dinamice.
 
-`assets.ogImage` acceptă o cale statică locală, de exemplu `/store-og.png`, cu fișierul
-în `public`; `null` nu inventează o imagine. Brandingul vizibil rămâne text (nu există
-logo real sau upload). Favicon-ul existent rămâne `src/app/favicon.ico`, conform
-convenției Next.js; logo/favicon/theme avansat sunt rezervate 10B.2c. Datele publice
-de contact/social configurate sunt afișate în footer. `/contact` rămâne disponibil.
-Emailul public NU schimbă expeditorul sau reply-to Resend.
+10B.2c adaugă `theme` (`evergreen`, `plum`, `terracotta`) și `assets.logo`,
+`assets.icon`, `assets.ogImage` în același config. Asset-urile sunt locale, versionate,
+în `public/branding`, cu nume simple precum `/branding/logo-v2.svg`. Logo absent sau
+invalid → nume; eroare de încărcare → nume în același spațiu 192×48. Logo/Icon SVG
+sunt permise numai ca surse revizuite în Git, niciodată upload. OG: PNG/JPEG/WebP.
+OG produs → OG brand → imagine generică statică `/brand-og` (PNG 1200×630, generată
+la build, fără fonturi externe). Favicon implicit: `/branding/icon.svg`; vechiul ICO
+starter este arhivat în `public/branding/legacy-favicon.ico`, nu mai overridează metadata.
+Nu adăuga `src/app/favicon.ico`/`icon.*`, care ar avea prioritate față de config.
+Nu există theme editor/upload/CSS arbitrar în Admin; tema și asset-urile cer release.
+Detalii de instalare, securitate și verificare: [10B.2c](docs/10b2c-theme-brand-assets.md).
+Contact/social rămân în footer, `/contact` disponibil. Emailul public NU schimbă
+expeditorul/reply-to Resend; emailurile folosesc numele și culoarea controlată a paletei.
 
 Configul este public și poate intra în bundle-ul browserului. NU include chei,
 parole, service role, roluri admin, RLS, reguli financiare, stocuri sau infrastructură.

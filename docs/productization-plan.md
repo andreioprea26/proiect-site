@@ -17,6 +17,11 @@ Configul versionat rămâne fallback; detalii și rezultate în
 
 ## 1. Baza auditului și limitele dovezilor
 
+Actualizare 10B.2c: palete semantice tipate și logo/favicon/OG versionate, fără
+extindere DB/Storage sau editor CSS. Admin Store Settings → fallback `store.ts`
+rămâne unica sursă de identitate. Vezi [checkpoint 10B.2c](10b2c-theme-brand-assets.md).
+Acesta nu certifică încă clean install și nu începe 10B.2d.
+
 - Plecare: `develop` / `origin/develop`, commit
   `6d84c236d4a91f460549be4cf175fd68e0ca1615` (merge 9C, PR #48).
 - Referințe permanente: tag annotated `phase-9-final` și branch

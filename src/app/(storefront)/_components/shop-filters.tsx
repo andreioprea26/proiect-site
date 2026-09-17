@@ -10,7 +10,7 @@ import type { StorefrontTaxonomy } from "@/lib/storefront/catalog";
 import type { ShopFilters } from "@/lib/storefront/discovery";
 
 const controlClass =
-  "mt-2 w-full rounded-xl border border-stone-300 bg-white px-3 py-2.5 text-sm text-stone-900 outline-none focus:border-emerald-700 focus:ring-2 focus:ring-emerald-100";
+  "mt-2 w-full rounded-xl border border-brand-border bg-brand-surface px-3 py-2.5 text-sm text-brand-text outline-none focus:border-brand-focus focus:ring-2 focus:ring-brand-focus/25";
 
 export function ShopFilters({
   filters,
@@ -24,11 +24,11 @@ export function ShopFilters({
   return (
     <form
       action="/shop"
-      className="rounded-3xl border border-stone-200 bg-white p-5 shadow-sm"
+      className="rounded-3xl border border-brand-border/25 bg-brand-surface p-5 shadow-sm"
       method="get"
     >
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-        <label className="text-sm font-medium text-stone-700 sm:col-span-2 lg:col-span-3 xl:col-span-2">
+        <label className="text-sm font-medium text-brand-muted sm:col-span-2 lg:col-span-3 xl:col-span-2">
           Caută produse
           <input
             className={controlClass}
@@ -76,13 +76,13 @@ export function ShopFilters({
       </div>
       <div className="mt-5 flex flex-wrap gap-3">
         <button
-          className="rounded-full bg-emerald-900 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-800"
+          className="rounded-full bg-brand px-5 py-2.5 text-sm font-semibold text-brand-foreground transition hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-focus"
           type="submit"
         >
           Aplică
         </button>
         <Link
-          className="rounded-full border border-stone-300 px-5 py-2.5 text-sm font-semibold text-stone-700 transition hover:bg-stone-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-800"
+          className="rounded-full border border-brand-border px-5 py-2.5 text-sm font-semibold text-brand-muted transition hover:bg-stone-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-focus"
           href="/shop"
         >
           Resetează filtrele
@@ -104,7 +104,7 @@ function FilterSelect({
   name: string;
 }) {
   return (
-    <label className="text-sm font-medium text-stone-700">
+    <label className="text-sm font-medium text-brand-muted">
       {label}
       <select className={controlClass} defaultValue={defaultValue} name={name}>
         <option value="">Toate</option>

@@ -25,19 +25,19 @@ export default async function ConfirmationPage({
   const isSuccess = status === "success";
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-amber-50 px-6 py-12 text-stone-800">
-      <section className="w-full max-w-md rounded-2xl border border-stone-200 bg-white p-6 shadow-sm sm:p-8">
-        <p className="text-sm font-medium text-emerald-800">{store.name}</p>
+    <main className="flex min-h-screen items-center justify-center bg-brand-background px-6 py-12 text-brand-text">
+      <section className="w-full max-w-md rounded-2xl border border-brand-border/25 bg-brand-surface p-6 shadow-sm sm:p-8">
+        <p className="text-sm font-medium text-brand">{store.name}</p>
         <h1 className="mt-2 text-3xl font-semibold tracking-tight">
           {isSuccess ? "E-mail confirmat" : "Confirmarea nu a reușit"}
         </h1>
-        <p className="mt-4 text-sm leading-6 text-stone-600">
+        <p className="mt-4 text-sm leading-6 text-brand-muted">
           {isSuccess
             ? "Adresa ta de e-mail a fost confirmată. Acum te poți autentifica."
             : "Linkul de confirmare este invalid sau a expirat. Poți încerca din nou folosind cel mai recent e-mail primit."}
         </p>
         <Link
-          className="mt-6 inline-flex min-h-11 items-center justify-center rounded-lg bg-emerald-800 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-800"
+          className="mt-6 inline-flex min-h-11 items-center justify-center rounded-lg bg-brand px-5 py-3 text-sm font-semibold text-brand-foreground transition hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-focus"
           href={isSuccess ? "/login" : "/"}
         >
           {isSuccess ? "Mergi la autentificare" : "Înapoi la pagina principală"}

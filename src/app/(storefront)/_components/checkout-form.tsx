@@ -116,7 +116,7 @@ export function CheckoutForm({
           Adaugă cel puțin un produs înainte de checkout.
         </p>
         <Link
-          className="mt-6 inline-flex rounded-full bg-emerald-900 px-5 py-2.5 text-sm font-semibold text-white"
+          className="mt-6 inline-flex rounded-full bg-brand px-5 py-2.5 text-sm font-semibold text-brand-foreground"
           href="/shop"
         >
           Vezi produsele
@@ -185,7 +185,7 @@ export function CheckoutForm({
 
         <CheckoutSection number="3" title="Facturare">
           <label className="flex items-start gap-3">
-            <input checked={billingSame} className="mt-1 size-4 accent-emerald-800" name="billingSameAsShipping" onChange={(event) => setBillingSame(event.target.checked)} type="checkbox" />
+            <input checked={billingSame} className="mt-1 size-4 accent-brand" name="billingSameAsShipping" onChange={(event) => setBillingSame(event.target.checked)} type="checkbox" />
             <span>Adresa de facturare este aceeași cu adresa de livrare.</span>
           </label>
           {!billingSame ? <div className="mt-5"><AddressFields address={EMPTY_ADDRESS} errors={state.fieldErrors} prefix="billing" /></div> : null}
@@ -237,7 +237,7 @@ export function CheckoutForm({
         ) : null}
         {state.message ? <p className={`mt-5 rounded-2xl p-4 text-sm ${state.success ? "bg-emerald-50 text-emerald-950" : "bg-red-50 text-red-900"}`} data-testid="checkout-result" role="status">{state.message}</p> : null}
         <ErrorText text={state.fieldErrors.cart} />
-        <button className="mt-6 min-h-12 w-full rounded-full bg-emerald-900 px-5 py-3 font-semibold text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:bg-stone-300 disabled:text-stone-600" disabled={!canValidate} type="submit">
+        <button className="mt-6 min-h-12 w-full rounded-full bg-brand px-5 py-3 font-semibold text-brand-foreground transition hover:bg-brand-hover disabled:cursor-not-allowed disabled:bg-stone-300 disabled:text-brand-muted" disabled={!canValidate} type="submit">
           {pending
             ? "Se pregătește în siguranță…"
             : paymentMethod === "card"
@@ -249,14 +249,14 @@ export function CheckoutForm({
             ? "Comanda și stocul sunt reverificate înainte de redirect. Numai webhook-ul Stripe verificat poate confirma plata."
             : "Comanda este reverificată și înregistrată atomic. Plata rămâne neachitată până la încasarea rambursului."}
         </p>
-        <Link className="mt-4 flex justify-center text-sm font-semibold text-emerald-900 hover:underline" href="/cart">Înapoi la coș</Link>
+        <Link className="mt-4 flex justify-center text-sm font-semibold text-brand hover:underline" href="/cart">Înapoi la coș</Link>
       </aside>
     </form>
   );
 }
 
 function CheckoutSection({ children, number, title }: { children: React.ReactNode; number: string; title: string }) {
-  return <section className="rounded-3xl border border-stone-200 bg-white p-5 shadow-sm sm:p-7"><h2 className="mb-6 text-xl font-semibold"><span className="mr-3 inline-flex size-8 items-center justify-center rounded-full bg-emerald-100 text-sm text-emerald-900">{number}</span>{title}</h2>{children}</section>;
+  return <section className="rounded-3xl border border-brand-border/25 bg-brand-surface p-5 shadow-sm sm:p-7"><h2 className="mb-6 text-xl font-semibold"><span className="mr-3 inline-flex size-8 items-center justify-center rounded-full bg-brand-tint text-sm text-brand">{number}</span>{title}</h2>{children}</section>;
 }
 
 function AddressFields({ address, errors, onChange, prefix }: { address: CheckoutAddress; errors: Record<string, string>; onChange?: (address: CheckoutAddress) => void; prefix: "shipping" | "billing" }) {
@@ -273,7 +273,7 @@ function AddressFields({ address, errors, onChange, prefix }: { address: Checkou
   </div>;
 }
 
-const inputClass = "mt-2 min-h-11 w-full rounded-xl border border-stone-300 bg-white px-3 py-2 text-base text-stone-950 outline-none focus:border-emerald-700 focus:ring-2 focus:ring-emerald-100";
+const inputClass = "mt-2 min-h-11 w-full rounded-xl border border-brand-border bg-brand-surface px-3 py-2 text-base text-brand-text outline-none focus:border-brand-focus focus:ring-2 focus:ring-brand-focus/25";
 
 function Field({ controlledValue, defaultValue, error, label, name, onValue, readOnly, required, type = "text" }: { controlledValue?: string; defaultValue?: string; error?: string; label: string; name: string; onValue?: (value: string) => void; readOnly?: boolean; required?: boolean; type?: string }) {
   const inputId = `checkout-${name}`;
@@ -282,7 +282,7 @@ function Field({ controlledValue, defaultValue, error, label, name, onValue, rea
 }
 
 function Radio({ label, ...props }: React.InputHTMLAttributes<HTMLInputElement> & { label: string }) {
-  return <label className="flex items-center gap-3 rounded-2xl border border-stone-200 p-4"><input className="size-4 accent-emerald-800" type="radio" {...props} /><span>{label}</span></label>;
+  return <label className="flex items-center gap-3 rounded-2xl border border-brand-border/25 p-4"><input className="size-4 accent-brand" type="radio" {...props} /><span>{label}</span></label>;
 }
 
 function ErrorText({ id, text }: { id?: string; text?: string }) {
@@ -290,5 +290,5 @@ function ErrorText({ id, text }: { id?: string; text?: string }) {
 }
 
 function MoneyRow({ emphasis, label, value }: { emphasis?: boolean; label: string; value: number }) {
-  return <div className={`mt-3 flex items-center justify-between gap-4 ${emphasis ? "text-lg text-emerald-900" : "text-sm"}`}><span className={emphasis ? "font-semibold" : "text-stone-600"}>{label}</span><strong>{formatMoney(value)}</strong></div>;
+  return <div className={`mt-3 flex items-center justify-between gap-4 ${emphasis ? "text-lg text-brand" : "text-sm"}`}><span className={emphasis ? "font-semibold" : "text-brand-muted"}>{label}</span><strong>{formatMoney(value)}</strong></div>;
 }
