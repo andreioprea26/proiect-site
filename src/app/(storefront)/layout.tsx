@@ -1,4 +1,6 @@
-import { STORE_CONFIG, storeText } from "@/lib/config/store";
+import { getPublicStoreSettings } from "@/lib/store-settings/server";
+import { StorePublicContact } from "@/components/store-public-contact";
+import { storeText } from "@/lib/config/store";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { listPublishedContentPages } from "@/lib/content/server";
@@ -8,16 +10,20 @@ import { CartIndicator } from "./_components/cart-indicator";
 import { CartProvider } from "./_components/cart-provider";
 import { NewsletterForm } from "./_components/newsletter-form";
 
-export const metadata: Metadata = {
-  title: {
-    default: storeText().defaultTitle,
-    template: storeText().titleTemplate,
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const store = await getPublicStoreSettings();
+  return {
+    title: {
+      default: storeText(store).defaultTitle,
+      template: storeText(store).titleTemplate,
+    },
+  };
+}
 
 export default async function StorefrontLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const store = await getPublicStoreSettings();
   const informationPages = await listPublishedContentPages();
   return (
     <CartProvider>
@@ -28,7 +34,7 @@ export default async function StorefrontLayout({
             className="text-lg font-semibold tracking-tight text-emerald-950 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-emerald-800"
             href="/"
           >
-            {STORE_CONFIG.name}
+            {store.name}
           </Link>
           <nav
             aria-label="Navigare principală"
@@ -63,10 +69,11 @@ export default async function StorefrontLayout({
       <footer className="mt-20 border-t border-stone-200 bg-emerald-950 text-emerald-50">
         <div className="mx-auto grid max-w-7xl gap-8 px-5 py-10 sm:px-8 md:grid-cols-2 lg:grid-cols-4">
           <div>
-            <p className="font-semibold">{STORE_CONFIG.name}</p>
+            <p className="font-semibold">{store.name}</p>
             <p className="mt-2 max-w-sm text-sm leading-6 text-emerald-100/80">
-              {STORE_CONFIG.footerDescription}
+              {store.footerDescription}
             </p>
+            <StorePublicContact store={store} />
           </div>
           <nav aria-label="Navigare footer magazin" className="site-navigation text-sm">
             <p className="font-semibold">Descoperă</p>

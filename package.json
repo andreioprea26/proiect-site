@@ -12,7 +12,8 @@
     "test:e2e": "npm run build && playwright test",
     "test:e2e:headed": "npm run build && playwright test --headed",
     "test:email": "node --test --experimental-strip-types tests/unit/email-notifications.test.mjs",
-    "test:config": "node --test --experimental-strip-types tests/unit/store-config.test.mjs"
+    "test:config": "node --test --experimental-strip-types tests/unit/store-config.test.mjs",
+    "test:settings": "node --test --experimental-strip-types tests/unit/store-settings.test.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.4",

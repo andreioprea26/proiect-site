@@ -1,3 +1,4 @@
+import { getPublicStoreSettings } from "@/lib/store-settings/server";
 import type { Metadata } from "next";
 
 import { getSiteUrl } from "@/lib/seo";
@@ -5,10 +6,13 @@ import { storeMetadata } from "@/lib/config/store";
 
 import "./globals.css";
 
-export const metadata: Metadata = {
-  metadataBase: getSiteUrl(),
-  ...storeMetadata(),
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const store = await getPublicStoreSettings();
+  return {
+    metadataBase: getSiteUrl(),
+    ...storeMetadata(store),
+  };
+}
 
 export default function RootLayout({
   children,

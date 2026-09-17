@@ -1,4 +1,5 @@
 import "server-only";
+import { getPublicStoreSettings } from "@/lib/store-settings/server";
 
 import { getAppUrl, getEmailEnvironment } from "@/lib/config/env";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -67,7 +68,7 @@ export async function deliverOrderNotification(input: {
       const originalRecipient = String(claimed.recipient);
       const environment = getEmailEnvironment();
       const snapshot = await loadEmailSnapshot(admin, input.orderId);
-      const message = renderOperationalEmail(input.type, snapshot);
+      const message = renderOperationalEmail(input.type, snapshot, await getPublicStoreSettings());
       const payload = prepareOperationalEmail({
         mode: environment.mode,
         originalRecipient,

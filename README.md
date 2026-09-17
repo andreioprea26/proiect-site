@@ -117,8 +117,19 @@ consultă [checklist-ul de lansare](docs/production-launch-checklist.md).
 Identitatea publică se configurează în `src/lib/config/store.ts`, contractul tipat
 `PublicStoreConfig`, versiunea 1. Schimbă `STORE_CONFIG.name` într-un singur loc pentru
 brandingul storefront/Auth/account/admin, titluri SEO și emailuri. Tagline-ul,
-descrierile, footer-ul și `copy` sunt texte publice editabile în cod. Schimbările
-necesită build și deployment; nu există încă Admin Store Settings.
+descrierile, footer-ul și `copy` sunt fallback-uri publice editabile în cod.
+Din 10B.2b, `/admin/settings` permite proprietarului cu rol admin să configureze
+numele, tagline-ul, descrierile, emailul/telefonul/WhatsApp public și linkuri pentru
+Instagram/Facebook/TikTok, fără editarea codului. Precedența este valoare DB validă
+→ fallback versionat. Câmp gol elimină override-ul; datele de contact/social rămân
+ascunse dacă fallback-ul lor este `null`.
+
+Citirea publică proiectează numai cele 11 câmpuri aprobate și folosește cheia publică,
+nu service role. Memoizare React pe request, fetch `no-store`, timeout 2 secunde și
+fallback pe erori; Save invalidează layout-ul rădăcină. Nu există cache persistent
+de branding. Metadata se generează dinamic; global-error rămâne complet static,
+fără dependență de Settings/DB. Fallback-ul nu garantează funcționarea catalogului
+sau autentificării dacă întreaga bază este indisponibilă.
 
 Fallback-urile homepage se folosesc când sloturile nu sunt configurate. Conținutul
 editorial deja salvat în administrarea homepage are prioritate și nu este rescris
@@ -127,9 +138,9 @@ la schimbarea configului. Datele produselor rămân sursa metadatelor dinamice.
 `assets.ogImage` acceptă o cale statică locală, de exemplu `/store-og.png`, cu fișierul
 în `public`; `null` nu inventează o imagine. Brandingul vizibil rămâne text (nu există
 logo real sau upload). Favicon-ul existent rămâne `src/app/favicon.ico`, conform
-convenției Next.js; logo/favicon/theme avansat sunt rezervate 10B.2c. Nu există încă
-adrese publice de contact sau rețele sociale configurate: pagina `/contact` rămâne
-canalul existent, fără date fictive afișate clienților.
+convenției Next.js; logo/favicon/theme avansat sunt rezervate 10B.2c. Datele publice
+de contact/social configurate sunt afișate în footer. `/contact` rămâne disponibil.
+Emailul public NU schimbă expeditorul sau reply-to Resend.
 
 Configul este public și poate intra în bundle-ul browserului. NU include chei,
 parole, service role, roluri admin, RLS, reguli financiare, stocuri sau infrastructură.
@@ -143,6 +154,12 @@ copy/Auth, toate cele opt emailuri, escaping, independența de DB/env și cheile
 Importul explicit `.ts` permite testarea acelorași module direct în Node fără loader
 nou; `allowImportingTsExtensions` este folosit împreună cu `noEmit`, compilarea aplicației
 rămânând în responsabilitatea Next.js.
+
+`npm run test:settings` verifică validarea și fallback-ul Settings. Testele E2E
+`store-settings` rulează serial înaintea proiectului `chromium`, deoarece modifică
+temporar identitatea globală; valorile originale sunt restaurate în `afterAll`.
+`npx playwright test --project=chromium` include automat această dependență.
+Nu rula concomitent alte suite/deployment-uri care modifică Settings în aceeași bază.
 
 ## Structura proiectului
 

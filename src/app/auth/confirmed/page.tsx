@@ -1,13 +1,17 @@
-import { STORE_CONFIG, storeTitle } from "@/lib/config/store";
+import { getPublicStoreSettings } from "@/lib/store-settings/server";
+import { storeTitle } from "@/lib/config/store";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PRIVATE_ROBOTS } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: storeTitle("Confirmare e-mail"),
-  description: "Rezultatul confirmării adresei de e-mail.",
-  robots: PRIVATE_ROBOTS,
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const store = await getPublicStoreSettings();
+  return {
+    title: storeTitle("Confirmare e-mail", store),
+    description: "Rezultatul confirmării adresei de e-mail.",
+    robots: PRIVATE_ROBOTS,
+  };
+}
 
 type ConfirmationPageProps = {
   searchParams: Promise<{ status?: string | string[] }>;
@@ -16,13 +20,14 @@ type ConfirmationPageProps = {
 export default async function ConfirmationPage({
   searchParams,
 }: ConfirmationPageProps) {
+  const store = await getPublicStoreSettings();
   const { status } = await searchParams;
   const isSuccess = status === "success";
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-amber-50 px-6 py-12 text-stone-800">
       <section className="w-full max-w-md rounded-2xl border border-stone-200 bg-white p-6 shadow-sm sm:p-8">
-        <p className="text-sm font-medium text-emerald-800">{STORE_CONFIG.name}</p>
+        <p className="text-sm font-medium text-emerald-800">{store.name}</p>
         <h1 className="mt-2 text-3xl font-semibold tracking-tight">
           {isSuccess ? "E-mail confirmat" : "Confirmarea nu a reușit"}
         </h1>

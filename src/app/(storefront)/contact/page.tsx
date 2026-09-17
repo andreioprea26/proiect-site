@@ -1,9 +1,13 @@
+import { getPublicStoreSettings } from "@/lib/store-settings/server";
 import { storeText } from "@/lib/config/store";
 import type { Metadata } from "next";
 import { getAccountContext } from "@/lib/account/server";
 import { ContactForm } from "./contact-form";
 
-export const metadata: Metadata = { title: "Contact", description: storeText().contactDescription, alternates: { canonical: "/contact" } };
+export async function generateMetadata(): Promise<Metadata> {
+  const store = await getPublicStoreSettings();
+  return { title: "Contact", description: storeText(store).contactDescription, alternates: { canonical: "/contact" } };
+}
 
 export default async function ContactPage() {
   const context = await getAccountContext();
