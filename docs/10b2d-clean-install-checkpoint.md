@@ -82,3 +82,50 @@ the new account-isolation test. Each script uses BEGIN/ROLLBACK. No assertions
 were deleted, no skip introduced. This checkpoint does not certify the full
 10B.2d phase. No application TypeScript/Next code or dependencies changed;
 lint/build/Playwright were not rerun for this SQL-only correction.
+
+## Demo Auth and Sandbox validation — 2026-09-18
+
+- Demo Auth Site URL is `https://handmade-project-olive.vercel.app`; the allowlist
+  contains only the exact `/auth/confirm` and `/auth/reset-password` URLs on that
+  host. User confirmed signup, confirmation-email receipt, confirmation, login,
+  password reset and subsequent login all work. This is user-reported E2E evidence.
+- Demo Vercel Production scope has APP_URL and STRIPE_WEBHOOK_SECRET configured.
+  This is the separate demo project's deployment environment, not original Production.
+- Stripe Sandbox destination `handmade-demo-vercel` listens for checkout session
+  completed/expired and refund created/updated/failed events.
+- The first payment delivery returned `400 invalid_signature`. The initial secret
+  transfer was incorrect; it was replaced from the exact secret text node after
+  explicit user approval, without logging its value or changing application code.
+  Redeployment `DN8TC43ozjwpbU2AykKPyjNuqKHn` reached Ready in 48 seconds.
+- The same event was resent; no second payment was created. Read-only demo DB audit
+  confirms order `CMD-2026-00000101` (ID `5c320cc4-8931-423c-ba2f-91619c22b945`):
+  order status `paid`, payment status `paid`, amount 10890 bani, reservation
+  `consumed` quantity 1, product stock 10 -> 9, and one processed
+  `checkout.session.completed` webhook. Browser shows confirmed payment and cart 0.
+- Before webhook processing, the success redirect left payment pending and cart
+  intact; it did not confirm payment independently.
+- Order/payment confirmation notifications both have status `sent`, no error,
+  and the dedicated test recipient. User subsequently confirmed receipt of both
+  messages in the test inbox.
+- The fictional order and stock movement remain for audit. No real payment or
+  carrier shipment was made. Original services/databases were not modified.
+- Full 10B.2d remains pending: demo repository synchronization, final automated
+  regression and checkpoint. Deployed application source remains demo `936cb84`.
+
+## Final local checks and remaining E2E boundary — 2026-09-18
+
+- ESLint PASS; TypeScript PASS; Next.js production build PASS (38 pages).
+- Unit tests: 30/30 PASS, zero failed/skipped (email/config/settings/theme).
+- Initial unit/build subprocess startup was denied by the local sandbox (EPERM);
+  rerunning with approved process permissions passed. No assertions were changed.
+- Full Chromium was deliberately NOT started: local environment targets original
+  Development, with original E2E credentials. Those fixtures must not be reused for
+  the isolated demo. No skip-based PASS is claimed.
+- Before full Chromium: provision dedicated disposable demo admin/customer E2E
+  accounts, isolated environment values and reviewed fixture permissions. Do not
+  promote the user's manual test account or broaden runtime grants for tests.
+- Repository synchronization is prepared on `codex/10b2d-clean-install` in the
+  demo repository, not by updating its main branch. No PR/merge is authorized.
+- This checkpoint is still BLOCKED for full automated certification, not for the
+  manually validated Auth/Stripe/email flow. No application source/dependency
+  changes were needed for this validation.

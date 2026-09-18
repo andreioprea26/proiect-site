@@ -47,6 +47,10 @@ Both commands passed on demo. An anon quote with a deliberately false client
 price of 1 ban returned the authoritative 8900 bani and valid=true. This was a
 transaction/rollback query, not an order or a Stripe transaction.
 
-Vercel/Auth/Stripe setup remains pending: browser control timed out twice before
-any settings mutation. No APP_URL/Auth URLs/webhook configuration is claimed.
-Shipping display in the browser has not yet been revalidated after insertion.
+The initial browser setup attempt timed out. Subsequent authorized setup and
+validation succeeded: APP_URL/Auth redirect URLs and Sandbox webhook configured;
+shipping displays 19.90 RON and the 89 RON product produces a 108.90 RON checkout.
+See `10b2d-clean-install-checkpoint.md` for the webhook-secret correction and audit.
+The Sandbox order is paid, reservation consumed, stock now 9 for the purchased
+product, cart cleared, and both notification emails received by the test user.
+Do not reset this stock or delete the order: they remain as audit evidence.
