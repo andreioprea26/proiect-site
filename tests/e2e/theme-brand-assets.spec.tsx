@@ -1,4 +1,5 @@
 import { expect, test, type APIRequestContext, type Page } from "@playwright/test";
+import { assertApprovedTestTarget } from "./demo-target";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { StoreBrand } from "../../src/components/store-brand";
@@ -12,7 +13,8 @@ const rgb = (hex: string) => `rgb(${hex.slice(1).match(/../g)!.map((part) => par
 async function product(request: APIRequestContext) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
-  if (!url || !key || new URL(url).hostname !== "bdyocajhhylvasfhmnal.supabase.co") throw new Error("Approved Development configuration required");
+  if (!url || !key) throw new Error("Approved test configuration required");
+  assertApprovedTestTarget(url);
   const response = await request.get(`${url}/rest/v1/products?select=name,slug&publication_status=eq.published&order=created_at.asc&limit=1`, { headers: { apikey: key, Authorization: `Bearer ${key}` } });
   expect(response.ok()).toBe(true);
   const rows = await response.json();

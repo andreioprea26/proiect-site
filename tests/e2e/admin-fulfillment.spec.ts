@@ -1,5 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import { createFixtureClient } from "./demo-fixture-client";
 
 const adminEmail = process.env.E2E_ADMIN_EMAIL ?? "";
 const adminPassword = process.env.E2E_ADMIN_PASSWORD ?? "";
@@ -26,7 +27,7 @@ test.describe.serial("7B shipments, anulare COD și refund admin", () => {
   let paidPaymentId = "";
 
   test.beforeAll(async () => {
-    service = createClient(supabaseUrl, serviceRoleKey, { auth: { autoRefreshToken: false, persistSession: false } });
+    service = createFixtureClient(supabaseUrl, serviceRoleKey, { auth: { autoRefreshToken: false, persistSession: false } });
     adminAuth = createClient(supabaseUrl, supabaseKey, { auth: { autoRefreshToken: false, persistSession: false } });
     customerAuth = createClient(supabaseUrl, supabaseKey, { auth: { autoRefreshToken: false, persistSession: false } });
     const adminLogin = await adminAuth.auth.signInWithPassword({ email: adminEmail, password: adminPassword });

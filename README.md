@@ -196,3 +196,12 @@ Nu se lucrează direct pe `main`. Fiecare task trebuie implementat și verificat
 - Implementarea respectă ordinea și deciziile aprobate în Project Bible.
 
 Specificația completă este disponibilă în [Project Bible v0.4](docs/project-bible-v0.4.md).
+
+## Instalare demo și lecții pentru onboarding
+
+- [Registru probleme, corecții și prevenție pentru clienți](docs/10b2d-installation-findings.md).
+- [Checkpoint clean install — dovezi și limite](docs/10b2d-clean-install-checkpoint.md).
+- [Seed demo controlat](docs/demo-seed.md) și [E2E demo izolat](docs/demo-e2e.md).
+
+Runner-ele demo sunt intenționat limitate la proiectul de test aprobat, nu sunt
+installere generice pentru clienți. Nu copia `.env` sau credențialele între instalări.

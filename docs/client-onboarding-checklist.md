@@ -201,3 +201,16 @@ Raportul consemnează target-urile verificate, release exact, schema, test count
 Auth/email delivery, comanda Sandbox, webhook, stoc, cleanup/audit, readiness Live,
 costuri aprobate, riscuri și persoana care aprobă lansarea. Lipsa unei dovezi este
 BLOCKED pentru acea poartă, nu PASS presupus din instalarea software-ului.
+
+### Gate-uri rezultate din clean install 10B.2d
+
+- [ ] Parcurge [registrul problemelor reale](10b2d-installation-findings.md), inclusiv
+  granturile explicite, automatizarea RLS a furnizorului și limitele fixture-urilor.
+- [ ] Verifică egalitatea release/schema: un branch demo sincronizat nu înseamnă
+  că deployment-ul main a primit deja corecțiile.
+- [ ] Nu declara webhook PASS din prezența secretului: cere semnătură acceptată,
+  eveniment procesat și efecte DB verificabile pentru aceeași comandă Sandbox.
+- [ ] E2E rulează pe ref verificat și credențiale separate, fără privilegii runtime
+  acordate artificial pentru setup/cleanup; zero skip-uri de infrastructură.
+- [ ] Problemele deschise și warning-urile observate sunt incluse în raportul de
+  predare, cu diferență explicită între cauză demonstrată și ipoteză.

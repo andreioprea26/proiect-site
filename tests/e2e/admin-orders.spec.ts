@@ -1,5 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import { createFixtureClient } from "./demo-fixture-client";
 
 import { allowedOrderTransitions } from "../../src/lib/admin/order-model";
 
@@ -54,7 +55,7 @@ test.describe.serial("administrare comenzi cu fixture-uri Development izolate", 
   let cardPaymentId = "";
 
   test.beforeAll(async () => {
-    service = createClient(supabaseUrl, serviceRoleKey, { auth: { autoRefreshToken: false, persistSession: false } });
+    service = createFixtureClient(supabaseUrl, serviceRoleKey, { auth: { autoRefreshToken: false, persistSession: false } });
     adminAuth = createClient(supabaseUrl, supabaseKey, { auth: { autoRefreshToken: false, persistSession: false } });
     const { error: signInError } = await adminAuth.auth.signInWithPassword({ email: adminEmail, password: adminPassword });
     if (signInError) throw signInError;

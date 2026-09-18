@@ -1,5 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
-import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import { type SupabaseClient } from "@supabase/supabase-js";
+import { createFixtureClient } from "./demo-fixture-client";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
 const publishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? "";
@@ -20,7 +21,7 @@ test.describe.serial("Faza 8B — newsletter, contact, cereri și conținut", ()
 
   test.beforeAll(async () => {
     test.skip(!configured, "Necesită Supabase Development și contul admin E2E.");
-    service = createClient(supabaseUrl, serviceRoleKey, { auth: { autoRefreshToken: false, persistSession: false } });
+    service = createFixtureClient(supabaseUrl, serviceRoleKey, { auth: { autoRefreshToken: false, persistSession: false } });
     const [tableProbe, newsletterProbe] = await Promise.all([
       service.from("content_pages").select("id", { head: true, count: "exact" }),
       service.rpc("subscribe_newsletter", { p_email: `probe-${namespace}@example.com`, p_source: "footer" }),

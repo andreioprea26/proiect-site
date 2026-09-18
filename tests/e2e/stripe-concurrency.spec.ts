@@ -1,7 +1,9 @@
 import { expect, test } from "@playwright/test";
-import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import { createClient as createRuntimeClient, type SupabaseClient } from "@supabase/supabase-js";
+import { createFixtureClient as createClient } from "./demo-fixture-client";
 
 let admin: SupabaseClient;
+let guest: SupabaseClient;
 let shippingId: string;
 let productIds: string[];
 const fixtureNamespace = crypto.randomUUID().replaceAll("-", "").slice(0, 12);
@@ -14,6 +16,11 @@ test.describe.serial("Stripe DB concurrency cu fixture-uri izolate", () => {
       throw new Error("Testele de concurență necesită Supabase Development server env.");
     }
     admin = createClient(url, serviceKey, {
+      auth: { autoRefreshToken: false, persistSession: false },
+    });
+    const publicKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+    if (!publicKey) throw new Error("Missing public key for guest COD runtime test.");
+    guest = createRuntimeClient(url, publicKey, {
       auth: { autoRefreshToken: false, persistSession: false },
     });
     shippingId = crypto.randomUUID();
@@ -112,7 +119,7 @@ test.describe.serial("Stripe DB concurrency cu fixture-uri izolate", () => {
 
   test("card/COD respinge COD când cardul deține ultima unitate", async () => {
     expect(isRpcSuccess(await prepareCard(productIds[1], crypto.randomUUID()))).toBe(true);
-    const { data, error } = await admin.rpc("place_cod_order", {
+    const { data, error } = await guest.rpc("place_cod_order", {
       p_idempotency_key: crypto.randomUUID(),
       p_lines: lines(productIds[1]),
       p_checkout: { ...checkout(), paymentMethod: "cash_on_delivery" },

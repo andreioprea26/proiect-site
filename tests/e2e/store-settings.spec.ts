@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { assertApprovedTestTarget } from "./demo-target";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { STORE_CONFIG } from "../../src/lib/config/store";
 import { SETTING_KEYS, resolveStoreSettings, type SettingsValues } from "../../src/lib/store-settings/model";
@@ -22,7 +23,7 @@ test.describe.serial("10B.2b Store Settings", () => {
       if (!process.env[key]) throw new Error(`Missing E2E configuration: ${key}`);
     }
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-    if (new URL(url).hostname !== "bdyocajhhylvasfhmnal.supabase.co") throw new Error("Store Settings tests require the approved Development project");
+    assertApprovedTestTarget(url);
     const options = { auth: { autoRefreshToken: false, persistSession: false } };
     admin = createClient(url, process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!, options);
     customer = createClient(url, process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!, options);

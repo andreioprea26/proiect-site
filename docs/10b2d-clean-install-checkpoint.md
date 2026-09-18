@@ -1,8 +1,13 @@
-# 10B.2d — clean-install checkpoint (partial, BLOCKED)
+# 10B.2d — clean-install demo checkpoint (PASS, scoped)
 
 Date: 2026-09-18. Demo: `bfmihaxfleztajzyamio` (`project-handmade`).
 Source release: `8784dfc3076e7601f3581024a02c747dc48cdec2`.
 Demo repository initial commit: `936cb843f714ddf171291e17d3d97346eae70ce3`.
+
+This document is chronological: earlier BLOCKED sections describe historical
+checkpoints, not the result of later corrections. Consult the final section for
+the latest certification boundary. All findings and prevention actions are in
+[installation findings](10b2d-installation-findings.md).
 
 ## Installation evidence
 
@@ -151,3 +156,75 @@ lint/build/Playwright were not rerun for this SQL-only correction.
   Next work requires an explicitly scoped fixture-infrastructure adaptation:
   target guard plus privileged test setup/cleanup outside runtime API permissions.
   The isolated env file is not automatically loaded by the current Playwright config.
+
+## Approved demo fixture adaptation — 2026-09-18
+
+- The isolated runner now loads the ignored demo environment, verifies URL/ref and
+  key project binding, builds against demo, and refuses reuse of an existing server.
+- Operator-only CLI transport handles selected test table setup/cleanup with the
+  exact demo ref. Browser/API identities and tested RPCs still use real Supabase
+  requests. No runtime grants, policies, application code or dependencies changed.
+- One worker avoids shared settings races; internal concurrent RPC assertions stay
+  concurrent. Four added infrastructure tests cover escaping, target isolation,
+  mutation safeguards and preservation of the manual order/seed.
+- The first full run reached 178 PASS / 2 FAILED / 6 NOT RUN. Failures were a
+  checkout locator also matching Next's route announcer and a COD test incorrectly
+  using service_role instead of the guest identity used by runtime. Fixed test
+  selectors/identity; no skip added and no assertions removed or weakened.
+- Focused final checkout/Stripe/Store Settings regression: **30/30 PASS**, including
+  concurrent last-unit reservations, webhook transitions and refund idempotency.
+- Latest ESLint and TypeScript PASS; unit tests **30/30 PASS**, zero skipped.
+- Full final Chromium and post-suite SQL/security audit are still pending at this
+  intermediate checkpoint. The no-skips reporter refuses incomplete certification.
+- See [demo E2E workflow](demo-e2e.md). This is a demo-specific operator tool,
+  not a generic unattended installer for arbitrary client projects.
+
+## Final demo certification — 2026-09-18
+
+This section supersedes the intermediate BLOCKED/pending results above.
+
+- The second full run reached 172 PASS / 1 FAILED / 13 NOT RUN after the CLI
+  fixture process returned no result during 7C setup. Its exact root cause was
+  not established. SQL now uses temporary files, bounded CLI execution and safe
+  killed/elapsed diagnostics; writes are never automatically retried.
+- Focused 7C plus Store Settings after correction: **18/18 PASS**.
+- Final full Chromium, including Store Settings dependency: **186 PASS / 0 FAILED
+  / 0 SKIPPED / 0 NOT RUN**, 11.7 minutes, exit 0. The no-skips reporter accepted
+  the run; `.last-run.json` reports passed with no failed tests.
+- ESLint **PASS**; TypeScript **PASS**; unit tests **30/30 PASS**; Next.js production
+  build **PASS**, including the final isolated E2E runner's build.
+- Post-suite SQL: **14/14 scripts PASS**, each with BEGIN/ROLLBACK:
+  admin_fulfillment, admin_orders, checkout_orders, clean_install_account_grants,
+  customer_orders_favorites_reviews, homepage_admin_stats,
+  newsletter_contact_custom_content, operational_notifications_cod,
+  payment_reservations, place_cod_order, public_store_settings,
+  security_data_integrity, stripe_checkout_webhook, stripe_hardening_refunds.
+- RLS/security **PASS** for account/address ownership, orders, favorites/reviews/
+  moderation, private leads/content, settings/homepage/admin statistics, and
+  payment/webhook/refund boundaries. Catalog: **29 migrations, 36 public tables,
+  zero without RLS**. No service_role INSERT on products/orders/inventory or
+  SELECT on reviews was added. COD remains callable by anon, not service_role.
+- Final read-only audit: `CMD-2026-00000101` order/payment paid, 10890 bani,
+  reservation consumed quantity 1, stock 9, one completed webhook, two sent
+  notifications. User-confirmed Auth and email delivery evidence stands.
+- Cleanup: zero published non-seed products, active non-seed shipping methods,
+  active concurrency reservations, pending concurrency payments or leftover 7C
+  orders. Terminal concurrency audit records and dedicated E2E accounts remain
+  intentionally; the database is not claimed to be empty.
+- Source branch: `codex/10b2d-rls-preflight`; demo branch:
+  `codex/10b2d-clean-install`. PR/merge are reserved for the user. No new deployment
+  was initiated; demo main/deployed source remains `936cb84`.
+- Original Production/main and original Development schema were not modified.
+  No new dependencies, paid services or upgrades. Credentials stay in an ignored
+  local file. Git synchronization and exact HEADs are reported in the handoff.
+
+**Verdict: PASS for isolated demo clean-install validation**, not certification
+of a generic installer, future client installation, Stripe Live or merged/deployed
+final release. Operator scripts intentionally pin this demo; do not remove their
+guards to reuse them on a client database.
+
+Residual observations: Next.js logs `The destination stream closed early` during
+navigation, including passing tests; cause unproven. The earlier CLI interruption's
+root cause is also not claimed as proven. Both are in the 20-entry findings register.
+Local logs/test artifacts are not published. No business logic, runtime privileges
+or assertions were weakened by this fixture adaptation.
