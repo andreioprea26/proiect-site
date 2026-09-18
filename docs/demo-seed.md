@@ -31,3 +31,22 @@ payments, shipping methods or legal copy. No data copied from original DB.
 - Full application certification is pending: shipping demo, APP_URL, Auth URLs,
   Stripe webhook, dedicated accounts and automated E2E validation.
 - Seed remains in demo for testing. No destructive cleanup performed.
+
+## Shipping continuation
+
+An independent opt-in step now adds one fictional shipping method (19.90 RON),
+explicitly labelled as demo with no real carrier. It refuses existing unrelated
+shipping configuration/orders and never overwrites the existing seed row:
+
+```powershell
+node scripts/demo-seed.mjs --project-ref=bfmihaxfleztajzyamio --dry-run --shipping
+node scripts/demo-seed.mjs --project-ref=bfmihaxfleztajzyamio --apply --shipping
+```
+
+Both commands passed on demo. An anon quote with a deliberately false client
+price of 1 ban returned the authoritative 8900 bani and valid=true. This was a
+transaction/rollback query, not an order or a Stripe transaction.
+
+Vercel/Auth/Stripe setup remains pending: browser control timed out twice before
+any settings mutation. No APP_URL/Auth URLs/webhook configuration is claimed.
+Shipping display in the browser has not yet been revalidated after insertion.

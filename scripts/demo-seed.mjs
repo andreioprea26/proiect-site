@@ -5,10 +5,10 @@ import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
 const ref = 'bfmihaxfleztajzyamio';
 const args = process.argv.slice(2);
-if (args.length !== 2 || args[0] !== `--project-ref=${ref}` || !['--dry-run', '--apply'].includes(args[1])) {
+if (![2, 3].includes(args.length) || (args.length === 3 && args[2] !== '--shipping') || args[0] !== `--project-ref=${ref}` || !['--dry-run', '--apply'].includes(args[1])) {
   throw new Error('Use --project-ref=bfmihaxfleztajzyamio and exactly --dry-run or --apply. Demo only.');
 }
-const sql = readFileSync(new URL('../supabase/seeds/handmade-demo.sql', import.meta.url), 'utf8');
+const sql = readFileSync(new URL(args[2] === '--shipping' ? '../supabase/seeds/handmade-demo-shipping.sql' : '../supabase/seeds/handmade-demo.sql', import.meta.url), 'utf8');
 const directory = mkdtempSync(join(tmpdir(), 'handmade-seed-'));
 try {
   const file = join(directory, 'seed.sql');
