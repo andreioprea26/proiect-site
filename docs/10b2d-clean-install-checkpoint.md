@@ -129,3 +129,25 @@ lint/build/Playwright were not rerun for this SQL-only correction.
 - This checkpoint is still BLOCKED for full automated certification, not for the
   manually validated Auth/Stripe/email flow. No application source/dependency
   changes were needed for this validation.
+
+## Approved isolated E2E identities — 2026-09-18
+
+- Executed `scripts/provision-demo-e2e.mjs` with the explicit demo ref and
+  `--provision`. Created two fixture-marked `example.invalid` accounts; confirmed
+  email via Admin Auth API (no emails sent), random independent passwords.
+- Promoted only the exact new marked admin fixture via a transaction; customer
+  fixture remains customer. Both login and own-role queries PASS.
+- Credentials saved in `.env.e2e-demo.local`, ignored by Git, never printed.
+  Original `.env.local` and the manually tested user account remain unchanged.
+  Provisioner refuses an existing output file or fixture emails; no silent reset.
+- Fixture accounts are retained for subsequent testing. No application table
+  privileges, RLS policies or other users were modified.
+- Full Chromium is NOT ready merely by switching env files: Store Settings test
+  explicitly pins the original Development hostname; several fixture setup/cleanup
+  paths directly INSERT/DELETE via service_role. Read-only demo probes confirm
+  service_role lacks INSERT on products/orders/inventory and SELECT on reviews.
+  These are test-infrastructure requirements, not proven runtime bugs.
+- Do not add blanket grants, weaken security assertions or silently skip tests.
+  Next work requires an explicitly scoped fixture-infrastructure adaptation:
+  target guard plus privileged test setup/cleanup outside runtime API permissions.
+  The isolated env file is not automatically loaded by the current Playwright config.
