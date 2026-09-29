@@ -15,6 +15,18 @@ pagina `/admin/settings` și integrarea request-scoped a brandingului sunt imple
 Configul versionat rămâne fallback; detalii și rezultate în
 [checkpoint-ul 10B.2b](10b2b-admin-store-settings.md). Nu include 10B.2c sau lansare Production.
 
+## Actualizare checkpoint 10B.2d — 2026-09-29
+
+Demo-ul a demonstrat instalarea manuală de la zero și regresia verde la 18 septembrie.
+Grant fix-ul este migrare versionată, seed-ul este opt-in și E2E este izolat.
+**Checkpoint-ul integral este BLOCKED**: preflight-ul automat complet per client lipsește.
+Demo-ul a fost reactivat de utilizator în timpul auditului; 29/29 migrări aliniate,
+dry-run up to date, granturi și comanda Sandbox reauditabile/PASS.
+Nu echivalăm PASS-ul demo cu un workflow universal reproductibil.
+Vezi [raportul final](10b2d-productization-final-checkpoint.md),
+[ghidul clean install](clean-install-guide.md) și [starea preflight](preflight.md).
+Secțiunile de audit inițial de mai jos rămân context istoric, nu stare live actuală.
+
 ## 1. Baza auditului și limitele dovezilor
 
 Actualizare 10B.2c: palete semantice tipate și logo/favicon/OG versionate, fără

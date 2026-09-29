@@ -42,6 +42,26 @@ pentru cleanup, limite și dovezile Auth/Stripe/email. Nu s-a făcut PR/merge.
 
 ## Gate pentru un client real
 
+### Completări din checkpoint-ul 2026-09-29
+
+- **INSTALL-21 — Demo paused:** Vercel READY nu garanta disponibilitatea bazei.
+  Utilizatorul a reactivat Supabase; Healthy, migrații și comandă reaudit PASS.
+  Prevenție: verificare separată de health DB înainte de acceptanță.
+- **INSTALL-22 — Preflight incomplet:** scripturile existente sunt demo-only și
+  nu acoperă complet environment, config copiată și manifest exact de migrări
+  înainte de instalare. Rămâne blocker de productization; checklist-ul nu este
+  prezentat ca script implementat. Vezi `preflight.md`.
+- **INSTALL-23 — Conexiune CLI:** verificările inițiale au eșuat IPv6, apoi
+  conectarea temporară a eșuat în timpul restaurării. Link configurat numai în
+  clone-ul izolat demo; verificările finale 29/29 și dry-run up to date PASS.
+  Nu s-a schimbat link-ul workspace-ului original și nu s-au introdus parole în logs.
+- **INSTALL-24 — Scope de certificare:** APP_URL și webhook secret sunt doar pe
+  Production demo, nu Preview; existența Secret env nu dovedește valoarea/binding-ul.
+  Nu certificăm Preview/Live sau absența absolută a auto-deployment-urilor originalului
+  din testele demo. Izolarea resurselor se verifică separat de succesul unui build.
+
+### Checklist
+
 1. Identitate/ref/repository distincte; niciun secret din instalarea precedentă.
 2. Release identificat, migrări aplicate și dry-run gol; RLS/grants verificate.
 3. Auth URLs + emailuri reale verificate end-to-end; parolele rămân private.

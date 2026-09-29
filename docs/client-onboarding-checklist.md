@@ -1,6 +1,12 @@
 # Onboarding client — v0.1, propunere 10B.1
 
 Proces viitor, nu autorizare de creare conturi, resurse, costuri sau lansare.
+
+Actualizare 2026-09-29: consultă [clean install guide](clean-install-guide.md),
+[preflight și lipsuri](preflight.md) și [checkpoint integral](10b2d-productization-final-checkpoint.md).
+Demo funcțional PASS istoric nu închide gate-urile clientului. Proiect paused,
+dry-run neverificat ori lipsă preflight complet = BLOCKED. Grant fix-ul
+`20260918150000_explicit_runtime_table_grants.sql` trebuie inclus în release.
 Un business = un repository/deployment și propriile Supabase, Stripe, Resend,
 Vercel, domeniu, utilizatori și date. Fără SaaS/multi-tenancy/shared DB.
 Vezi [auditul și matricea](productization-plan.md) pentru capabilitățile încă lipsă.

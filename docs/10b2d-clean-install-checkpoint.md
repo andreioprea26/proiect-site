@@ -1,5 +1,11 @@
 # 10B.2d — clean-install demo checkpoint (PASS, scoped)
 
+**Actualizare 2026-09-29:** PASS de mai jos este certificarea demo din 18 septembrie.
+Checkpoint-ul integral de productization este acum **BLOCKED**; vezi
+[auditul actual](10b2d-productization-final-checkpoint.md). Supabase demo a fost
+reactivat și reauditul live a trecut, dar preflight-ul complet per client nu există
+încă. Rezultatele istorice nu sunt anulate.
+
 Date: 2026-09-18. Demo: `bfmihaxfleztajzyamio` (`project-handmade`).
 Source release: `8784dfc3076e7601f3581024a02c747dc48cdec2`.
 Demo repository initial commit: `936cb843f714ddf171291e17d3d97346eae70ce3`.
