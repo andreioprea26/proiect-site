@@ -5,6 +5,8 @@ import { readFileSync, readdirSync, lstatSync } from 'node:fs';
 import { resolve, join } from 'node:path';
 
 export const ORIGINAL_REF = 'bdyocajhhylvasfhmnal';
+export const EXISTING_DEMO_REF = 'bfmihaxfleztajzyamio';
+const forbiddenRefs = [ORIGINAL_REF, EXISTING_DEMO_REF];
 export class PreflightError extends Error {}
 export function requireGate(ok, code) { if (!ok) throw new PreflightError(code); }
 const required = ['SUPABASE_ACCESS_TOKEN', 'NEXT_PUBLIC_SUPABASE_URL',
@@ -18,9 +20,11 @@ export const digest = text => createHash('sha256').update(text.replace(/\r\n/g, 
 export function validateConfig(c, env, stage, confirmRef) {
   requireGate(c?.version === 1 && ['empty', 'migrated', 'e2e'].includes(stage), 'CONFIG_OR_STAGE_INVALID');
   requireGate(['test', 'preview'].includes(c.environment) && c.production === false, 'PRODUCTION_FORBIDDEN');
-  requireGate(refPattern.test(c.projectRef) && c.projectRef !== ORIGINAL_REF, 'PROJECT_REF_FORBIDDEN');
+  requireGate(refPattern.test(c.projectRef) && !forbiddenRefs.includes(c.projectRef), 'PROJECT_REF_FORBIDDEN');
   requireGate(confirmRef === c.projectRef && c.approvedNonProductionRef === c.projectRef, 'TARGET_CONFIRMATION_REQUIRED');
   requireGate(Array.isArray(c.productionRefs) && c.productionRefs.every(r => refPattern.test(r)) && !c.productionRefs.includes(c.projectRef), 'PRODUCTION_TARGET_FORBIDDEN');
+  requireGate(refPattern.test(c.previewBranch?.parentProjectRef) && !forbiddenRefs.includes(c.previewBranch.parentProjectRef)
+    && c.previewBranch.parentProjectRef !== c.projectRef && /^[0-9a-f-]{36}$/.test(c.previewBranch.id ?? ''), 'REMOTE_PREVIEW_CLASSIFICATION_REQUIRED');
   requireGate(typeof c.projectName === 'string' && c.projectName.trim() && typeof c.organizationId === 'string' && c.organizationId.trim(), 'PROJECT_IDENTITY_REQUIRED');
   requireGate(/^https:\/\/github\.com\/[\w-]+\/[\w.-]+\.git$/.test(c.repository ?? '') && c.repository !== 'https://github.com/andreioprea26/proiect-site.git', 'CLIENT_REPOSITORY_REQUIRED');
   requireGate(c.e2e?.required === true && c.e2e.projectRef === c.projectRef, 'E2E_PLAN_REQUIRED');
@@ -116,8 +120,17 @@ export async function inspectRemote(c, env, fetcher = fetch) {
   const base = `https://api.supabase.com/v1/projects/${c.projectRef}`;
   const api = (url, body) => requestJson(url, env.SUPABASE_ACCESS_TOKEN, body, fetcher);
   const projects = await api('https://api.supabase.com/v1/projects');
-  const project = Array.isArray(projects) && projects.find(p => p.id === c.projectRef);
-  requireGate(project && project.name === c.projectName && project.organization_id === c.organizationId && project.status === 'ACTIVE_HEALTHY', 'REMOTE_PROJECT_IDENTITY_MISMATCH');
+  const project = Array.isArray(projects) && projects.find(p => (p.ref ?? p.id) === c.previewBranch.parentProjectRef);
+  requireGate(project && project.organization_id === c.organizationId && project.status === 'ACTIVE_HEALTHY', 'REMOTE_PROJECT_IDENTITY_MISMATCH');
+  const branches = await api(`https://api.supabase.com/v1/projects/${c.previewBranch.parentProjectRef}/branches`);
+  const matches = Array.isArray(branches) ? branches.filter(b => b.project_ref === c.projectRef) : [];
+  requireGate(matches.length === 1, 'REMOTE_PREVIEW_CLASSIFICATION_REQUIRED');
+  const branch = matches[0];
+  requireGate(branch.id === c.previewBranch.id && branch.parent_project_ref === c.previewBranch.parentProjectRef
+    && branch.name === c.projectName && branch.is_default === false && branch.with_data === false
+    && branch.preview_project_status === 'ACTIVE_HEALTHY', 'REMOTE_PREVIEW_CLASSIFICATION_REQUIRED');
+  const identity = { ref: branch.project_ref, branchId: branch.id, parentRef: branch.parent_project_ref,
+    name: branch.name, organizationId: project.organization_id, classification: 'non-default-preview-without-data' };
   const keys = await api(`${base}/api-keys?reveal=true`);
   requireGate(Array.isArray(keys), 'REMOTE_KEYS_UNREADABLE');
   for (const [name, role] of [['NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY', 'anon'], ['SUPABASE_SERVICE_ROLE_KEY', 'service_role']]) {
@@ -127,14 +140,15 @@ export async function inspectRemote(c, env, fetcher = fetch) {
   const rows = await query("select pg_catalog.to_regclass('supabase_migrations.schema_migrations') is not null as history_exists, (select count(*)::int from pg_catalog.pg_class c join pg_catalog.pg_namespace n on n.oid=c.relnamespace where n.nspname='public' and c.relkind in ('r','p','v','m','f','S')) as relations, (select count(*)::int from auth.users) as users, (select count(*)::int from storage.objects) as objects");
   requireGate(Array.isArray(rows) && rows.length === 1 && typeof rows[0].history_exists === 'boolean', 'DATABASE_SNAPSHOT_INVALID');
   const history = rows[0].history_exists ? await query('select version, name from supabase_migrations.schema_migrations order by version') : [];
-  return { history, snapshot: rows[0] };
+  return { history, snapshot: rows[0], identity };
 }
 
 export async function preflight({ root, config, env, stage, confirmRef, fetcher = fetch }) {
   validateConfig(config, env, stage, confirmRef);
   inspectRepository(root, config.repository);
   const migrations = verifyManifest(root);
-  const { history, snapshot } = await inspectRemote(config, env, fetcher);
+  const { history, snapshot, identity } = await inspectRemote(config, env, fetcher);
   validateHistory(history, migrations, stage, snapshot);
-  return { status: 'PASS', stage, migrationCount: migrations.length, remoteMigrationCount: history.length };
+  return { status: 'PASS', stage, migrationCount: migrations.length, remoteMigrationCount: history.length,
+    identity, snapshot, manifestDigest: digest(JSON.stringify(migrations)), historyDigest: digest(JSON.stringify(history)) };
 }

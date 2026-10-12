@@ -2,7 +2,9 @@
 
 2026-10-12: client nou Test/Preview folosește `scripts/seed-demo.mjs`, cu preflight
 live și `allowDemoSeed: true`, conform [instrucțiunilor](preflight.md). Runner-ul
-legacy de mai jos rămâne demo-only și cere acum manifestul extern și gate-ul.
+legacy de mai jos este documentat numai istoric: denylist-ul central refuză acum
+demo-ul existent în toate etapele. Nu executa aceste comenzi pentru instalări noi
+și nu elimina protecția. Pentru client folosește runner-ul nou pe ținta Preview verificată.
 Payload-ul SQL și idempotency nu s-au schimbat.
 
 Target: Supabase `bfmihaxfleztajzyamio` only. Never use on a client or original DB.

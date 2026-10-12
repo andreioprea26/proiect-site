@@ -1,5 +1,11 @@
 # 10B.1 — Audit și plan de productizare
 
+Final acceptance 10B.2d, 2026-10-12: [runner oficial](client-install-runner.md) cu
+migrations/bootstrap guarded și denylist central pentru demo + Development original.
+Clasificarea noilor ținte necesită dovadă Supabase Preview non-default. Nu sunt
+acceptate writes manuale după preflight separat ca flux oficial. Validări simulate,
+fără reinstalarea demo-ului sau schimbarea schemei ecommerce.
+
 Data: 14 septembrie 2026. Verdict: **PASS pentru audit și arhitectură**, nu
 certificare că template-ul se poate instala sau lansa deja fără intervenție.
 Scope: template master → repository și deployment separat pentru fiecare business

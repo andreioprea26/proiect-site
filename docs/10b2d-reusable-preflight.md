@@ -1,5 +1,12 @@
 # 10B.2d reusable client preflight
 
+Actualizare final acceptance: auditul ulterior a identificat lipsa enforcement-ului
+migrations/bootstrap și lipsa refuzului demo. Acestea sunt tratate de
+[runner-ul oficial](client-install-runner.md), cu gate-uri interne și clasificare
+remote Preview. PASS-ul de mai jos se referă la checkpoint-ul inițial al validatorului,
+nu constituie dovadă istorică pentru executorul adăugat ulterior. Vezi
+[raportul fixului](10b2d-acceptance-blockers-fix.md) pentru testele actuale.
+
 Data: 2026-10-12. Scope: tooling și documentație, fără business logic, schemă,
 deployments manuale, resurse sau instalare demo repetată. Fără PR/merge.
 

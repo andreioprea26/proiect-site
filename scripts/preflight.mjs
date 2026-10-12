@@ -3,14 +3,19 @@ import { resolve, relative, isAbsolute } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { preflight, requireGate, PreflightError } from './lib/client-preflight.mjs';
 
-export async function runPreflight(root = process.cwd(), stageOverride) {
+export function readInstallInput(root = process.cwd()) {
   const configPath = process.env.CLIENT_INSTALL_CONFIG;
   requireGate(configPath && isAbsolute(configPath), 'EXTERNAL_CONFIG_REQUIRED');
   const rel = relative(resolve(root), resolve(configPath));
-  requireGate(rel.startsWith('..') || isAbsolute(rel), 'CONFIG_MUST_BE_OUTSIDE_REPOSITORY');
+  requireGate(rel === '..' || rel.startsWith(`..${process.platform === 'win32' ? '\\' : '/'}`) || isAbsolute(rel), 'CONFIG_MUST_BE_OUTSIDE_REPOSITORY');
   const config = JSON.parse(readFileSync(configPath, 'utf8'));
+  return { config, env: { ...process.env } };
+}
+
+export async function runPreflight(root = process.cwd(), stageOverride) {
+  const { config, env } = readInstallInput(root);
   const stage = stageOverride ?? process.argv[2];
-  const result = await preflight({ root, config, stage, env: process.env, confirmRef: process.env.CLIENT_CONFIRM_PROJECT_REF });
+  const result = await preflight({ root, config, stage, env, confirmRef: env.CLIENT_CONFIRM_PROJECT_REF });
   return { config, result };
 }
 

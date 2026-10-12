@@ -19,8 +19,9 @@ link CLI implicit, cache de autorizare sau fallback offline. Nu creează resurse
    CLIENT_CONFIRM_PROJECT_REF = ref-ul confirmat separat de owner.
 5. Rulează `node scripts/preflight.mjs empty` înainte de migrare.
    Exit 0 + JSON PASS sunt obligatorii; orice alt rezultat = STOP.
-6. Repetă cu `migrated` înainte de bootstrap/seed/configurări după schema completă,
-   cu `e2e` înainte de validarea finală. Nu reutiliza PASS după schimbări de stare.
+6. Pentru writes folosește exclusiv [runner-ul oficial](client-install-runner.md),
+   nu un PASS manual urmat de CLI/SQL separat. `migrated` și `e2e` rămân disponibile
+   pentru diagnostic; runner-ul repetă gate-urile în același proces cu executorul.
 
 Environment obligatoriu: SUPABASE_ACCESS_TOKEN, NEXT_PUBLIC_SUPABASE_URL,
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, SUPABASE_SERVICE_ROLE_KEY, STRIPE_SECRET_KEY,
@@ -37,8 +38,15 @@ Gate-ul validează configurația; nu face login și nu rulează Playwright.
 ## Controale
 
 - Exclusiv test/preview, production=false, ref valid confirmat separat. Ref original
-  bdyocajhhylvasfhmnal blocat în cod. Toate ref-urile Production declarate sunt
+  bdyocajhhylvasfhmnal și demo bfmihaxfleztajzyamio blocate în cod în toate etapele.
+  Toate ref-urile Production declarate sunt
   blocate. Fără force sau override Production, chiar dacă operatorul îl solicită.
+- Clasificare remote obligatorie: `previewBranch.id` și `previewBranch.parentProjectRef`
+  aprobate; API-ul Supabase trebuie să confirme ref, UUID, parent, nume, organizație,
+  `is_default=false`, `with_data=false`, `preview_project_status=ACTIVE_HEALTHY`.
+  Parent-ul nu poate fi unul dintre cele două proiecte originale protejate.
+  Standalone/default, răspuns ambiguu, lipsă permisiuni sau metadata = FAIL. Nu ajunge
+  doar eticheta environment din manifest. Nu se creează ramuri sau costuri automat.
 - Proiect existent, ACTIVE_HEALTHY, nume/organizație exacte. Cheile publică/server
   trebuie să coincidă cu cheile returnate de API pentru proiect și rolul/tipul corect.
   Nu ne bazăm numai pe decodarea JWT.
@@ -64,8 +72,9 @@ API-uri:
 [projects](https://supabase.com/docs/reference/api/v1-list-all-projects),
 [project keys](https://supabase.com/docs/reference/api/v1-get-project-api-keys),
 [read-only query](https://supabase.com/docs/reference/api/v1-read-only-query).
+Clasificare: [branches API](https://supabase.com/docs/reference/api/v1-list-all-branches).
 Tokenul cere projects read, keys read inclusiv secret pentru comparație exclusiv
-în memorie și database read. Rolul read-only trebuie să vadă catalogul, istoricul,
+în memorie, branching read și database read. Rolul read-only trebuie să vadă catalogul, istoricul,
 auth.users și storage.objects. Nu lărgi granturile aplicației pentru gate.
 
 ## Seed și limite
@@ -77,15 +86,16 @@ ref-ul guard-ului SQL după verificarea online. Locks, tranzacții, refuzul seed
 parțial și idempotency rămân. Rulează înainte de bootstrap users; refuzul unei baze
 populate este intenționat. Seed necesită database write separat de preflight.
 
-Preflight nu este firewall pentru SQL Editor/CLI manual. Operatorul rulează gate-ul
-imediat înainte de fiecare write autorizat și folosește exact ținta verificată.
-Nu există lock distribuit între gate și comandă: fără operatori concurenți.
+Comenzile oficiale de migrations/bootstrap execută gate-ul intern, imediat înainte
+de write și folosesc inputul fixat și payload-ul verificat. CLI/SQL manual separat
+nu mai este flux oficial. Nu există lock distribuit peste API-ul cloud și CLI:
+fără operatori concurenți, promovare/renumire branch sau trafic comercial în instalare.
 Manifestul trebuie să aparțină unui release revizuit; nu protejează de modificarea
 intenționată simultană a codului și manifestului de către un operator privilegiat.
 
-Legacy demo-seed.mjs primește același gate. provision-demo-e2e.mjs rămâne demo-only
-și cere CLIENT_PREFLIGHT_ROOT către checkout operator curat, separat de workspace
-cu dependențe. Nu-l folosi pentru client nou și nu copia .env.e2e-demo.local.
+Legacy demo-seed.mjs/provision-demo-e2e.mjs sunt acum intenționat blocate de refuzul
+central al demo-ului. Nu le folosi pentru un client nou și nu dezactiva denylist-ul.
+Istoricul demo-ului este păstrat; mentenanța lui cere alt task, nu installer-ul client.
 Runner-ul demo produce eroare explicită când fișierul E2E lipsește.
 
 ## Teste

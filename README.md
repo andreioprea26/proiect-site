@@ -18,6 +18,11 @@ rulează fără npm install într-un checkout operator curat, cu manifest extern
 secrete injectate în proces. Production este refuzat; demo seed este opt-in.
 Tooling: `npm run test:preflight` și `npm run verify:migrations`.
 
+Writes client: `npm run client:install -- all --apply`, cu gate-uri interne pentru
+migrations și bootstrap. [Comenzi și limite](docs/client-install-runner.md).
+Testare runner fără cloud: `npm run test:client-install`. Demo-ul existent este
+interzis installer-ului; numai ținte Preview non-default verificate remote.
+
 ## Tehnologii folosite
 
 - Next.js, React și TypeScript;

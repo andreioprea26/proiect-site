@@ -7,8 +7,9 @@ Proces viitor, nu autorizare de creare conturi, resurse, costuri sau lansare.
 - [ ] Release revizuit, manifest 29 SQL/hash-uri; origin unic către repository client.
 - [ ] Checkout operator curat, separat de workspace cu dependențe/E2E.
 - [ ] Manifest extern aprobat: ref, organizație, nume, inventar Production.
-- [ ] Preflight empty PASS înainte de migrations; proiect existent și gol.
-- [ ] Preflight migrated PASS după schema completă și înainte de writes ulterioare.
+- [ ] Clasificare Supabase Preview non-default/fără date copiate verificată remote.
+- [ ] Runner oficial `client:install -- all --apply` sau migrate/seed/bootstrap guarded.
+- [ ] Gate-uri interne înainte de write și post-migration exact PASS; fără CLI separat.
 - [ ] Seed numai aprobat explicit, dry-run și înainte de bootstrap users.
 - [ ] Conturi E2E noi, niciun cont/secret copiat de la alt business.
 - [ ] Cont Stripe separat Sandbox și Resend separat verificate de owner.
@@ -109,7 +110,12 @@ nu înseamnă că onboarding-ul unui client nou sau lansarea Production au fost 
 - [ ] Nu declarăm reproductibilitatea doar pentru că migrările sunt versionate:
   instalarea pe bază goală trebuie să treacă efectiv.
 
-## 3. Auth și admin bootstrap — manual controlat
+## 3. Auth și admin bootstrap
+
+Test/Preview nou: [runner oficial](client-install-runner.md) creează și promovează
+numai administrator tehnic dedicat, cu gate-uri interne. Bootstrap owner/Live și
+configurările Auth de mai jos rămân administrative separate, nu protejate printr-un
+PASS manual vechi. Nu folosi provisioner-ul demo pe un client.
 
 - [ ] Proprietarul creează un cont nou, adresă verificată, parolă proprie; fără
   credentiale default în seed/Git/chat.

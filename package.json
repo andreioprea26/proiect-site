@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "preflight": "node scripts/preflight.mjs",
+    "client:install": "node scripts/install-client.mjs",
+    "test:client-install": "node --test tests/unit/client-install.test.mjs",
     "seed-demo": "node scripts/seed-demo.mjs",
     "verify:migrations": "node scripts/verify-migration-manifest.mjs",
     "test:preflight": "node --test tests/unit/client-preflight.test.mjs",

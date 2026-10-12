@@ -4,7 +4,7 @@ import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, rmSync } from 'nod
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { execFileSync, spawnSync } from 'node:child_process';
-import { digest, preflight, validateConfig, validateHistory, verifyManifest, containsSecret, ORIGINAL_REF } from '../../scripts/lib/client-preflight.mjs';
+import { digest, preflight, validateConfig, validateHistory, verifyManifest, containsSecret, ORIGINAL_REF, EXISTING_DEMO_REF } from '../../scripts/lib/client-preflight.mjs';
 import { seedDemo } from '../../scripts/seed-demo.mjs';
 
 const ref = 'abcdefghijklmnopqrst';
@@ -18,6 +18,7 @@ function fixture(t) {
   writeFileSync(join(root, 'supabase/migration-manifest.json'), JSON.stringify({ version: 1, normalization: 'utf8-lf', migrations }));
   const config = { version: 1, environment: 'preview', production: false, projectRef: ref,
     approvedNonProductionRef: ref, productionRefs: [], projectName: 'New client test', organizationId: 'org-test',
+    previewBranch: { parentProjectRef: 'zyxwvutsrqponmlkjihg', id: '11111111-1111-4111-8111-111111111111' },
     repository: 'https://github.com/example/client-test.git', appUrl: 'https://client-test.vercel.app',
     emailTestRecipient: 'qa@example.invalid', allowDemoSeed: false, e2e: { required: true, projectRef: ref } };
   const env = { SUPABASE_ACCESS_TOKEN: 'fixture-token', NEXT_PUBLIC_SUPABASE_URL: `https://${ref}.supabase.co`,
@@ -33,7 +34,8 @@ function fixture(t) {
   const fetcher = async (url, options) => {
     calls.push({ url, options });
     let data;
-    if (url.endsWith('/projects')) data = [{ id: ref, name: config.projectName, organization_id: config.organizationId, status: 'ACTIVE_HEALTHY' }];
+    if (url.endsWith('/projects')) data = [{ id: config.previewBranch.parentProjectRef, organization_id: config.organizationId, status: 'ACTIVE_HEALTHY' }];
+    else if (url.endsWith('/branches')) data = [{ id: config.previewBranch.id, project_ref: ref, parent_project_ref: config.previewBranch.parentProjectRef, name: config.projectName, is_default: false, with_data: false, preview_project_status: 'ACTIVE_HEALTHY' }];
     else if (url.includes('/api-keys?')) data = [{ name: 'anon', api_key: 'fixture-public' }, { name: 'service_role', api_key: 'fixture-service' }];
     else if (url.endsWith('/database/query/read-only')) data = [{ history_exists: false, relations: 0, users: 0, objects: 0 }];
     else throw new Error('Unexpected endpoint');
@@ -45,7 +47,7 @@ function fixture(t) {
 test('valid empty client passes with only read-only remote calls', async t => {
   const f = fixture(t);
   assert.equal((await preflight(f)).status, 'PASS');
-  assert.equal(f.calls.length, 3);
+  assert.equal(f.calls.length, 4);
   assert.ok(f.calls.every(c => c.options.method === 'GET' || c.url.endsWith('/query/read-only')));
 });
 
@@ -162,3 +164,31 @@ test('HTTP rejection and malformed provider results fail closed', async t => {
   f.fetcher = async () => ({ ok: true, json: async () => { throw new Error('private response'); } });
   await assert.rejects(preflight(f), e => e.message === 'REMOTE_REQUEST_FAILED');
 });
+
+for (const stage of ['empty', 'migrated', 'e2e']) {
+  test(`existing demo is forbidden in ${stage}, even with matching history/approval`, async t => {
+    const f = fixture(t);
+    f.stage = stage; f.confirmRef = EXISTING_DEMO_REF;
+    Object.assign(f.config, { projectRef: EXISTING_DEMO_REF, approvedNonProductionRef: EXISTING_DEMO_REF });
+    f.config.e2e.projectRef = EXISTING_DEMO_REF;
+    f.env.NEXT_PUBLIC_SUPABASE_URL = `https://${EXISTING_DEMO_REF}.supabase.co`;
+    const matching = [{ version: '20260101000000', name: 'initial' }];
+    assert.doesNotThrow(() => validateHistory(matching, f.migrations, 'migrated', { relations: 36, users: 0, objects: 0 }));
+    await assert.rejects(preflight(f), /PROJECT_REF_FORBIDDEN/);
+    assert.equal(f.calls.length, 0);
+  });
+}
+for (const mutation of [b => b.is_default = true, b => b.with_data = true,
+  b => b.project_ref = 'zzzzzzzzzzzzzzzzzzzz', b => b.preview_project_status = 'INACTIVE',
+  b => b.parent_project_ref = ORIGINAL_REF]) {
+  test('remote classification mismatch rejects operator-declared Preview', async t => {
+    const f = fixture(t); const original = f.fetcher;
+    f.fetcher = async (url, options) => {
+      const result = await original(url, options);
+      if (!url.endsWith('/branches')) return result;
+      const rows = await result.json(); mutation(rows[0]);
+      return { ok: true, json: async () => rows };
+    };
+    await assert.rejects(preflight(f), /REMOTE_PREVIEW_CLASSIFICATION_REQUIRED/);
+  });
+}
