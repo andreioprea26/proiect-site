@@ -10,6 +10,22 @@ Productizarea 10B este în desfășurare. Acest lucru nu reprezintă aprobarea l
 sau activarea Stripe Live. Starea finală a Fazei 9 este păstrată în tag-ul `phase-9-final`
 și branch-ul `archive/phase-9-final`.
 
+## Instalare client Test și Preview
+
+Instalare client Test/Preview: [clean-install guide](docs/clean-install-guide.md),
+[preflight fail-closed](docs/preflight.md). `node scripts/preflight.mjs empty`
+rulează fără npm install într-un checkout operator curat, cu manifest extern și
+secrete injectate în proces. Production este refuzat; demo seed este opt-in.
+Tooling: `npm run test:preflight` și `npm run verify:migrations`.
+
+Writes client: `npm run client:install -- all --apply`, cu gate-uri interne pentru
+migrations și bootstrap. [Comenzi și limite](docs/client-install-runner.md).
+Testare runner fără cloud: `npm run test:client-install`. Demo-ul existent este
+interzis installer-ului. Proiectele standalone Test/Preview sunt suportate prin
+[autorizare explicită owner](docs/standalone-target-authorization.md):
+`npm run client:authorize`, apoi preflight și runner. Branching este opțional,
+nu necesită activarea unui plan plătit pentru fluxul standalone.
+
 ## Tehnologii folosite
 
 - Next.js, React și TypeScript;
@@ -196,3 +212,12 @@ Nu se lucrează direct pe `main`. Fiecare task trebuie implementat și verificat
 - Implementarea respectă ordinea și deciziile aprobate în Project Bible.
 
 Specificația completă este disponibilă în [Project Bible v0.4](docs/project-bible-v0.4.md).
+
+## Instalare demo și lecții pentru onboarding
+
+- [Registru probleme, corecții și prevenție pentru clienți](docs/10b2d-installation-findings.md).
+- [Checkpoint clean install — dovezi și limite](docs/10b2d-clean-install-checkpoint.md).
+- [Seed demo controlat](docs/demo-seed.md) și [E2E demo izolat](docs/demo-e2e.md).
+
+Runner-ele demo sunt intenționat limitate la proiectul de test aprobat, nu sunt
+installere generice pentru clienți. Nu copia `.env` sau credențialele între instalări.

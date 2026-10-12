@@ -1,5 +1,12 @@
 # 10B.1 — Audit și plan de productizare
 
+Final acceptance 10B.2d, 2026-10-12: [runner oficial](client-install-runner.md) cu
+migrations/bootstrap guarded și denylist central pentru demo + Development original.
+Țintele standalone sunt suportate prin [aprobare explicită](standalone-target-authorization.md)
+legată de identitatea remote; Branching este opțional, fără cost nou obligatoriu. Nu sunt
+acceptate writes manuale după preflight separat ca flux oficial. Validări simulate,
+fără reinstalarea demo-ului sau schimbarea schemei ecommerce.
+
 Data: 14 septembrie 2026. Verdict: **PASS pentru audit și arhitectură**, nu
 certificare că template-ul se poate instala sau lansa deja fără intervenție.
 Scope: template master → repository și deployment separat pentru fiecare business
@@ -14,6 +21,25 @@ Actualizare 10B.2b: singleton-ul public `store_settings`, RPC-urile restrictive,
 pagina `/admin/settings` și integrarea request-scoped a brandingului sunt implementate.
 Configul versionat rămâne fallback; detalii și rezultate în
 [checkpoint-ul 10B.2b](10b2b-admin-store-settings.md). Nu include 10B.2c sau lansare Production.
+
+## Actualizare checkpoint 10B.2d — 2026-09-29
+
+Actualizare 2026-10-12: blocajul tooling are implementare versionată în
+`scripts/preflight.mjs`, manifest exact/hash-uri, verificare online read-only,
+interdicții Production/original și seed generic explicit. Vezi [preflight](preflight.md)
+și [ghid client](clean-install-guide.md). Testare izolată, fără reinstalarea demo-ului.
+Paragrafele datate septembrie de mai jos sunt istorice; certificarea fiecărui client
+concret rămâne obligatorie, nu este înlocuită de testele tooling.
+
+Demo-ul a demonstrat instalarea manuală de la zero și regresia verde la 18 septembrie.
+Grant fix-ul este migrare versionată, seed-ul este opt-in și E2E este izolat.
+**Checkpoint-ul integral este BLOCKED**: preflight-ul automat complet per client lipsește.
+Demo-ul a fost reactivat de utilizator în timpul auditului; 29/29 migrări aliniate,
+dry-run up to date, granturi și comanda Sandbox reauditabile/PASS.
+Nu echivalăm PASS-ul demo cu un workflow universal reproductibil.
+Vezi [raportul final](10b2d-productization-final-checkpoint.md),
+[ghidul clean install](clean-install-guide.md) și [starea preflight](preflight.md).
+Secțiunile de audit inițial de mai jos rămân context istoric, nu stare live actuală.
 
 ## 1. Baza auditului și limitele dovezilor
 

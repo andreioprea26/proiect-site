@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "environment": "preview",
+  "production": false,
+  "projectRef": "REPLACE_WITH_CLIENT_REF",
+  "approvedNonProductionRef": "REPLACE_WITH_CLIENT_REF",
+  "productionRefs": [],
+  "projectName": "REPLACE_WITH_APPROVED_TEST_PROJECT_NAME",
+  "organizationId": "REPLACE_WITH_CLIENT_ORGANIZATION_ID",
+  "repository": "https://github.com/CLIENT/CLIENT-REPO.git",
+  "appUrl": "https://CLIENT-PREVIEW.vercel.app",
+  "emailTestRecipient": "test-owner@example.invalid",
+  "allowDemoSeed": false,
+  "e2e": { "required": true, "projectRef": "REPLACE_WITH_CLIENT_REF" }
+}

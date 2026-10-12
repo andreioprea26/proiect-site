@@ -4,7 +4,38 @@ do $$
 declare
   v_unsafe_function text;
   v_unexpected_anon_function text;
+  v_platform_rls_trigger oid;
 begin
+  -- Optional dashboard-created automation, NOT an application RPC. Fail closed
+  -- on any drift; never exempt functions by name or return type alone.
+  v_platform_rls_trigger := to_regprocedure('public.rls_auto_enable()');
+  if v_platform_rls_trigger is not null then
+    assert (select p.prorettype = 'pg_catalog.event_trigger'::regtype
+      and p.pronargs = 0 and p.prosecdef
+      and pg_get_userbyid(p.proowner) = 'postgres'
+      and l.lanname = 'plpgsql'
+      and p.proconfig = array['search_path=pg_catalog']::text[]
+      and encode(sha256(convert_to(replace(p.prosrc, chr(13), ''), 'UTF8')), 'hex')
+        = '2782e98b348aca7d6f6f73c420fd78d2e094957dd7a52b0483d4c34f29d2a7a1'
+      from pg_catalog.pg_proc p
+      join pg_catalog.pg_language l on l.oid = p.prolang
+      where p.oid = v_platform_rls_trigger),
+      'dashboard RLS automation differs from the reviewed definition';
+    assert (select count(*) = 1 from pg_catalog.pg_event_trigger
+      where evtfoid = v_platform_rls_trigger),
+      'dashboard RLS automation must have exactly one event trigger';
+    assert exists (select 1 from pg_catalog.pg_event_trigger
+      where evtfoid = v_platform_rls_trigger and evtname = 'ensure_rls'
+        and evtevent = 'ddl_command_end' and evtenabled = 'O'
+        and pg_get_userbyid(evtowner) = 'postgres'
+        and evttags @> array['CREATE TABLE', 'CREATE TABLE AS', 'SELECT INTO']::text[]
+        and cardinality(evttags) = 3),
+      'dashboard RLS event trigger configuration changed';
+    assert not has_schema_privilege('anon', 'public', 'CREATE')
+      and not has_schema_privilege('authenticated', 'public', 'CREATE'),
+      'API roles can create objects and invoke DDL automation';
+  end if;
+
   assert not exists (
     select 1
     from pg_catalog.pg_class c
@@ -19,6 +50,7 @@ begin
   join pg_catalog.pg_namespace n on n.oid = p.pronamespace
   where n.nspname = 'public'
     and p.prosecdef
+    and p.oid is distinct from v_platform_rls_trigger
     and not exists (
       select 1
       from unnest(coalesce(p.proconfig, '{}'::text[])) setting
@@ -34,6 +66,7 @@ begin
     join pg_catalog.pg_namespace n on n.oid = p.pronamespace
     where n.nspname = 'public'
       and p.prosecdef
+      and p.oid is distinct from v_platform_rls_trigger
       and has_function_privilege('public', p.oid, 'EXECUTE')
   ), 'PUBLIC can execute a SECURITY DEFINER function';
 
@@ -42,6 +75,7 @@ begin
   join pg_catalog.pg_namespace n on n.oid = p.pronamespace
   where n.nspname = 'public'
     and p.prosecdef
+    and p.oid is distinct from v_platform_rls_trigger
     and has_function_privilege('anon', p.oid, 'EXECUTE')
     and p.proname not in (
       'get_approved_product_reviews',
@@ -197,7 +231,16 @@ $$;
 set local role anon;
 
 do $$
+declare v_event_result text;
 begin
+  if to_regprocedure('public.rls_auto_enable()') is not null then
+    begin
+      execute 'select public.rls_auto_enable()' into v_event_result;
+      assert false, 'anon directly invoked dashboard event trigger';
+    exception when feature_not_supported or insufficient_privilege then null;
+    end;
+  end if;
+
   begin
     perform 1 from public.profiles limit 1;
     assert false, 'anon profile read did not fail closed';
@@ -217,7 +260,16 @@ set local role authenticated;
 select set_config('request.jwt.claim.sub', '9a000000-0000-4000-8000-000000000001', true);
 
 do $$
+declare v_event_result text;
 begin
+  if to_regprocedure('public.rls_auto_enable()') is not null then
+    begin
+      execute 'select public.rls_auto_enable()' into v_event_result;
+      assert false, 'customer directly invoked dashboard event trigger';
+    exception when feature_not_supported or insufficient_privilege then null;
+    end;
+  end if;
+
   assert (select count(*) = 0 from public.profiles),
     'customer can read another profile';
   assert (select count(*) = 0 from public.customer_addresses),
