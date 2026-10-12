@@ -7,12 +7,13 @@ Nu folosește Docker, nu creează servicii și nu schimbă schema ecommerce vers
 ## Identitate și autorizare
 
 Configurează manifestul extern din `config/client-install.example.json` și env
-conform [preflight](preflight.md). Noua țintă trebuie să fie o ramură Preview
-non-default, fără copiere de date, confirmată de Supabase Management API; UUID/ref/
-parent/nume/organizație și healthy status trebuie să coincidă. Standalone/default
-și clasificare neverificabilă sunt refuzate. Un nume care conține test nu este probă.
-Nu proviziona un plan plătit pentru a ocoli un FAIL: disponibilitatea/costul ramurii
-necesită aprobarea owner-ului într-un task separat. Runner-ul nu creează ramura.
+conform [preflight](preflight.md). Opțiunea standard este un proiect standalone nou,
+deținut de client, înrolat explicit prin [autorizare target](standalone-target-authorization.md).
+Ref/id/nume/organizație/data creării/status și apartenența cheilor sunt verificate
+remote. Scopul necomercial este atestat explicit de owner, nu dedus dintr-un nume.
+Supabase Preview Branching rămâne opțional: metadata non-default/fără date copiate
+este verificată remote; poate presupune costuri suplimentare. Nu este necesar pentru
+standalone și runner-ul nu creează resurse, abonamente sau ramuri.
 
 Development original și demo existent sunt interzise central, indiferent de etapă,
 history valid sau aprobări locale. Nu există force, repair, reset sau override.

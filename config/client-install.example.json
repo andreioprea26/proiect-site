@@ -7,10 +7,6 @@
   "productionRefs": [],
   "projectName": "REPLACE_WITH_APPROVED_TEST_PROJECT_NAME",
   "organizationId": "REPLACE_WITH_CLIENT_ORGANIZATION_ID",
-  "previewBranch": {
-    "parentProjectRef": "REPLACE_WITH_SEPARATE_CLIENT_PARENT_REF",
-    "id": "REPLACE_WITH_REMOTE_PREVIEW_BRANCH_UUID"
-  },
   "repository": "https://github.com/CLIENT/CLIENT-REPO.git",
   "appUrl": "https://CLIENT-PREVIEW.vercel.app",
   "emailTestRecipient": "test-owner@example.invalid",

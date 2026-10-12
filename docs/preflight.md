@@ -17,7 +17,8 @@ link CLI implicit, cache de autorizare sau fallback offline. Nu creează resurse
    argumente, Git sau transcript. Nu copia .env din alt proiect.
 4. CLIENT_INSTALL_CONFIG = calea absolută externă a manifestului;
    CLIENT_CONFIRM_PROJECT_REF = ref-ul confirmat separat de owner.
-5. Rulează `node scripts/preflight.mjs empty` înainte de migrare.
+5. Înrolează standalone prin [aprobarea owner-ului](standalone-target-authorization.md),
+   apoi rulează `node scripts/preflight.mjs empty` înainte de migrare.
    Exit 0 + JSON PASS sunt obligatorii; orice alt rezultat = STOP.
 6. Pentru writes folosește exclusiv [runner-ul oficial](client-install-runner.md),
    nu un PASS manual urmat de CLI/SQL separat. `migrated` și `e2e` rămân disponibile
@@ -41,11 +42,13 @@ Gate-ul validează configurația; nu face login și nu rulează Playwright.
   bdyocajhhylvasfhmnal și demo bfmihaxfleztajzyamio blocate în cod în toate etapele.
   Toate ref-urile Production declarate sunt
   blocate. Fără force sau override Production, chiar dacă operatorul îl solicită.
-- Clasificare remote obligatorie: `previewBranch.id` și `previewBranch.parentProjectRef`
+- Standalone implicit: identitate remote exactă + aprobare owner semnată, externă,
+  valabilă 24h, legată de identitate și configurație. Nu există auto-aprobare.
+- Branching opțional: `previewBranch.id` și `previewBranch.parentProjectRef`
   aprobate; API-ul Supabase trebuie să confirme ref, UUID, parent, nume, organizație,
   `is_default=false`, `with_data=false`, `preview_project_status=ACTIVE_HEALTHY`.
   Parent-ul nu poate fi unul dintre cele două proiecte originale protejate.
-  Standalone/default, răspuns ambiguu, lipsă permisiuni sau metadata = FAIL. Nu ajunge
+  Branch default, răspuns ambiguu, lipsă permisiuni sau metadata = FAIL. Nu ajunge
   doar eticheta environment din manifest. Nu se creează ramuri sau costuri automat.
 - Proiect existent, ACTIVE_HEALTHY, nume/organizație exacte. Cheile publică/server
   trebuie să coincidă cu cheile returnate de API pentru proiect și rolul/tipul corect.
@@ -74,7 +77,7 @@ API-uri:
 [read-only query](https://supabase.com/docs/reference/api/v1-read-only-query).
 Clasificare: [branches API](https://supabase.com/docs/reference/api/v1-list-all-branches).
 Tokenul cere projects read, keys read inclusiv secret pentru comparație exclusiv
-în memorie, branching read și database read. Rolul read-only trebuie să vadă catalogul, istoricul,
+în memorie și database read; branching read numai pentru ramuri opționale. Rolul read-only trebuie să vadă catalogul, istoricul,
 auth.users și storage.objects. Nu lărgi granturile aplicației pentru gate.
 
 ## Seed și limite

@@ -1,14 +1,15 @@
 # Clean install client — flux oficial guarded
 
-Fluxul suportat: repo client curat → target Preview verificat online → runner
+Fluxul suportat: repo client curat → autorizare standalone Test/Preview → preflight → runner
 migrations → verificare migrated → seed fictiv opțional → bootstrap tehnic Test
 → configurări Preview autorizate separat → teste și checkpoint funcțional.
 
 1. Release revizuit cu toate cele 29 de migrații și manifestul SHA-256, inclusiv
    grant fix. Repo separat, origin unic client, fără dump sau secrete originale.
-2. Owner-ul aprobă/provisionează separat resursa Preview; installer-ul nu creează
-   resurse sau costuri. Supabase trebuie să confirme ramură non-default, fără date
-   copiate. Standalone/default sau identitate insuficient verificabilă = FAIL.
+2. Owner-ul creează separat un proiect standalone client Test/Preview și îl
+   [înrolează explicit](standalone-target-authorization.md). Installer-ul verifică
+   identitatea remote și baza goală, fără să creeze resurse sau costuri. Branching
+   este opțional, nu o condiție; identitate/aprobare insuficientă = FAIL.
 3. Manifest client extern, ref confirmat și env prin secret manager, conform
    [preflight](preflight.md). Checkout operator fără dependențe/config copiate;
    folosește alt workspace pentru npm ci/build/E2E.

@@ -21,7 +21,10 @@ Tooling: `npm run test:preflight` și `npm run verify:migrations`.
 Writes client: `npm run client:install -- all --apply`, cu gate-uri interne pentru
 migrations și bootstrap. [Comenzi și limite](docs/client-install-runner.md).
 Testare runner fără cloud: `npm run test:client-install`. Demo-ul existent este
-interzis installer-ului; numai ținte Preview non-default verificate remote.
+interzis installer-ului. Proiectele standalone Test/Preview sunt suportate prin
+[autorizare explicită owner](docs/standalone-target-authorization.md):
+`npm run client:authorize`, apoi preflight și runner. Branching este opțional,
+nu necesită activarea unui plan plătit pentru fluxul standalone.
 
 ## Tehnologii folosite
 

@@ -3,6 +3,7 @@ import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { readFileSync, readdirSync, lstatSync } from 'node:fs';
 import { resolve, join } from 'node:path';
+import { verifyTargetApproval } from './target-approval.mjs';
 
 export const ORIGINAL_REF = 'bdyocajhhylvasfhmnal';
 export const EXISTING_DEMO_REF = 'bfmihaxfleztajzyamio';
@@ -23,7 +24,7 @@ export function validateConfig(c, env, stage, confirmRef) {
   requireGate(refPattern.test(c.projectRef) && !forbiddenRefs.includes(c.projectRef), 'PROJECT_REF_FORBIDDEN');
   requireGate(confirmRef === c.projectRef && c.approvedNonProductionRef === c.projectRef, 'TARGET_CONFIRMATION_REQUIRED');
   requireGate(Array.isArray(c.productionRefs) && c.productionRefs.every(r => refPattern.test(r)) && !c.productionRefs.includes(c.projectRef), 'PRODUCTION_TARGET_FORBIDDEN');
-  requireGate(refPattern.test(c.previewBranch?.parentProjectRef) && !forbiddenRefs.includes(c.previewBranch.parentProjectRef)
+  if (c.previewBranch) requireGate(refPattern.test(c.previewBranch.parentProjectRef) && !forbiddenRefs.includes(c.previewBranch.parentProjectRef)
     && c.previewBranch.parentProjectRef !== c.projectRef && /^[0-9a-f-]{36}$/.test(c.previewBranch.id ?? ''), 'REMOTE_PREVIEW_CLASSIFICATION_REQUIRED');
   requireGate(typeof c.projectName === 'string' && c.projectName.trim() && typeof c.organizationId === 'string' && c.organizationId.trim(), 'PROJECT_IDENTITY_REQUIRED');
   requireGate(/^https:\/\/github\.com\/[\w-]+\/[\w.-]+\.git$/.test(c.repository ?? '') && c.repository !== 'https://github.com/andreioprea26/proiect-site.git', 'CLIENT_REPOSITORY_REQUIRED');
@@ -120,8 +121,11 @@ export async function inspectRemote(c, env, fetcher = fetch) {
   const base = `https://api.supabase.com/v1/projects/${c.projectRef}`;
   const api = (url, body) => requestJson(url, env.SUPABASE_ACCESS_TOKEN, body, fetcher);
   const projects = await api('https://api.supabase.com/v1/projects');
-  const project = Array.isArray(projects) && projects.find(p => (p.ref ?? p.id) === c.previewBranch.parentProjectRef);
+  const matchesProject = Array.isArray(projects) ? projects.filter(p => (p.ref ?? p.id) === (c.previewBranch?.parentProjectRef ?? c.projectRef)) : [];
+  const project = matchesProject.length === 1 && matchesProject[0];
   requireGate(project && project.organization_id === c.organizationId && project.status === 'ACTIVE_HEALTHY', 'REMOTE_PROJECT_IDENTITY_MISMATCH');
+  let identity;
+  if (c.previewBranch) {
   const branches = await api(`https://api.supabase.com/v1/projects/${c.previewBranch.parentProjectRef}/branches`);
   const matches = Array.isArray(branches) ? branches.filter(b => b.project_ref === c.projectRef) : [];
   requireGate(matches.length === 1, 'REMOTE_PREVIEW_CLASSIFICATION_REQUIRED');
@@ -129,8 +133,14 @@ export async function inspectRemote(c, env, fetcher = fetch) {
   requireGate(branch.id === c.previewBranch.id && branch.parent_project_ref === c.previewBranch.parentProjectRef
     && branch.name === c.projectName && branch.is_default === false && branch.with_data === false
     && branch.preview_project_status === 'ACTIVE_HEALTHY', 'REMOTE_PREVIEW_CLASSIFICATION_REQUIRED');
-  const identity = { ref: branch.project_ref, branchId: branch.id, parentRef: branch.parent_project_ref,
+  identity = { ref: branch.project_ref, branchId: branch.id, parentRef: branch.parent_project_ref,
     name: branch.name, organizationId: project.organization_id, classification: 'non-default-preview-without-data' };
+  } else {
+    requireGate(project.name === c.projectName && typeof project.id === 'string' && typeof project.created_at === 'string'
+      && Number.isFinite(Date.parse(project.created_at)), 'REMOTE_PROJECT_IDENTITY_MISMATCH');
+    identity = { ref: c.projectRef, id: project.id, name: project.name, organizationId: project.organization_id,
+      createdAt: project.created_at, classification: 'standalone-owner-attested' };
+  }
   const keys = await api(`${base}/api-keys?reveal=true`);
   requireGate(Array.isArray(keys), 'REMOTE_KEYS_UNREADABLE');
   for (const [name, role] of [['NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY', 'anon'], ['SUPABASE_SERVICE_ROLE_KEY', 'service_role']]) {
@@ -148,6 +158,7 @@ export async function preflight({ root, config, env, stage, confirmRef, fetcher 
   inspectRepository(root, config.repository);
   const migrations = verifyManifest(root);
   const { history, snapshot, identity } = await inspectRemote(config, env, fetcher);
+  if (!config.previewBranch) verifyTargetApproval(root, config, env, identity);
   validateHistory(history, migrations, stage, snapshot);
   return { status: 'PASS', stage, migrationCount: migrations.length, remoteMigrationCount: history.length,
     identity, snapshot, manifestDigest: digest(JSON.stringify(migrations)), historyDigest: digest(JSON.stringify(history)) };

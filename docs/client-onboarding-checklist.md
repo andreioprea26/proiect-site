@@ -7,7 +7,9 @@ Proces viitor, nu autorizare de creare conturi, resurse, costuri sau lansare.
 - [ ] Release revizuit, manifest 29 SQL/hash-uri; origin unic către repository client.
 - [ ] Checkout operator curat, separat de workspace cu dependențe/E2E.
 - [ ] Manifest extern aprobat: ref, organizație, nume, inventar Production.
-- [ ] Clasificare Supabase Preview non-default/fără date copiate verificată remote.
+- [ ] Standalone Test/Preview: [aprobare owner](standalone-target-authorization.md) externă,
+  semnată, neexpirată, identitate remote și chei verificate; inventar Production revizuit.
+  Alternativ Branching opțional non-default/fără date copiate, cu cost aprobat separat.
 - [ ] Runner oficial `client:install -- all --apply` sau migrate/seed/bootstrap guarded.
 - [ ] Gate-uri interne înainte de write și post-migration exact PASS; fără CLI separat.
 - [ ] Seed numai aprobat explicit, dry-run și înainte de bootstrap users.

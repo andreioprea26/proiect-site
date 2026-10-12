@@ -2,7 +2,8 @@
 
 Final acceptance 10B.2d, 2026-10-12: [runner oficial](client-install-runner.md) cu
 migrations/bootstrap guarded și denylist central pentru demo + Development original.
-Clasificarea noilor ținte necesită dovadă Supabase Preview non-default. Nu sunt
+Țintele standalone sunt suportate prin [aprobare explicită](standalone-target-authorization.md)
+legată de identitatea remote; Branching este opțional, fără cost nou obligatoriu. Nu sunt
 acceptate writes manuale după preflight separat ca flux oficial. Validări simulate,
 fără reinstalarea demo-ului sau schimbarea schemei ecommerce.
 

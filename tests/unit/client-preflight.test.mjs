@@ -6,8 +6,101 @@ import { join, resolve } from 'node:path';
 import { execFileSync, spawnSync } from 'node:child_process';
 import { digest, preflight, validateConfig, validateHistory, verifyManifest, containsSecret, ORIGINAL_REF, EXISTING_DEMO_REF } from '../../scripts/lib/client-preflight.mjs';
 import { seedDemo } from '../../scripts/seed-demo.mjs';
+import { issueTargetApproval, approvalChallenge } from '../../scripts/lib/target-approval.mjs';
+import { installClient } from '../../scripts/lib/client-install.mjs';
 
 const ref = 'abcdefghijklmnopqrst';
+function standalone(t) {
+  const f = fixture(t);
+  delete f.config.previewBranch;
+  const dir = mkdtempSync(join(tmpdir(), 'owner-approval-'));
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  f.env.CLIENT_TARGET_APPROVAL = join(dir, 'approval.json');
+  f.env.CLIENT_TARGET_APPROVAL_KEY = 'ab'.repeat(32);
+  f.identity = { ref, id: ref, name: f.config.projectName, organizationId: f.config.organizationId,
+    createdAt: '2026-10-12T00:00:00Z', classification: 'standalone-owner-attested' };
+  f.approve = () => writeFileSync(f.env.CLIENT_TARGET_APPROVAL,
+    JSON.stringify(issueTargetApproval(f.config, f.env, f.identity, approvalChallenge(f.identity))));
+  f.approve();
+  const previous = f.fetcher;
+  f.fetcher = async (url, options) => url.endsWith('/projects')
+    ? { ok: true, json: async () => [{ id: f.identity.id, name: f.identity.name,
+      organization_id: f.identity.organizationId, created_at: f.identity.createdAt, status: 'ACTIVE_HEALTHY' }] }
+    : previous(url, options);
+  return f;
+}
+
+test('standalone remotely verified and explicitly approved passes without branches API', async t => {
+  const f = standalone(t);
+  assert.equal((await preflight(f)).status, 'PASS');
+  assert.ok(f.calls.every(c => !c.url.endsWith('/branches')));
+});
+for (const [name, mutate, error] of [
+  ['missing approval', f => delete f.env.CLIENT_TARGET_APPROVAL, /EXTERNAL_TARGET_APPROVAL_REQUIRED/],
+  ['changed remote identity', f => f.identity.createdAt = '2026-10-11T00:00:00Z', /APPROVED_IDENTITY/],
+  ['changed organization', f => f.identity.organizationId = 'other', /REMOTE_PROJECT_IDENTITY/],
+  ['foreign credential', f => f.env.SUPABASE_SERVICE_ROLE_KEY = 'other', /REMOTE_KEY_BINDING/],
+  ['Production', f => f.config.production = true, /PRODUCTION_FORBIDDEN/],
+  ['known Production', f => f.config.productionRefs = [ref], /PRODUCTION_TARGET_FORBIDDEN/],
+  ['Development', f => f.config.projectRef = ORIGINAL_REF, /PROJECT_REF_FORBIDDEN/],
+  ['Demo', f => f.config.projectRef = EXISTING_DEMO_REF, /PROJECT_REF_FORBIDDEN/],
+  ['wrong trust key', f => f.env.CLIENT_TARGET_APPROVAL_KEY = 'cd'.repeat(32), /APPROVAL_SIGNATURE/],
+  ['changed local approval config', f => f.config.allowDemoSeed = true, /APPROVED_IDENTITY_OR_CONFIG/],
+]) test(`standalone ${name} fails`, async t => {
+  const f = standalone(t); mutate(f); await assert.rejects(preflight(f), error);
+});
+test('enrollment requires exact explicit owner challenge', t => {
+  const f = standalone(t);
+  assert.throws(() => issueTargetApproval(f.config, f.env, f.identity, 'yes'), /EXPLICIT_OWNER/);
+});
+test('enrollment CLI refuses noninteractive approval and bypass flags', () => {
+  for (const args of [[], ['--yes']]) {
+    const result = spawnSync(process.execPath, ['scripts/authorize-client-target.mjs', ...args], { encoding: 'utf8' });
+    assert.equal(result.status, 1);
+    assert.match(result.stderr, /INTERACTIVE_OWNER_ENROLLMENT_REQUIRED/);
+  }
+});
+test('expired enrollment fails closed', async t => {
+  const f = standalone(t);
+  writeFileSync(f.env.CLIENT_TARGET_APPROVAL, JSON.stringify(issueTargetApproval(f.config, f.env, f.identity,
+    approvalChallenge(f.identity), Date.now() - 86400001)));
+  await assert.rejects(preflight(f), /APPROVAL_EXPIRED/);
+});
+for (const scenario of ['valid', 'manifest mismatch', 'target drift', 'bootstrap early', 'approval revoked']) {
+  test(`standalone real preflight through runner: ${scenario}`, async t => {
+    const f = standalone(t); let migrated = false; let users = 0; const writes = [];
+    Object.assign(f.env, { CLIENT_CONFIRM_PROJECT_REF: ref, CLIENT_BOOTSTRAP_ADMIN_EMAIL: f.config.emailTestRecipient,
+      CLIENT_BOOTSTRAP_ADMIN_PASSWORD: 'fixture-password-only' });
+    const original = f.fetcher;
+    const fetcher = async (url, options) => {
+      if (!url.endsWith('/query/read-only')) return original(url, options);
+      const data = JSON.parse(options.body).query.startsWith('select version')
+        ? [{ version: '20260101000000', name: 'initial' }]
+        : [{ history_exists: migrated, relations: migrated ? 36 : 0, users, objects: 0 }];
+      return { ok: true, json: async () => data };
+    };
+    const options = { root: f.root, load: () => ({ config: f.config, env: f.env }),
+      gate: args => preflight({ ...args, fetcher }),
+      migrate: async (_input, _sql, dryRun) => {
+        if (dryRun) {
+          if (scenario === 'target drift') f.identity.createdAt = '2026-10-11T00:00:00Z';
+          if (scenario === 'approval revoked') rmSync(f.env.CLIENT_TARGET_APPROVAL);
+        } else { writes.push('migrate'); migrated = true; }
+      }, unused: async () => {}, inspect: async () => {},
+      create: async () => { writes.push('create'); users = 1; return '11111111-1111-4111-8111-111111111111'; },
+      promote: async () => { writes.push('promote'); } };
+    if (scenario === 'manifest mismatch') {
+      writeFileSync(join(f.root, 'supabase/migrations', f.migrations[0].file), 'select 2;'); f.commit();
+    }
+    if (scenario === 'valid') {
+      assert.equal((await installClient('all', options)).status, 'PASS');
+      assert.deepEqual(writes, ['migrate', 'create', 'promote']);
+    } else {
+      await assert.rejects(installClient(scenario === 'bootstrap early' ? 'bootstrap' : 'all', options));
+      assert.deepEqual(writes, []);
+    }
+  });
+}
 function fixture(t) {
   const root = mkdtempSync(join(tmpdir(), 'client-preflight-test-'));
   t.after(() => rmSync(root, { recursive: true, force: true }));
