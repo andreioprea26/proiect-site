@@ -1,8 +1,9 @@
-import { readFileSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 import { parseEnv } from 'node:util';
 import { spawnSync } from 'node:child_process';
 
 const ref = 'bfmihaxfleztajzyamio';
+if (!existsSync('.env.e2e-demo.local')) throw new Error('E2E_CONFIG_MISSING: provision dedicated test identities first; refusing to skip tests.');
 const isolated = parseEnv(readFileSync('.env.e2e-demo.local', 'utf8'));
 if (isolated.E2E_APPROVED_PROJECT_REF !== ref || isolated.NEXT_PUBLIC_SUPABASE_URL !== `https://${ref}.supabase.co`) {
   throw new Error('Demo environment target mismatch');

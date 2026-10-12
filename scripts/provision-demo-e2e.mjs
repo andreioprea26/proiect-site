@@ -4,6 +4,7 @@ import { randomBytes } from 'node:crypto';
 import { existsSync, writeFileSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { createClient } from '@supabase/supabase-js';
+import { runPreflight } from './preflight.mjs';
 
 const ref = 'bfmihaxfleztajzyamio';
 const url = `https://${ref}.supabase.co`;
@@ -21,6 +22,10 @@ const jwtRef = (key) => {
 };
 
 async function main() {
+  // Dependency-installed E2E workspace is separate from the pristine operator clone.
+  if (!process.env.CLIENT_PREFLIGHT_ROOT) fail('CLIENT_PREFLIGHT_ROOT required: pristine operator clone');
+  const { config } = await runPreflight(process.env.CLIENT_PREFLIGHT_ROOT, 'migrated');
+  if (config.projectRef !== ref) fail('Preflight target mismatch');
   if (process.argv.slice(2).join(' ') !== `--project-ref=${ref} --provision`) fail('Explicit approved demo ref and --provision required.');
   if (existsSync(output)) fail('Demo env already exists; refuse overwrite or credential rotation.');
   const keys = JSON.parse(cli(['projects', 'api-keys', '--project-ref', ref, '--output', 'json']));

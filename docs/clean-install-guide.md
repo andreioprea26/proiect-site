@@ -1,37 +1,35 @@
-# Clean install — ghid controlat
+# Clean install pentru un client nou
 
-Stare 2026-09-29: demo instalat și testat la 18 septembrie; checkpoint integral
-BLOCKED. Vezi [raportul actual](10b2d-productization-final-checkpoint.md).
-Nu există încă installer/preflight complet pentru clienți noi.
+Workflow Test/Preview: repo nou → preflight → Supabase gol confirmat → migrations
+→ bootstrap → demo opțional → Preview → teste.
+Excepție de ordine obligatorie: catalogul demo se introduce înainte de users;
+seed-ul refuză o bază cu utilizatori/comenzi. Nu reseta baza pentru a ocoli guard-ul.
 
-1. Selectează release master revizuit care include toate cele 29 de migrații,
-   în special `20260918150000_explicit_runtime_table_grants.sql`. Nu folosi develop
-   vechi fără grant fix și nu copia doar schema demo prin dump.
-2. Creează repo separat din surse tracked, nu copia workspace-ul cu .env, .vercel,
-   .supabase, supabase/.temp, node_modules, .next sau artefacte E2E.
-3. Provisionează separat Supabase Test gol și integrările clientului, cu aprobarea
-   owner-ului/costurilor. Notează ref-urile; nu reutiliza secretele altui magazin.
-4. Parcurge [preflight](preflight.md). Nu continua la target necunoscut, DB paused,
-   env incomplete, istorice nealiniate sau date private preexistente.
-5. În checkout izolat, verifică migration list și db push --dry-run cu ref explicit.
-   Aplică numai migrațiile revizuite după aprobare. Nu folosi reset/repair ca să
-   ascunzi diferențe. Repetă list/dry-run și verifică RLS/grants/search_path.
-6. Rulează cele 14 scripturi SQL în transaction/rollback pe Test. Grant fix-ul vine
-   din migrare, nu din SQL de onboarding executat manual și uitat în dashboard.
-7. Seed-ul demonstrativ este opt-in, în afara migrations. [Runner-ul actual](demo-seed.md)
-   acceptă DOAR demo-ul aprobat, nu un ref client. Nu elimina guard-ul pentru reuse;
-   adaptarea la client cere manifest/review/validare separată. Fără demo în Live.
-8. Configurează Vercel repo/env, Auth Site URL și callbacks exacte, Stripe Test
-   endpoint propriu și Resend redirect. APP_URL/webhook pot lipsi înainte de primul
-   deploy, dar nu la certificare. READY este doar status deployment.
-9. Verifică Auth/emailuri cu linkuri noi și o plată Sandbox controlată: webhook,
-   order/payment, un singur efect stock, rezervare, cart; păstrează auditul.
-10. Rulează E2E numai cu fixtures separate, guard-uri de target și fără skip mascat.
-    Runner-ul actual este demo-specific; nu îl rula pe clienți prin schimbarea
-    unilaterală a ref-ului. Lint/type/build/unit + security gates obligatorii.
-11. Predă dovezile și limitele, apoi review/PR/merge manual. Git nu include Auth
-    dashboard, secrete, DB/Storage sau configurația furnizorilor. Live are gate separat.
+1. Selectează release revizuit cu supabase/migration-manifest.json și cele 29 SQL,
+   inclusiv 20260918150000_explicit_runtime_table_grants.sql.
+2. Repo client separat din surse tracked. Checkout operator fără env/config/cache/
+   dependențe copiate, numai origin client. Workspace separat pentru npm ci/build/E2E.
+3. Resurse Test separate, aprobare owner/costuri; fără dump/clonă DB sau chei originale.
+   Gate-ul verifică un proiect existent: crearea inițială are aprobarea umană separată.
+4. Pregătește manifest extern și env conform [preflight](preflight.md).
+   `node scripts/preflight.mjs empty` confirmă online proiectul, cheile și lipsa
+   istoricului/datei de aplicație. Orice exit nonzero oprește instalarea.
+5. Aplică migrațiile exacte în ordine cu CLI aprobat, dry-run și ref explicit,
+   fără link-ul workspace-ului original. Preflight nu face acest write.
+   Eșec parțial = STOP/investigare; fără reset/repair sau relaxarea manifestului.
+6. `node scripts/preflight.mjs migrated` confirmă istoricul complet. Rulează SQL
+   security în transaction/rollback. Niciun grant manual de onboarding.
+7. Dacă se dorește demo: allowDemoSeed=true, dry-run apoi apply conform ghidului;
+   numai date fictive. Apoi bootstrap conturi/admin prin procedura aprobată, fără
+   copiere conturi demo/originale. Provisioner-ul istoric demo nu este pentru client.
+8. Rerulează migrated înainte de configurări Preview/Auth/Stripe Test/Resend redirect.
+   APP_URL/webhook secret obligatorii la validare finală, nu înainte de primul deploy.
+9. Credențiale E2E dedicate în secret manager, apoi `node scripts/preflight.mjs e2e`.
+   Config lipsă = eroare. Folosește teste autorizate pe client, nu runner-ele istorice
+   hardcoded demo. Auth/linkuri noi, email, plată Sandbox și stock effect unic trebuie
+   validate efectiv; gate-ul nu execută testele funcționale.
+10. Păstrează dovezile fără secrete, review/PR/merge separat. Production cere alt gate;
+    tooling-ul acesta refuză integral Live.
 
-Pentru un demo paused, nu reexecuta seed, migrații sau provisioning ca să-l reactivezi.
-Resume autorizat este urmat de audit read-only, fără ștergerea datelor. Demo-ul
-curent a fost reactivat de utilizator și reauditul a trecut la 29 septembrie.
+Demo-ul real din septembrie rămâne dovada funcțională istorică. Tooling-ul din
+octombrie nu a reaplicat schema și nu a schimbat demo-ul sau proiectul original.

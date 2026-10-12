@@ -10,6 +10,14 @@ Productizarea 10B este în desfășurare. Acest lucru nu reprezintă aprobarea l
 sau activarea Stripe Live. Starea finală a Fazei 9 este păstrată în tag-ul `phase-9-final`
 și branch-ul `archive/phase-9-final`.
 
+## Instalare client Test și Preview
+
+Instalare client Test/Preview: [clean-install guide](docs/clean-install-guide.md),
+[preflight fail-closed](docs/preflight.md). `node scripts/preflight.mjs empty`
+rulează fără npm install într-un checkout operator curat, cu manifest extern și
+secrete injectate în proces. Production este refuzat; demo seed este opt-in.
+Tooling: `npm run test:preflight` și `npm run verify:migrations`.
+
 ## Tehnologii folosite
 
 - Next.js, React și TypeScript;

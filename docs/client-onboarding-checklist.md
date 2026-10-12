@@ -2,6 +2,23 @@
 
 Proces viitor, nu autorizare de creare conturi, resurse, costuri sau lansare.
 
+## Gate reutilizabil obligatoriu — 2026-10-12
+
+- [ ] Release revizuit, manifest 29 SQL/hash-uri; origin unic către repository client.
+- [ ] Checkout operator curat, separat de workspace cu dependențe/E2E.
+- [ ] Manifest extern aprobat: ref, organizație, nume, inventar Production.
+- [ ] Preflight empty PASS înainte de migrations; proiect existent și gol.
+- [ ] Preflight migrated PASS după schema completă și înainte de writes ulterioare.
+- [ ] Seed numai aprobat explicit, dry-run și înainte de bootstrap users.
+- [ ] Conturi E2E noi, niciun cont/secret copiat de la alt business.
+- [ ] Cont Stripe separat Sandbox și Resend separat verificate de owner.
+- [ ] Preview/callbacks/APP_URL/webhook client; email redirect către QA aprobat.
+- [ ] Preflight e2e PASS; lipsuri/skip-uri nu sunt certificare.
+- [ ] Auth/email/Stripe/RLS și regresie client validate separat de gate-ul tooling.
+
+Comenzi și limite: [preflight](preflight.md), [clean install](clean-install-guide.md).
+Actualizarea de mai jos descrie starea istorică din septembrie.
+
 Actualizare 2026-09-29: consultă [clean install guide](clean-install-guide.md),
 [preflight și lipsuri](preflight.md) și [checkpoint integral](10b2d-productization-final-checkpoint.md).
 Demo funcțional PASS istoric nu închide gate-urile clientului. Proiect paused,

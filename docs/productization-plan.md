@@ -17,6 +17,13 @@ Configul versionat rămâne fallback; detalii și rezultate în
 
 ## Actualizare checkpoint 10B.2d — 2026-09-29
 
+Actualizare 2026-10-12: blocajul tooling are implementare versionată în
+`scripts/preflight.mjs`, manifest exact/hash-uri, verificare online read-only,
+interdicții Production/original și seed generic explicit. Vezi [preflight](preflight.md)
+și [ghid client](clean-install-guide.md). Testare izolată, fără reinstalarea demo-ului.
+Paragrafele datate septembrie de mai jos sunt istorice; certificarea fiecărui client
+concret rămâne obligatorie, nu este înlocuită de testele tooling.
+
 Demo-ul a demonstrat instalarea manuală de la zero și regresia verde la 18 septembrie.
 Grant fix-ul este migrare versionată, seed-ul este opt-in și E2E este izolat.
 **Checkpoint-ul integral este BLOCKED**: preflight-ul automat complet per client lipsește.

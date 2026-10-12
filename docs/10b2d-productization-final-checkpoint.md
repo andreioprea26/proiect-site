@@ -1,5 +1,9 @@
 # 10B.2d — checkpoint productization / clean install
 
+Actualizare 2026-10-12: gate-ul reutilizabil lipsă în acest audit istoric a fost
+implementat și testat. Vezi [checkpoint-ul preflight](10b2d-reusable-preflight.md).
+Raportul de mai jos păstrează rezultatele și limitele din 2026-09-29.
+
 Data auditului: 2026-09-29. **Verdict: BLOCKED pentru criteriile integrale.**
 Validarea funcțională din 2026-09-18 rămâne PASS; nu a fost rerulată și nu este
 prezentată drept probă live din 29 septembrie. Nu s-a modificat codul/schema.

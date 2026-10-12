@@ -3,6 +3,11 @@ import { readFileSync, mkdtempSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
+import { runPreflight, reportFailure } from './preflight.mjs';
+try {
+  const { config } = await runPreflight(process.cwd(), 'migrated');
+  if (!config.allowDemoSeed || config.projectRef !== 'bfmihaxfleztajzyamio') throw new Error('Seed target not approved');
+} catch (error) { reportFailure(error); process.exit(1); }
 const ref = 'bfmihaxfleztajzyamio';
 const args = process.argv.slice(2);
 if (![2, 3].includes(args.length) || (args.length === 3 && args[2] !== '--shipping') || args[0] !== `--project-ref=${ref}` || !['--dry-run', '--apply'].includes(args[1])) {
@@ -15,6 +20,6 @@ try {
   writeFileSync(file, `begin;\nselect set_config('demo_seed.authorized_ref','${ref}',true);\n${sql}\n${args[1] === '--apply' ? 'commit' : 'rollback'};\n`);
   const result = spawnSync('supabase', ['db', 'query', '--linked', '--project-ref', ref, '--file', file], { encoding: 'utf8', shell: false });
   if (result.error) throw new Error('Could not start Supabase CLI.');
-  if (result.status !== 0) { process.stderr.write(result.stderr || result.stdout); process.exitCode = 1; }
+  if (result.status !== 0) { console.error('Seed failed; provider output suppressed to protect secrets.'); process.exitCode = 1; }
   else console.log(args[1] === '--apply' ? 'Demo seed transaction committed (existing complete seed is unchanged).' : 'Demo seed dry-run PASS; transaction rolled back.');
 } finally { rmSync(directory, { recursive: true, force: true }); }

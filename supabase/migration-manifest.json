@@ -1,0 +1,122 @@
+{
+  "version": 1,
+  "normalization": "utf8-lf",
+  "migrations": [
+    {
+      "file": "20260811120000_create_account_schema.sql",
+      "sha256": "dcba4f757e05d65c6d9d50405ff7a0640c0e673a165671eec331a1d0f8adcd94"
+    },
+    {
+      "file": "20260812120000_create_account_bootstrap.sql",
+      "sha256": "17b504c03c09001688e0768f4059976ac24b4e4e9423d01e071ae95ec557bbcd"
+    },
+    {
+      "file": "20260820120000_add_user_roles_select_own_policy.sql",
+      "sha256": "3c28325d0ae70b7f906486cf66da898ff706ca1f71f94a2ff58f8d917a61355c"
+    },
+    {
+      "file": "20260820160000_add_account_rls_policies.sql",
+      "sha256": "59a393d63524875512b768445e3b4a634b8c5485bd77522103478f30450fb236"
+    },
+    {
+      "file": "20260820200000_create_catalog_base_schema.sql",
+      "sha256": "7020686a30b927b90d9d2371775cc33aa207ff7d399b623c93cb6abfa2fac799"
+    },
+    {
+      "file": "20260820210000_create_variants_customizations.sql",
+      "sha256": "cbd15e01a8fcae3b813f0ab519ecf4fe0b9e256de724aabbf474a9e0f793aa36"
+    },
+    {
+      "file": "20260820220000_create_inventory.sql",
+      "sha256": "c45f7e5247be74e210969af8ae9d2ba15b80d1d9183b8d7ef74c7f8f699337b5"
+    },
+    {
+      "file": "20260820230000_create_product_images_storage.sql",
+      "sha256": "a1e282ad026d60601964343435bddc8f76a3fb69e9f6b85cca60330958220383"
+    },
+    {
+      "file": "20260820240000_add_catalog_rls.sql",
+      "sha256": "6cc88b51924cefc56c8069d33fbc44db38598f89151b64eb8aa4c82353f15ad8"
+    },
+    {
+      "file": "20260823120000_create_checkout_order_schema.sql",
+      "sha256": "f4df429e90919dac587483ab7d21f69347e62b7a354bafbc6ef42d6ddea2311b"
+    },
+    {
+      "file": "20260823130000_create_checkout_quote_function.sql",
+      "sha256": "203a9f7cb9305656ff568850b2bd659c5ba649c487057902fa9d1d2253035e1a"
+    },
+    {
+      "file": "20260823140000_place_cod_order.sql",
+      "sha256": "e82f8c1b8cc253cc4802b07cfad3e88d831a15df2f6a5873abd4afe51cc8157d"
+    },
+    {
+      "file": "20260827120000_create_payment_reservations.sql",
+      "sha256": "08f632a2925d3f644c6ddc1aaeec115d29b80dec4d1d08f9b358f69a271a55b6"
+    },
+    {
+      "file": "20260827130000_create_stripe_checkout_webhook.sql",
+      "sha256": "88a7a3bd5c37fc0dfe96de0543ac6c07e081fe561cfb7c68394f5fd8bfe9402b"
+    },
+    {
+      "file": "20260901010000_allow_stripe_sessions_without_stock_reservations.sql",
+      "sha256": "f084fc475ef632fa36f6981fea2112022e3352043d77c55b0e668dae3cb6ca96"
+    },
+    {
+      "file": "20260901130000_stripe_hardening_refunds.sql",
+      "sha256": "eab988f9674358c632b6a19d2eb8ccda01ca5950187e5076c5743a7383ffee57"
+    },
+    {
+      "file": "20260901140000_allow_stale_attached_stripe_holds.sql",
+      "sha256": "40fbfff6b2c52f354bed991b982e55cc153c14b3916d8223d2ec2f59b6a77328"
+    },
+    {
+      "file": "20260901150000_reject_conflicting_stripe_sessions.sql",
+      "sha256": "0c1247727a9cba7003e4831019f14b5b538dba0266f7c924a6d0e7455cb66216"
+    },
+    {
+      "file": "20260902120000_admin_order_status_transitions.sql",
+      "sha256": "e6a78ca54461f40981f296e48815620b1a2e1ba5493e7e47cff53da37d917d69"
+    },
+    {
+      "file": "20260902160000_shipments_cancellations_refunds.sql",
+      "sha256": "666448d437d22d2c59d91882a96df430bbba2e9d09504bd12e8f460533b786b6"
+    },
+    {
+      "file": "20260902200000_operational_notifications_cod_collection.sql",
+      "sha256": "a4abe0f8341e37f2cc947ea295c816b2727d03ab6167afb2d05984ad5644b06e"
+    },
+    {
+      "file": "20260904120000_customer_orders_favorites_reviews.sql",
+      "sha256": "b146735700ea3d3c43a13bd8eb8b62e2d5a437f2e506d4c2ded8672422e4eaed"
+    },
+    {
+      "file": "20260904160000_newsletter_contact_custom_content.sql",
+      "sha256": "e0a9f3bec1e2de8288913805e6cb1e2b09da10d57b3ce628f1e2b74b64d541ad"
+    },
+    {
+      "file": "20260904170000_content_pages_rls_fix.sql",
+      "sha256": "c5b85efd0c4097903ad08c1ab999f8392b191280de97e065097e63cc2a0700a9"
+    },
+    {
+      "file": "20260904200000_homepage_admin_stats.sql",
+      "sha256": "64ec86798898d9f2ad5f369acf9ec9c36743b54a844ac69151909bbe1356694c"
+    },
+    {
+      "file": "20260904210000_restrict_homepage_admin_rpcs.sql",
+      "sha256": "c9a499b8171e13fdefa3ff86d42f10715934a6a111c29da6d4d5b7e1fef72764"
+    },
+    {
+      "file": "20260904230000_security_data_integrity.sql",
+      "sha256": "2cdfc3cb5c55672e1e64d4eccc70f2237231e923df2f979ee4d0802e383daf5a"
+    },
+    {
+      "file": "20260915120000_public_store_settings.sql",
+      "sha256": "ce039228656470e050905e6f3981d4bd0f7e9237be71c5ff3502233c5db25cdb"
+    },
+    {
+      "file": "20260918150000_explicit_runtime_table_grants.sql",
+      "sha256": "d54e83239a7662b515bfc399356012e7664376f9f78f2d8bf3fb9d84c2009f2d"
+    }
+  ]
+}

@@ -1,41 +1,95 @@
-# Preflight înainte de clean install — stare 2026-09-29
+# Preflight reutilizabil pentru clienți Test și Preview
 
-**Incomplet: nu există încă un script unic read-only care să acopere toate gate-urile.**
-Checklist-ul manual nu este echivalentul unui preflight automat executat.
+Actualizare 2026-10-12: scripts/preflight.mjs înlocuiește checklist-ul incomplet din
+septembrie. Dependency-free (Node 22+ și Git), read-only și fail-closed. Fără dotenv,
+link CLI implicit, cache de autorizare sau fallback offline. Nu creează resurse.
 
-| Control | Implementare existentă | Limită |
-| --- | --- | --- |
-| Target Supabase | scripts/demo-seed.mjs, scripts/provision-demo-e2e.mjs, tests/e2e/demo-target.ts | Ref demo hardcoded, nu manifest per client |
-| Environment/Production guard | Ref allowlisted, Stripe placeholder și Resend gol în scripts/run-demo-e2e.mjs | Nu verifică mediul real al unui client înainte de instalare |
-| Env necesare | scripts/run-demo-e2e.mjs: URL, JWT project binding, credențiale E2E | Nu inventariază complet env Vercel/Auth/Stripe/Resend; numai după provisioning |
-| Config/secrets copiate | .gitignore și docs/client-onboarding-checklist.md | Fără detecție automată pre-install a fișierelor locale ignorate/copiate |
-| Expected migrations | supabase/seeds/handmade-demo*.sql cer count=29 | Nu compară lista/hash-urile release-ului cu Local/Remote |
-| Test config | playwright.config.ts, scripts/run-demo-e2e.mjs, tests/e2e/demo-no-skips-reporter.ts | Demo-only; nu certifică provisioning/env ale unui client nou |
+## Configurare
 
-`provision-demo-e2e.mjs` creează users, rol și env local; NU este read-only.
-`demo-seed.mjs --apply` scrie date; NU este preflight.
-`run-demo-e2e.mjs --full` execută fixture-uri; NU este verificare înaintea instalării.
+1. Folosește checkout operator curat al repository-ului clientului, cu origin unic.
+   Nu instala dependențe aici; păstrează separat workspace-ul aplicației/E2E.
+2. Copiază config/client-install.example.json ÎN AFARA repository-ului. Completează
+   ref Test/Preview, confirmarea ref-ului, nume, organizație, origin HTTPS exact,
+   URL Preview planificat, destinatarul QA, inventarul ref-urilor Production și
+   aprobarea seed-ului. Owner-ul trebuie să revizuiască clasificarea Test: furnizorul
+   nu poate deduce scopul comercial al unei baze doar din numele ei.
+3. Injectează secretele prin secret manager/environment de proces, nu în fișiere,
+   argumente, Git sau transcript. Nu copia .env din alt proiect.
+4. CLIENT_INSTALL_CONFIG = calea absolută externă a manifestului;
+   CLIENT_CONFIRM_PROJECT_REF = ref-ul confirmat separat de owner.
+5. Rulează `node scripts/preflight.mjs empty` înainte de migrare.
+   Exit 0 + JSON PASS sunt obligatorii; orice alt rezultat = STOP.
+6. Repetă cu `migrated` înainte de bootstrap/seed/configurări după schema completă,
+   cu `e2e` înainte de validarea finală. Nu reutiliza PASS după schimbări de stare.
 
-## Procedură manuală obligatorie până la implementare
+Environment obligatoriu: SUPABASE_ACCESS_TOKEN, NEXT_PUBLIC_SUPABASE_URL,
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, SUPABASE_SERVICE_ROLE_KEY, STRIPE_SECRET_KEY,
+RESEND_API_KEY, EMAIL_DELIVERY_MODE, EMAIL_TEST_RECIPIENT, RESEND_FROM_EMAIL,
+RESEND_REPLY_TO_EMAIL. APP_URL și STRIPE_WEBHOOK_SECRET pot lipsi înainte de deploy;
+dacă există sunt validate, iar în etapa e2e sunt obligatorii. APP_URL trebuie să
+coincidă cu URL aprobat, fără slash final. Nu sunt imprimate valori secrete.
 
-1. Identifică repo/commit, owner și ref Test; exclude explicit ref-urile originale și Live.
-2. Verifică proiectul online, planul aprobat, branch-ul DB și absența datelor inițiale.
-3. Clone curat fără env/config/cache copiate; inspectează origin și secret scan.
-4. Verifică numai nume/scope și rezultate booleene pentru secrete, fără valori în logs.
-   Inventar: APP_URL, Supabase public URL/key + service role, Stripe Test/webhook,
-   Resend key/from/reply-to, EMAIL_DELIVERY_MODE=redirect și destinatar dedicat.
-5. Compară lista migrațiilor release-ului, migration list și dry-run targetat explicit.
-   Nu executa comanda simplă --linked într-un workspace legat de proiectul original.
-6. Înainte de E2E: identități dedicate, schema potrivită, providerii reali dezactivați
-   pentru suita automată și reporter care respinge skip/unrun. Fără granturi extra.
-7. O lipsă sau nepotrivire = STOP. Un proiect paused nu înseamnă DB goală și READY
-   în Vercel nu demonstrează funcționarea bazei, emailurilor sau plăților.
+empty/migrated cer planul E2E (required=true, ref identic), nu conturi înainte de
+bootstrap. e2e cere E2E_APPROVED_PROJECT_REF, E2E_ADMIN_EMAIL, E2E_ADMIN_PASSWORD,
+E2E_TEST_EMAIL, E2E_TEST_PASSWORD. Lipsuri = E2E_CONFIG_MISSING, niciodată skip.
+Gate-ul validează configurația; nu face login și nu rulează Playwright.
 
-## Criterii pentru scriptul viitor
+## Controale
 
-Manifest ne-secret per instalare/release, target explicit, mediu Test obligatoriu,
-interdicții Production/original, inventar env validat fără disclosure, verificare
-config locală/copiată + remote Git, manifest exact migrations, probe read-only,
-raport PASS/BLOCKED cu exit nonzero la lipsuri, teste negative pentru fiecare guard.
-Scriptul nu trebuie să creeze resurse, users, migrations sau webhook-uri implicit.
-Aceste criterii sunt cerințe restante, nu funcții implementate în acest checkpoint.
+- Exclusiv test/preview, production=false, ref valid confirmat separat. Ref original
+  bdyocajhhylvasfhmnal blocat în cod. Toate ref-urile Production declarate sunt
+  blocate. Fără force sau override Production, chiar dacă operatorul îl solicită.
+- Proiect existent, ACTIVE_HEALTHY, nume/organizație exacte. Cheile publică/server
+  trebuie să coincidă cu cheile returnate de API pentru proiect și rolul/tipul corect.
+  Nu ne bazăm numai pe decodarea JWT.
+- Stripe sk_test obligatoriu, Live refuzat. Control de mod/format, nu autentificarea
+  contului sau o plată. Contul Sandbox separat se verifică și în checklist.
+- Email numai redirect, destinatar exact aprobat, config Resend prezentă și format
+  valid. Apartenența contului și livrarea se validează separat, fără email automat.
+- Git clean, origin fetch/push unic exact. Scan inclusiv fișiere ignorate: .env*
+  exceptând .env.example, .vercel, .supabase, supabase/.temp, .next, node_modules,
+  credențiale cloud, private keys, dumps, logs și artefacte test. Symlink-uri și
+  fișiere neinspectabile refuzate. Pattern scan de secrete fără imprimarea match-ului.
+- supabase/migration-manifest.json: exact 29 nume/ordine/SHA-256, UTF-8 cu CRLF
+  normalizat LF. Fără regenerare automată pentru a ascunde drift. Schimbarea
+  release-ului cere review al SQL și manifestului împreună.
+- Istoric remote SQL read-only: empty cere zero istoric, relații publice, users și
+  obiecte Storage. migrated/e2e cer toate versiunile și numele exacte, în ordine.
+  Parțial, extra, redenumit sau lipsă = FAIL. Istoricul nu este checksum al schemei:
+  nu certifică absența oricărui SQL manual executat anterior.
+- Timeout HTTP, redirect refuzat, erori/provider bodies suprimate. Lipsă permisiuni,
+  endpoint indisponibil sau format schimbat = BLOCKED, fără query write de rezervă.
+
+API-uri:
+[projects](https://supabase.com/docs/reference/api/v1-list-all-projects),
+[project keys](https://supabase.com/docs/reference/api/v1-get-project-api-keys),
+[read-only query](https://supabase.com/docs/reference/api/v1-read-only-query).
+Tokenul cere projects read, keys read inclusiv secret pentru comparație exclusiv
+în memorie și database read. Rolul read-only trebuie să vadă catalogul, istoricul,
+auth.users și storage.objects. Nu lărgi granturile aplicației pentru gate.
+
+## Seed și limite
+
+`node scripts/seed-demo.mjs catalog --dry-run`, apoi catalog --apply; opțional
+shipping --dry-run și shipping --apply. Fiecare invocare rerulează migrated și cere
+allowDemoSeed=true. Fără apply implicit. Payload fictiv identic; se adaptează numai
+ref-ul guard-ului SQL după verificarea online. Locks, tranzacții, refuzul seed-ului
+parțial și idempotency rămân. Rulează înainte de bootstrap users; refuzul unei baze
+populate este intenționat. Seed necesită database write separat de preflight.
+
+Preflight nu este firewall pentru SQL Editor/CLI manual. Operatorul rulează gate-ul
+imediat înainte de fiecare write autorizat și folosește exact ținta verificată.
+Nu există lock distribuit între gate și comandă: fără operatori concurenți.
+Manifestul trebuie să aparțină unui release revizuit; nu protejează de modificarea
+intenționată simultană a codului și manifestului de către un operator privilegiat.
+
+Legacy demo-seed.mjs primește același gate. provision-demo-e2e.mjs rămâne demo-only
+și cere CLIENT_PREFLIGHT_ROOT către checkout operator curat, separat de workspace
+cu dependențe. Nu-l folosi pentru client nou și nu copia .env.e2e-demo.local.
+Runner-ul demo produce eroare explicită când fișierul E2E lipsește.
+
+## Teste
+
+`npm run test:preflight`: repository-uri temporare, HTTP simulat, fără furnizori.
+`npm run verify:migrations`: numai manifest local, nu PASS pentru un target online.
+Testele tooling nu înlocuiesc certificarea Auth/email/Stripe/RLS a fiecărui client.
