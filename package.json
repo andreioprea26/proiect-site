@@ -3,6 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "showcase:export": "node scripts/commercial-showcase.mjs export",
+    "showcase:capture": "node scripts/commercial-showcase.mjs capture",
+    "showcase:serve": "node scripts/commercial-showcase.mjs serve",
+    "test:showcase": "node --test --experimental-strip-types tests/unit/commercial-showcase.test.mjs",
     "client:authorize": "node scripts/authorize-client-target.mjs",
     "preflight": "node scripts/preflight.mjs",
     "client:install": "node scripts/install-client.mjs",

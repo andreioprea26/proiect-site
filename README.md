@@ -229,3 +229,12 @@ ghidul instalatorului Test/Preview, ghidul administratorului, acceptanța și pr
 mentenanța, fișa clientului și procedura Production cu aprobări separate.
 Pachetul nu certifică un client instalat și nu autorizează Production; limitele
 E2E generic și Stripe Live sunt documentate în auditul pachetului.
+
+## Commercial Demo Showcase — 10B.4
+
+[Bijuterii Iris, Lumânări Soare și Cadouri cu Poveste](docs/commercial-demos/README.md)
+demonstrează trei identități pe același storefront. Profiluri fictive, ilustrații
+originale și capturi desktop/mobile din rutele reale Next.js, randate local cu
+fixtures read-only. Reproducere: `npm run showcase:capture`; prezentare locală:
+`npm run showcase:serve -- iris` (sau `soare`/`poveste`). Nu sunt magazine live;
+checkout-ul, plățile, Supabase și certificarea per-client nu sunt validate aici.

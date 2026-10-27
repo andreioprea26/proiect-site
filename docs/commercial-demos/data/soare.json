@@ -1,0 +1,692 @@
+{
+  "version": 1,
+  "id": "soare",
+  "fictitious": true,
+  "checkoutValidated": false,
+  "theme": "terracotta",
+  "art": {
+    "accent": "#a56442",
+    "background": "#f7efe2"
+  },
+  "store": {
+    "name": "Lumânări Soare",
+    "tagline": "Ritualuri calde pentru acasă.",
+    "description": "Lumânări în recipiente simple și decorațiuni în tonuri naturale. Alege aroma, pregătește o carte și fă loc unui moment doar al tău.",
+    "seoDescription": "Lumânări Soare: concept comercial fictiv, fără vânzare reală.",
+    "footerDescription": "DEMO FICTIV · Prețuri și produse demonstrative. Ilustrații originale, nu fotografii de produs. Fără comenzi, plăți sau expediere reale.",
+    "theme": "terracotta",
+    "assets": {
+      "logo": "/branding/soare-logo.svg",
+      "icon": "/branding/soare-icon.svg",
+      "ogImage": null
+    },
+    "copy": {
+      "heroTitle": "Un colț de liniște, în fiecare seară.",
+      "highlightsTitle": "În atelierul nostru demonstrativ",
+      "highlights": [
+        "Arome inspirate de natură",
+        "Două dimensiuni, același ritual",
+        "Colecție fictivă · fără vânzare reală"
+      ],
+      "shopDescription": "Lumânări în recipiente simple și decorațiuni în tonuri naturale. Alege aroma, pregătește o carte și fă loc unui moment doar al tău. Catalog fictiv, fără vânzare reală."
+    }
+  },
+  "settings": {
+    "display_name": "Lumânări Soare",
+    "tagline": "Ritualuri calde pentru acasă.",
+    "short_description": "Lumânări în recipiente simple și decorațiuni în tonuri naturale. Alege aroma, pregătește o carte și fă loc unui moment doar al tău.",
+    "seo_description": "Lumânări Soare: concept comercial fictiv, fără vânzare reală.",
+    "footer_description": "DEMO FICTIV · Prețuri și produse demonstrative. Ilustrații originale, nu fotografii de produs. Fără comenzi, plăți sau expediere reale.",
+    "public_email": null,
+    "public_phone": null,
+    "whatsapp": null,
+    "instagram_url": null,
+    "facebook_url": null,
+    "tiktok_url": null
+  },
+  "homepage": [
+    {
+      "slot": "hero",
+      "eyebrow": "Concept demonstrativ · România",
+      "title": "Un colț de liniște, în fiecare seară.",
+      "subtitle": "Lumânări în recipiente simple și decorațiuni în tonuri naturale. Alege aroma, pregătește o carte și fă loc unui moment doar al tău.",
+      "cta_label": "Descoperă colecția",
+      "cta_href": "/shop",
+      "display_order": 0,
+      "is_active": true
+    },
+    {
+      "slot": "products",
+      "eyebrow": "Selecția atelierului",
+      "title": "Alege atmosfera de acasă",
+      "subtitle": "Produse fictive · prețuri demonstrative în lei",
+      "cta_label": "Vezi toate produsele",
+      "cta_href": "/shop",
+      "display_order": 10,
+      "is_active": true
+    },
+    {
+      "slot": "categories",
+      "eyebrow": "Găsește inspirația",
+      "title": "Alege ce ți se potrivește",
+      "subtitle": null,
+      "cta_label": "Toate categoriile",
+      "cta_href": "/categories",
+      "display_order": 20,
+      "is_active": true
+    },
+    {
+      "slot": "collections",
+      "eyebrow": "O selecție cu personalitate",
+      "title": "Seri de toamnă",
+      "subtitle": null,
+      "cta_label": "Vezi colecțiile",
+      "cta_href": "/collections",
+      "display_order": 30,
+      "is_active": true
+    },
+    {
+      "slot": "promo",
+      "eyebrow": "Doar în prezentarea locală",
+      "title": "Un singur template. Identitatea ta.",
+      "subtitle": "Această prezentare demonstrează catalogul și designul. Checkout-ul și plățile nu sunt validate aici.",
+      "cta_label": "Explorează magazinul",
+      "cta_href": "/shop",
+      "display_order": 40,
+      "is_active": true
+    }
+  ],
+  "categories": [
+    {
+      "id": "00000002-0001-4000-8000-000000000001",
+      "name": "Lumânări parfumate",
+      "slug": "lumanari-parfumate",
+      "description": "Selecție demonstrativă: lumânări parfumate."
+    },
+    {
+      "id": "00000002-0001-4000-8000-000000000002",
+      "name": "Lumânări decorative",
+      "slug": "lumanari-decorative",
+      "description": "Selecție demonstrativă: lumânări decorative."
+    },
+    {
+      "id": "00000002-0001-4000-8000-000000000003",
+      "name": "Accesorii",
+      "slug": "accesorii",
+      "description": "Selecție demonstrativă: accesorii."
+    }
+  ],
+  "collections": [
+    {
+      "id": "00000002-0002-4000-8000-000000000001",
+      "name": "Seri de toamnă",
+      "slug": "seri-de-toamna",
+      "description": "O colecție fictivă, pregătită pentru prezentarea template-ului."
+    }
+  ],
+  "products": [
+    {
+      "id": "00000002-0003-4000-8000-000000000001",
+      "name": "Lumânare Amurg",
+      "slug": "lumanare-amurg",
+      "description": "Note demonstrative de portocală și lemn de cedru, într-un recipient ambră. Lasă lumânarea pe o suprafață stabilă, departe de materiale inflamabile.",
+      "base_price": 59,
+      "product_type": "standard",
+      "availability_status": "in_stock",
+      "publication_status": "published",
+      "is_customizable": false,
+      "lead_time_days": 2,
+      "created_at": "2026-10-27T09:00:00Z",
+      "product_images": [
+        {
+          "storage_path": "soare/lumanare-amurg.svg",
+          "display_order": 0,
+          "alt_text": "Ilustrație originală demonstrativă — Lumânare Amurg"
+        }
+      ],
+      "product_variants": [
+        {
+          "id": "00000002-0004-4000-8000-000000000010",
+          "title": "Recipient 120 g",
+          "attributes": {
+            "Cantitate": "Recipient 120 g"
+          },
+          "price_override": 59,
+          "is_active": true,
+          "display_order": 0
+        },
+        {
+          "id": "00000002-0004-4000-8000-000000000011",
+          "title": "Recipient 220 g",
+          "attributes": {
+            "Cantitate": "Recipient 220 g"
+          },
+          "price_override": 87,
+          "is_active": true,
+          "display_order": 1
+        }
+      ],
+      "customization_options": [],
+      "product_categories": [
+        {
+          "category_id": "00000002-0001-4000-8000-000000000001"
+        }
+      ],
+      "product_collections": [
+        {
+          "collection_id": "00000002-0002-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "id": "00000002-0003-4000-8000-000000000002",
+      "name": "Lumânare Lavandă",
+      "slug": "lumanare-lavanda",
+      "description": "Un acord floral discret pentru o seară liniștită. Recipient cu capac, în două dimensiuni. Nu lăsa lumânarea aprinsă nesupravegheată.",
+      "base_price": 55,
+      "product_type": "standard",
+      "availability_status": "in_stock",
+      "publication_status": "published",
+      "is_customizable": false,
+      "lead_time_days": 2,
+      "created_at": "2026-10-26T09:00:00Z",
+      "product_images": [
+        {
+          "storage_path": "soare/lumanare-lavanda.svg",
+          "display_order": 0,
+          "alt_text": "Ilustrație originală demonstrativă — Lumânare Lavandă"
+        }
+      ],
+      "product_variants": [
+        {
+          "id": "00000002-0004-4000-8000-000000000020",
+          "title": "Recipient 120 g",
+          "attributes": {
+            "Cantitate": "Recipient 120 g"
+          },
+          "price_override": 55,
+          "is_active": true,
+          "display_order": 0
+        },
+        {
+          "id": "00000002-0004-4000-8000-000000000021",
+          "title": "Recipient 220 g",
+          "attributes": {
+            "Cantitate": "Recipient 220 g"
+          },
+          "price_override": 83,
+          "is_active": true,
+          "display_order": 1
+        }
+      ],
+      "customization_options": [],
+      "product_categories": [
+        {
+          "category_id": "00000002-0001-4000-8000-000000000001"
+        }
+      ],
+      "product_collections": [
+        {
+          "collection_id": "00000002-0002-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "id": "00000002-0003-4000-8000-000000000003",
+      "name": "Lumânare Floare de bumbac",
+      "slug": "lumanare-floare-de-bumbac",
+      "description": "O aromă curată și delicată într-un recipient simplu. Descrierea și gramajul sunt exemple fictive pentru configurarea catalogului.",
+      "base_price": 57,
+      "product_type": "standard",
+      "availability_status": "in_stock",
+      "publication_status": "published",
+      "is_customizable": false,
+      "lead_time_days": 2,
+      "created_at": "2026-10-25T09:00:00Z",
+      "product_images": [
+        {
+          "storage_path": "soare/lumanare-floare-de-bumbac.svg",
+          "display_order": 0,
+          "alt_text": "Ilustrație originală demonstrativă — Lumânare Floare de bumbac"
+        }
+      ],
+      "product_variants": [
+        {
+          "id": "00000002-0004-4000-8000-000000000030",
+          "title": "Recipient 120 g",
+          "attributes": {
+            "Cantitate": "Recipient 120 g"
+          },
+          "price_override": 57,
+          "is_active": true,
+          "display_order": 0
+        },
+        {
+          "id": "00000002-0004-4000-8000-000000000031",
+          "title": "Recipient 220 g",
+          "attributes": {
+            "Cantitate": "Recipient 220 g"
+          },
+          "price_override": 85,
+          "is_active": true,
+          "display_order": 1
+        }
+      ],
+      "customization_options": [],
+      "product_categories": [
+        {
+          "category_id": "00000002-0001-4000-8000-000000000001"
+        }
+      ],
+      "product_collections": [
+        {
+          "collection_id": "00000002-0002-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "id": "00000002-0003-4000-8000-000000000004",
+      "name": "Lumânare Coloana",
+      "slug": "lumanare-coloana",
+      "description": "Formă canelată, în nuanță de fildeș, pentru un raft sau o masă festivă. Folosește un suport termorezistent când este aprinsă.",
+      "base_price": 39,
+      "product_type": "standard",
+      "availability_status": "in_stock",
+      "publication_status": "published",
+      "is_customizable": false,
+      "lead_time_days": 2,
+      "created_at": "2026-10-24T09:00:00Z",
+      "product_images": [
+        {
+          "storage_path": "soare/lumanare-coloana.svg",
+          "display_order": 0,
+          "alt_text": "Ilustrație originală demonstrativă — Lumânare Coloana"
+        }
+      ],
+      "product_variants": [],
+      "customization_options": [],
+      "product_categories": [
+        {
+          "category_id": "00000002-0001-4000-8000-000000000002"
+        }
+      ],
+      "product_collections": [
+        {
+          "collection_id": "00000002-0002-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "id": "00000002-0003-4000-8000-000000000005",
+      "name": "Lumânare Sferă",
+      "slug": "lumanare-sfera",
+      "description": "O formă rotundă cu relief fin, potrivită unei compoziții naturale. Produs decorativ fictiv, ilustrat prin grafică originală.",
+      "base_price": 35,
+      "product_type": "standard",
+      "availability_status": "in_stock",
+      "publication_status": "published",
+      "is_customizable": false,
+      "lead_time_days": 2,
+      "created_at": "2026-10-23T09:00:00Z",
+      "product_images": [
+        {
+          "storage_path": "soare/lumanare-sfera.svg",
+          "display_order": 0,
+          "alt_text": "Ilustrație originală demonstrativă — Lumânare Sferă"
+        }
+      ],
+      "product_variants": [],
+      "customization_options": [],
+      "product_categories": [
+        {
+          "category_id": "00000002-0001-4000-8000-000000000002"
+        }
+      ],
+      "product_collections": [
+        {
+          "collection_id": "00000002-0002-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "id": "00000002-0003-4000-8000-000000000006",
+      "name": "Lumânare Vanilie și tonka",
+      "slug": "lumanare-vanilie-si-tonka",
+      "description": "Un parfum cald, cu note dulci și lemnoase. Alege dimensiunea recipientului pentru exemplul de variantă din configurator.",
+      "base_price": 62,
+      "product_type": "standard",
+      "availability_status": "in_stock",
+      "publication_status": "published",
+      "is_customizable": false,
+      "lead_time_days": 2,
+      "created_at": "2026-10-22T09:00:00Z",
+      "product_images": [
+        {
+          "storage_path": "soare/lumanare-vanilie-si-tonka.svg",
+          "display_order": 0,
+          "alt_text": "Ilustrație originală demonstrativă — Lumânare Vanilie și tonka"
+        }
+      ],
+      "product_variants": [
+        {
+          "id": "00000002-0004-4000-8000-000000000060",
+          "title": "Recipient 120 g",
+          "attributes": {
+            "Cantitate": "Recipient 120 g"
+          },
+          "price_override": 62,
+          "is_active": true,
+          "display_order": 0
+        },
+        {
+          "id": "00000002-0004-4000-8000-000000000061",
+          "title": "Recipient 220 g",
+          "attributes": {
+            "Cantitate": "Recipient 220 g"
+          },
+          "price_override": 90,
+          "is_active": true,
+          "display_order": 1
+        }
+      ],
+      "customization_options": [],
+      "product_categories": [
+        {
+          "category_id": "00000002-0001-4000-8000-000000000001"
+        }
+      ],
+      "product_collections": [
+        {
+          "collection_id": "00000002-0002-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "id": "00000002-0003-4000-8000-000000000007",
+      "name": "Tăviță Nisip",
+      "slug": "tavita-nisip",
+      "description": "O tăviță ovală cu textură minerală, pentru aranjarea obiectelor decorative. Exemplu de accesoriu, fără certificări de rezistență termică presupuse.",
+      "base_price": 45,
+      "product_type": "standard",
+      "availability_status": "in_stock",
+      "publication_status": "published",
+      "is_customizable": false,
+      "lead_time_days": 2,
+      "created_at": "2026-10-21T09:00:00Z",
+      "product_images": [
+        {
+          "storage_path": "soare/tavita-nisip.svg",
+          "display_order": 0,
+          "alt_text": "Ilustrație originală demonstrativă — Tăviță Nisip"
+        }
+      ],
+      "product_variants": [],
+      "customization_options": [],
+      "product_categories": [
+        {
+          "category_id": "00000002-0001-4000-8000-000000000003"
+        }
+      ],
+      "product_collections": [
+        {
+          "collection_id": "00000002-0002-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "id": "00000002-0003-4000-8000-000000000008",
+      "name": "Lumânare Pădure",
+      "slug": "lumanare-padure",
+      "description": "Note verzi de brad și lemn, într-o prezentare caldă și simplă. Păstrează lumânările aprinse departe de copii și animale.",
+      "base_price": 65,
+      "product_type": "standard",
+      "availability_status": "in_stock",
+      "publication_status": "published",
+      "is_customizable": false,
+      "lead_time_days": 2,
+      "created_at": "2026-10-20T09:00:00Z",
+      "product_images": [
+        {
+          "storage_path": "soare/lumanare-padure.svg",
+          "display_order": 0,
+          "alt_text": "Ilustrație originală demonstrativă — Lumânare Pădure"
+        }
+      ],
+      "product_variants": [
+        {
+          "id": "00000002-0004-4000-8000-000000000080",
+          "title": "Recipient 120 g",
+          "attributes": {
+            "Cantitate": "Recipient 120 g"
+          },
+          "price_override": 65,
+          "is_active": true,
+          "display_order": 0
+        },
+        {
+          "id": "00000002-0004-4000-8000-000000000081",
+          "title": "Recipient 220 g",
+          "attributes": {
+            "Cantitate": "Recipient 220 g"
+          },
+          "price_override": 93,
+          "is_active": true,
+          "display_order": 1
+        }
+      ],
+      "customization_options": [],
+      "product_categories": [
+        {
+          "category_id": "00000002-0001-4000-8000-000000000001"
+        }
+      ],
+      "product_collections": [
+        {
+          "collection_id": "00000002-0002-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "id": "00000002-0003-4000-8000-000000000009",
+      "name": "Suport Arc",
+      "slug": "suport-arc",
+      "description": "Un obiect decorativ cu formă de arc, în ton de teracotă. Dimensiuni orientative 12 × 8 cm; nu este prezentat ca suport termic certificat.",
+      "base_price": 49,
+      "product_type": "standard",
+      "availability_status": "in_stock",
+      "publication_status": "published",
+      "is_customizable": false,
+      "lead_time_days": 2,
+      "created_at": "2026-10-19T09:00:00Z",
+      "product_images": [
+        {
+          "storage_path": "soare/suport-arc.svg",
+          "display_order": 0,
+          "alt_text": "Ilustrație originală demonstrativă — Suport Arc"
+        }
+      ],
+      "product_variants": [],
+      "customization_options": [],
+      "product_categories": [
+        {
+          "category_id": "00000002-0001-4000-8000-000000000003"
+        }
+      ],
+      "product_collections": [
+        {
+          "collection_id": "00000002-0002-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "id": "00000002-0003-4000-8000-000000000010",
+      "name": "Lumânare Dimineață",
+      "slug": "lumanare-dimineata",
+      "description": "Un acord de citrice și ceai pentru spațiile de zi. Arome, gramaje și prețuri demonstrative, fără promisiuni terapeutice.",
+      "base_price": 58,
+      "product_type": "standard",
+      "availability_status": "in_stock",
+      "publication_status": "published",
+      "is_customizable": false,
+      "lead_time_days": 2,
+      "created_at": "2026-10-18T09:00:00Z",
+      "product_images": [
+        {
+          "storage_path": "soare/lumanare-dimineata.svg",
+          "display_order": 0,
+          "alt_text": "Ilustrație originală demonstrativă — Lumânare Dimineață"
+        }
+      ],
+      "product_variants": [
+        {
+          "id": "00000002-0004-4000-8000-000000000100",
+          "title": "Recipient 120 g",
+          "attributes": {
+            "Cantitate": "Recipient 120 g"
+          },
+          "price_override": 58,
+          "is_active": true,
+          "display_order": 0
+        },
+        {
+          "id": "00000002-0004-4000-8000-000000000101",
+          "title": "Recipient 220 g",
+          "attributes": {
+            "Cantitate": "Recipient 220 g"
+          },
+          "price_override": 86,
+          "is_active": true,
+          "display_order": 1
+        }
+      ],
+      "customization_options": [],
+      "product_categories": [
+        {
+          "category_id": "00000002-0001-4000-8000-000000000001"
+        }
+      ],
+      "product_collections": [
+        {
+          "collection_id": "00000002-0002-4000-8000-000000000001"
+        }
+      ]
+    }
+  ],
+  "inventory": [
+    {
+      "id": "00000002-0006-4000-8000-000000000010",
+      "product_id": null,
+      "variant_id": "00000002-0004-4000-8000-000000000010",
+      "quantity": 8,
+      "low_stock_threshold": 3
+    },
+    {
+      "id": "00000002-0006-4000-8000-000000000011",
+      "product_id": null,
+      "variant_id": "00000002-0004-4000-8000-000000000011",
+      "quantity": 9,
+      "low_stock_threshold": 3
+    },
+    {
+      "id": "00000002-0006-4000-8000-000000000020",
+      "product_id": null,
+      "variant_id": "00000002-0004-4000-8000-000000000020",
+      "quantity": 9,
+      "low_stock_threshold": 3
+    },
+    {
+      "id": "00000002-0006-4000-8000-000000000021",
+      "product_id": null,
+      "variant_id": "00000002-0004-4000-8000-000000000021",
+      "quantity": 10,
+      "low_stock_threshold": 3
+    },
+    {
+      "id": "00000002-0006-4000-8000-000000000030",
+      "product_id": null,
+      "variant_id": "00000002-0004-4000-8000-000000000030",
+      "quantity": 10,
+      "low_stock_threshold": 3
+    },
+    {
+      "id": "00000002-0006-4000-8000-000000000031",
+      "product_id": null,
+      "variant_id": "00000002-0004-4000-8000-000000000031",
+      "quantity": 11,
+      "low_stock_threshold": 3
+    },
+    {
+      "id": "00000002-0006-4000-8000-000000000040",
+      "product_id": "00000002-0003-4000-8000-000000000004",
+      "variant_id": null,
+      "quantity": 11,
+      "low_stock_threshold": 3
+    },
+    {
+      "id": "00000002-0006-4000-8000-000000000050",
+      "product_id": "00000002-0003-4000-8000-000000000005",
+      "variant_id": null,
+      "quantity": 12,
+      "low_stock_threshold": 3
+    },
+    {
+      "id": "00000002-0006-4000-8000-000000000060",
+      "product_id": null,
+      "variant_id": "00000002-0004-4000-8000-000000000060",
+      "quantity": 13,
+      "low_stock_threshold": 3
+    },
+    {
+      "id": "00000002-0006-4000-8000-000000000061",
+      "product_id": null,
+      "variant_id": "00000002-0004-4000-8000-000000000061",
+      "quantity": 14,
+      "low_stock_threshold": 3
+    },
+    {
+      "id": "00000002-0006-4000-8000-000000000070",
+      "product_id": "00000002-0003-4000-8000-000000000007",
+      "variant_id": null,
+      "quantity": 14,
+      "low_stock_threshold": 3
+    },
+    {
+      "id": "00000002-0006-4000-8000-000000000080",
+      "product_id": null,
+      "variant_id": "00000002-0004-4000-8000-000000000080",
+      "quantity": 15,
+      "low_stock_threshold": 3
+    },
+    {
+      "id": "00000002-0006-4000-8000-000000000081",
+      "product_id": null,
+      "variant_id": "00000002-0004-4000-8000-000000000081",
+      "quantity": 16,
+      "low_stock_threshold": 3
+    },
+    {
+      "id": "00000002-0006-4000-8000-000000000090",
+      "product_id": "00000002-0003-4000-8000-000000000009",
+      "variant_id": null,
+      "quantity": 16,
+      "low_stock_threshold": 3
+    },
+    {
+      "id": "00000002-0006-4000-8000-000000000100",
+      "product_id": null,
+      "variant_id": "00000002-0004-4000-8000-000000000100",
+      "quantity": 17,
+      "low_stock_threshold": 3
+    },
+    {
+      "id": "00000002-0006-4000-8000-000000000101",
+      "product_id": null,
+      "variant_id": "00000002-0004-4000-8000-000000000101",
+      "quantity": 18,
+      "low_stock_threshold": 3
+    }
+  ],
+  "reviews": [],
+  "orders": [],
+  "payments": []
+}

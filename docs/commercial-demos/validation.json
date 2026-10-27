@@ -1,0 +1,75 @@
+{
+  "templateCommit": "0081812ce76f16811cd97b983cd772f139cc10f1",
+  "runtime": "next build --webpack + next start, loopback only",
+  "results": [
+    {
+      "id": "iris",
+      "app": "real Next routes",
+      "data": "immutable loopback HTTP fixtures (not Supabase)",
+      "products": 10,
+      "homepageProducts": 8,
+      "theme": "plum",
+      "responsiveWidths": [
+        320,
+        390,
+        1440
+      ],
+      "variants": "selected, price asserted",
+      "customizations": "not applicable",
+      "cart": "local browser only; isolated context empty",
+      "checkout": "NOT RUN",
+      "payments": "NOT RUN",
+      "database": "NOT RUN",
+      "browserErrors": [],
+      "externalRequests": [],
+      "fixtureReads": 165,
+      "fixtureRejected": 0
+    },
+    {
+      "id": "soare",
+      "app": "real Next routes",
+      "data": "immutable loopback HTTP fixtures (not Supabase)",
+      "products": 10,
+      "homepageProducts": 8,
+      "theme": "terracotta",
+      "responsiveWidths": [
+        320,
+        390,
+        1440
+      ],
+      "variants": "selected, price asserted",
+      "customizations": "not applicable",
+      "cart": "local browser only; isolated context empty",
+      "checkout": "NOT RUN",
+      "payments": "NOT RUN",
+      "database": "NOT RUN",
+      "browserErrors": [],
+      "externalRequests": [],
+      "fixtureReads": 174,
+      "fixtureRejected": 0
+    },
+    {
+      "id": "poveste",
+      "app": "real Next routes",
+      "data": "immutable loopback HTTP fixtures (not Supabase)",
+      "products": 10,
+      "homepageProducts": 8,
+      "theme": "evergreen",
+      "responsiveWidths": [
+        320,
+        390,
+        1440
+      ],
+      "variants": "selected, price asserted",
+      "customizations": "text + selection + boolean; +18 RON asserted",
+      "cart": "local browser only; isolated context empty",
+      "checkout": "NOT RUN",
+      "payments": "NOT RUN",
+      "database": "NOT RUN",
+      "browserErrors": [],
+      "externalRequests": [],
+      "fixtureReads": 147,
+      "fixtureRejected": 0
+    }
+  ]
+}

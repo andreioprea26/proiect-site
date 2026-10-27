@@ -1,0 +1,804 @@
+{
+  "version": 1,
+  "id": "iris",
+  "fictitious": true,
+  "checkoutValidated": false,
+  "theme": "plum",
+  "art": {
+    "accent": "#785477",
+    "background": "#f5eef3"
+  },
+  "store": {
+    "name": "Bijuterii Iris",
+    "tagline": "Forme delicate. Stil personal.",
+    "description": "Bijuterii handmade cu linii curate și accente botanice. Descoperă piese ușor de purtat, de oferit și de păstrat aproape.",
+    "seoDescription": "Bijuterii Iris: concept comercial fictiv, fără vânzare reală.",
+    "footerDescription": "DEMO FICTIV · Prețuri și produse demonstrative. Ilustrații originale, nu fotografii de produs. Fără comenzi, plăți sau expediere reale.",
+    "theme": "plum",
+    "assets": {
+      "logo": "/branding/iris-logo.svg",
+      "icon": "/branding/iris-icon.svg",
+      "ogImage": null
+    },
+    "copy": {
+      "heroTitle": "Detalii mici, prezență aparte.",
+      "highlightsTitle": "În atelierul nostru demonstrativ",
+      "highlights": [
+        "Forme botanice și finisaje discrete",
+        "Variante de culoare pentru fiecare stil",
+        "Colecție fictivă · prețuri demonstrative"
+      ],
+      "shopDescription": "Bijuterii handmade cu linii curate și accente botanice. Descoperă piese ușor de purtat, de oferit și de păstrat aproape. Catalog fictiv, fără vânzare reală."
+    }
+  },
+  "settings": {
+    "display_name": "Bijuterii Iris",
+    "tagline": "Forme delicate. Stil personal.",
+    "short_description": "Bijuterii handmade cu linii curate și accente botanice. Descoperă piese ușor de purtat, de oferit și de păstrat aproape.",
+    "seo_description": "Bijuterii Iris: concept comercial fictiv, fără vânzare reală.",
+    "footer_description": "DEMO FICTIV · Prețuri și produse demonstrative. Ilustrații originale, nu fotografii de produs. Fără comenzi, plăți sau expediere reale.",
+    "public_email": null,
+    "public_phone": null,
+    "whatsapp": null,
+    "instagram_url": null,
+    "facebook_url": null,
+    "tiktok_url": null
+  },
+  "homepage": [
+    {
+      "slot": "hero",
+      "eyebrow": "Concept demonstrativ · România",
+      "title": "Detalii mici, prezență aparte.",
+      "subtitle": "Bijuterii handmade cu linii curate și accente botanice. Descoperă piese ușor de purtat, de oferit și de păstrat aproape.",
+      "cta_label": "Descoperă colecția",
+      "cta_href": "/shop",
+      "display_order": 0,
+      "is_active": true
+    },
+    {
+      "slot": "products",
+      "eyebrow": "Selecția atelierului",
+      "title": "Piese care te însoțesc",
+      "subtitle": "Produse fictive · prețuri demonstrative în lei",
+      "cta_label": "Vezi toate produsele",
+      "cta_href": "/shop",
+      "display_order": 10,
+      "is_active": true
+    },
+    {
+      "slot": "categories",
+      "eyebrow": "Găsește inspirația",
+      "title": "Alege ce ți se potrivește",
+      "subtitle": null,
+      "cta_label": "Toate categoriile",
+      "cta_href": "/categories",
+      "display_order": 20,
+      "is_active": true
+    },
+    {
+      "slot": "collections",
+      "eyebrow": "O selecție cu personalitate",
+      "title": "Botanica de zi cu zi",
+      "subtitle": null,
+      "cta_label": "Vezi colecțiile",
+      "cta_href": "/collections",
+      "display_order": 30,
+      "is_active": true
+    },
+    {
+      "slot": "promo",
+      "eyebrow": "Doar în prezentarea locală",
+      "title": "Un singur template. Identitatea ta.",
+      "subtitle": "Această prezentare demonstrează catalogul și designul. Checkout-ul și plățile nu sunt validate aici.",
+      "cta_label": "Explorează magazinul",
+      "cta_href": "/shop",
+      "display_order": 40,
+      "is_active": true
+    }
+  ],
+  "categories": [
+    {
+      "id": "00000001-0001-4000-8000-000000000001",
+      "name": "Coliere",
+      "slug": "coliere",
+      "description": "Selecție demonstrativă: coliere."
+    },
+    {
+      "id": "00000001-0001-4000-8000-000000000002",
+      "name": "Cercei",
+      "slug": "cercei",
+      "description": "Selecție demonstrativă: cercei."
+    },
+    {
+      "id": "00000001-0001-4000-8000-000000000003",
+      "name": "Brățări",
+      "slug": "bratari",
+      "description": "Selecție demonstrativă: brățări."
+    }
+  ],
+  "collections": [
+    {
+      "id": "00000001-0002-4000-8000-000000000001",
+      "name": "Botanica de zi cu zi",
+      "slug": "botanica-de-zi-cu-zi",
+      "description": "O colecție fictivă, pregătită pentru prezentarea template-ului."
+    }
+  ],
+  "products": [
+    {
+      "id": "00000001-0003-4000-8000-000000000001",
+      "name": "Colier Petală",
+      "slug": "colier-petala",
+      "description": "O petală stilizată pe un lanț fin, pentru ținute simple și momente speciale. Lungime demonstrativă 42 cm, cu extensie de 5 cm.",
+      "base_price": 129,
+      "product_type": "standard",
+      "availability_status": "in_stock",
+      "publication_status": "published",
+      "is_customizable": false,
+      "lead_time_days": 2,
+      "created_at": "2026-10-27T09:00:00Z",
+      "product_images": [
+        {
+          "storage_path": "iris/colier-petala.svg",
+          "display_order": 0,
+          "alt_text": "Ilustrație originală demonstrativă — Colier Petală"
+        }
+      ],
+      "product_variants": [
+        {
+          "id": "00000001-0004-4000-8000-000000000010",
+          "title": "Auriu satinat",
+          "attributes": {
+            "Finisaj": "Auriu satinat"
+          },
+          "price_override": 129,
+          "is_active": true,
+          "display_order": 0
+        },
+        {
+          "id": "00000001-0004-4000-8000-000000000011",
+          "title": "Argintiu mat",
+          "attributes": {
+            "Finisaj": "Argintiu mat"
+          },
+          "price_override": 141,
+          "is_active": true,
+          "display_order": 1
+        }
+      ],
+      "customization_options": [],
+      "product_categories": [
+        {
+          "category_id": "00000001-0001-4000-8000-000000000001"
+        }
+      ],
+      "product_collections": [
+        {
+          "collection_id": "00000001-0002-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "id": "00000001-0003-4000-8000-000000000002",
+      "name": "Cercei Lunaria",
+      "slug": "cercei-lunaria",
+      "description": "Două forme ovale inspirate de frunzele uscate de lunaria. Siluetă ușoară, cu un finisaj satinat și o lungime de aproximativ 3 cm.",
+      "base_price": 89,
+      "product_type": "standard",
+      "availability_status": "in_stock",
+      "publication_status": "published",
+      "is_customizable": false,
+      "lead_time_days": 2,
+      "created_at": "2026-10-26T09:00:00Z",
+      "product_images": [
+        {
+          "storage_path": "iris/cercei-lunaria.svg",
+          "display_order": 0,
+          "alt_text": "Ilustrație originală demonstrativă — Cercei Lunaria"
+        }
+      ],
+      "product_variants": [
+        {
+          "id": "00000001-0004-4000-8000-000000000020",
+          "title": "Auriu satinat",
+          "attributes": {
+            "Finisaj": "Auriu satinat"
+          },
+          "price_override": 89,
+          "is_active": true,
+          "display_order": 0
+        },
+        {
+          "id": "00000001-0004-4000-8000-000000000021",
+          "title": "Argintiu mat",
+          "attributes": {
+            "Finisaj": "Argintiu mat"
+          },
+          "price_override": 101,
+          "is_active": true,
+          "display_order": 1
+        }
+      ],
+      "customization_options": [],
+      "product_categories": [
+        {
+          "category_id": "00000001-0001-4000-8000-000000000002"
+        }
+      ],
+      "product_collections": [
+        {
+          "collection_id": "00000001-0002-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "id": "00000001-0003-4000-8000-000000000003",
+      "name": "Brățară Fir de lumină",
+      "slug": "bratara-fir-de-lumina",
+      "description": "Un șnur delicat și un detaliu metalic discret. Model reglabil, potrivit pentru o combinație de mai multe brățări.",
+      "base_price": 69,
+      "product_type": "standard",
+      "availability_status": "in_stock",
+      "publication_status": "published",
+      "is_customizable": false,
+      "lead_time_days": 2,
+      "created_at": "2026-10-25T09:00:00Z",
+      "product_images": [
+        {
+          "storage_path": "iris/bratara-fir-de-lumina.svg",
+          "display_order": 0,
+          "alt_text": "Ilustrație originală demonstrativă — Brățară Fir de lumină"
+        }
+      ],
+      "product_variants": [
+        {
+          "id": "00000001-0004-4000-8000-000000000030",
+          "title": "Auriu satinat",
+          "attributes": {
+            "Finisaj": "Auriu satinat"
+          },
+          "price_override": 69,
+          "is_active": true,
+          "display_order": 0
+        },
+        {
+          "id": "00000001-0004-4000-8000-000000000031",
+          "title": "Argintiu mat",
+          "attributes": {
+            "Finisaj": "Argintiu mat"
+          },
+          "price_override": 81,
+          "is_active": true,
+          "display_order": 1
+        }
+      ],
+      "customization_options": [],
+      "product_categories": [
+        {
+          "category_id": "00000001-0001-4000-8000-000000000003"
+        }
+      ],
+      "product_collections": [
+        {
+          "collection_id": "00000001-0002-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "id": "00000001-0003-4000-8000-000000000004",
+      "name": "Colier Cerc senin",
+      "slug": "colier-cerc-senin",
+      "description": "Un cerc simplu, cu proporții echilibrate, pe lanț subțire. O piesă versatilă pentru ținute de zi.",
+      "base_price": 119,
+      "product_type": "standard",
+      "availability_status": "in_stock",
+      "publication_status": "published",
+      "is_customizable": false,
+      "lead_time_days": 2,
+      "created_at": "2026-10-24T09:00:00Z",
+      "product_images": [
+        {
+          "storage_path": "iris/colier-cerc-senin.svg",
+          "display_order": 0,
+          "alt_text": "Ilustrație originală demonstrativă — Colier Cerc senin"
+        }
+      ],
+      "product_variants": [
+        {
+          "id": "00000001-0004-4000-8000-000000000040",
+          "title": "Auriu satinat",
+          "attributes": {
+            "Finisaj": "Auriu satinat"
+          },
+          "price_override": 119,
+          "is_active": true,
+          "display_order": 0
+        },
+        {
+          "id": "00000001-0004-4000-8000-000000000041",
+          "title": "Argintiu mat",
+          "attributes": {
+            "Finisaj": "Argintiu mat"
+          },
+          "price_override": 131,
+          "is_active": true,
+          "display_order": 1
+        }
+      ],
+      "customization_options": [],
+      "product_categories": [
+        {
+          "category_id": "00000001-0001-4000-8000-000000000001"
+        }
+      ],
+      "product_collections": [
+        {
+          "collection_id": "00000001-0002-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "id": "00000001-0003-4000-8000-000000000005",
+      "name": "Cercei Iris",
+      "slug": "cercei-iris",
+      "description": "Petale geometrice în tonuri de mov prună. Un accent de culoare cu textură mată, conceput pentru colecția demonstrativă.",
+      "base_price": 99,
+      "product_type": "standard",
+      "availability_status": "in_stock",
+      "publication_status": "published",
+      "is_customizable": false,
+      "lead_time_days": 2,
+      "created_at": "2026-10-23T09:00:00Z",
+      "product_images": [
+        {
+          "storage_path": "iris/cercei-iris.svg",
+          "display_order": 0,
+          "alt_text": "Ilustrație originală demonstrativă — Cercei Iris"
+        }
+      ],
+      "product_variants": [
+        {
+          "id": "00000001-0004-4000-8000-000000000050",
+          "title": "Auriu satinat",
+          "attributes": {
+            "Finisaj": "Auriu satinat"
+          },
+          "price_override": 99,
+          "is_active": true,
+          "display_order": 0
+        },
+        {
+          "id": "00000001-0004-4000-8000-000000000051",
+          "title": "Argintiu mat",
+          "attributes": {
+            "Finisaj": "Argintiu mat"
+          },
+          "price_override": 111,
+          "is_active": true,
+          "display_order": 1
+        }
+      ],
+      "customization_options": [],
+      "product_categories": [
+        {
+          "category_id": "00000001-0001-4000-8000-000000000002"
+        }
+      ],
+      "product_collections": [
+        {
+          "collection_id": "00000001-0002-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "id": "00000001-0003-4000-8000-000000000006",
+      "name": "Brățară Nod fin",
+      "slug": "bratara-nod-fin",
+      "description": "Un nod sculptural într-o compoziție minimalistă. Sistem reglabil și finisaj atent descris în opțiunile produsului.",
+      "base_price": 79,
+      "product_type": "standard",
+      "availability_status": "in_stock",
+      "publication_status": "published",
+      "is_customizable": false,
+      "lead_time_days": 2,
+      "created_at": "2026-10-22T09:00:00Z",
+      "product_images": [
+        {
+          "storage_path": "iris/bratara-nod-fin.svg",
+          "display_order": 0,
+          "alt_text": "Ilustrație originală demonstrativă — Brățară Nod fin"
+        }
+      ],
+      "product_variants": [
+        {
+          "id": "00000001-0004-4000-8000-000000000060",
+          "title": "Auriu satinat",
+          "attributes": {
+            "Finisaj": "Auriu satinat"
+          },
+          "price_override": 79,
+          "is_active": true,
+          "display_order": 0
+        },
+        {
+          "id": "00000001-0004-4000-8000-000000000061",
+          "title": "Argintiu mat",
+          "attributes": {
+            "Finisaj": "Argintiu mat"
+          },
+          "price_override": 91,
+          "is_active": true,
+          "display_order": 1
+        }
+      ],
+      "customization_options": [],
+      "product_categories": [
+        {
+          "category_id": "00000001-0001-4000-8000-000000000003"
+        }
+      ],
+      "product_collections": [
+        {
+          "collection_id": "00000001-0002-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "id": "00000001-0003-4000-8000-000000000007",
+      "name": "Colier Rouă",
+      "slug": "colier-roua",
+      "description": "Pandantiv cu formă de picătură și reflexii calde. Lungime demonstrativă 45 cm; se oferă într-un săculeț textil.",
+      "base_price": 139,
+      "product_type": "standard",
+      "availability_status": "in_stock",
+      "publication_status": "published",
+      "is_customizable": false,
+      "lead_time_days": 2,
+      "created_at": "2026-10-21T09:00:00Z",
+      "product_images": [
+        {
+          "storage_path": "iris/colier-roua.svg",
+          "display_order": 0,
+          "alt_text": "Ilustrație originală demonstrativă — Colier Rouă"
+        }
+      ],
+      "product_variants": [
+        {
+          "id": "00000001-0004-4000-8000-000000000070",
+          "title": "Auriu satinat",
+          "attributes": {
+            "Finisaj": "Auriu satinat"
+          },
+          "price_override": 139,
+          "is_active": true,
+          "display_order": 0
+        },
+        {
+          "id": "00000001-0004-4000-8000-000000000071",
+          "title": "Argintiu mat",
+          "attributes": {
+            "Finisaj": "Argintiu mat"
+          },
+          "price_override": 151,
+          "is_active": true,
+          "display_order": 1
+        }
+      ],
+      "customization_options": [],
+      "product_categories": [
+        {
+          "category_id": "00000001-0001-4000-8000-000000000001"
+        }
+      ],
+      "product_collections": [
+        {
+          "collection_id": "00000001-0002-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "id": "00000001-0003-4000-8000-000000000008",
+      "name": "Cercei Arc",
+      "slug": "cercei-arc",
+      "description": "Arce mici cu profil rotunjit, ușor de asociat cu un colier fin. Modelul este disponibil în două finisaje.",
+      "base_price": 109,
+      "product_type": "standard",
+      "availability_status": "in_stock",
+      "publication_status": "published",
+      "is_customizable": false,
+      "lead_time_days": 2,
+      "created_at": "2026-10-20T09:00:00Z",
+      "product_images": [
+        {
+          "storage_path": "iris/cercei-arc.svg",
+          "display_order": 0,
+          "alt_text": "Ilustrație originală demonstrativă — Cercei Arc"
+        }
+      ],
+      "product_variants": [
+        {
+          "id": "00000001-0004-4000-8000-000000000080",
+          "title": "Auriu satinat",
+          "attributes": {
+            "Finisaj": "Auriu satinat"
+          },
+          "price_override": 109,
+          "is_active": true,
+          "display_order": 0
+        },
+        {
+          "id": "00000001-0004-4000-8000-000000000081",
+          "title": "Argintiu mat",
+          "attributes": {
+            "Finisaj": "Argintiu mat"
+          },
+          "price_override": 121,
+          "is_active": true,
+          "display_order": 1
+        }
+      ],
+      "customization_options": [],
+      "product_categories": [
+        {
+          "category_id": "00000001-0001-4000-8000-000000000002"
+        }
+      ],
+      "product_collections": [
+        {
+          "collection_id": "00000001-0002-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "id": "00000001-0003-4000-8000-000000000009",
+      "name": "Brățară Petale",
+      "slug": "bratara-petale",
+      "description": "Trei detalii botanice pe o brățară fină. O idee de cadou pentru aniversări, ilustrată prin date fictive.",
+      "base_price": 95,
+      "product_type": "standard",
+      "availability_status": "in_stock",
+      "publication_status": "published",
+      "is_customizable": false,
+      "lead_time_days": 2,
+      "created_at": "2026-10-19T09:00:00Z",
+      "product_images": [
+        {
+          "storage_path": "iris/bratara-petale.svg",
+          "display_order": 0,
+          "alt_text": "Ilustrație originală demonstrativă — Brățară Petale"
+        }
+      ],
+      "product_variants": [
+        {
+          "id": "00000001-0004-4000-8000-000000000090",
+          "title": "Auriu satinat",
+          "attributes": {
+            "Finisaj": "Auriu satinat"
+          },
+          "price_override": 95,
+          "is_active": true,
+          "display_order": 0
+        },
+        {
+          "id": "00000001-0004-4000-8000-000000000091",
+          "title": "Argintiu mat",
+          "attributes": {
+            "Finisaj": "Argintiu mat"
+          },
+          "price_override": 107,
+          "is_active": true,
+          "display_order": 1
+        }
+      ],
+      "customization_options": [],
+      "product_categories": [
+        {
+          "category_id": "00000001-0001-4000-8000-000000000003"
+        }
+      ],
+      "product_collections": [
+        {
+          "collection_id": "00000001-0002-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "id": "00000001-0003-4000-8000-000000000010",
+      "name": "Colier Solitar",
+      "slug": "colier-solitar",
+      "description": "O formă organică centrală, realizată pentru o ținută cu puține accesorii. Dimensiunile sunt orientative în acest demo.",
+      "base_price": 159,
+      "product_type": "standard",
+      "availability_status": "in_stock",
+      "publication_status": "published",
+      "is_customizable": false,
+      "lead_time_days": 2,
+      "created_at": "2026-10-18T09:00:00Z",
+      "product_images": [
+        {
+          "storage_path": "iris/colier-solitar.svg",
+          "display_order": 0,
+          "alt_text": "Ilustrație originală demonstrativă — Colier Solitar"
+        }
+      ],
+      "product_variants": [
+        {
+          "id": "00000001-0004-4000-8000-000000000100",
+          "title": "Auriu satinat",
+          "attributes": {
+            "Finisaj": "Auriu satinat"
+          },
+          "price_override": 159,
+          "is_active": true,
+          "display_order": 0
+        },
+        {
+          "id": "00000001-0004-4000-8000-000000000101",
+          "title": "Argintiu mat",
+          "attributes": {
+            "Finisaj": "Argintiu mat"
+          },
+          "price_override": 171,
+          "is_active": true,
+          "display_order": 1
+        }
+      ],
+      "customization_options": [],
+      "product_categories": [
+        {
+          "category_id": "00000001-0001-4000-8000-000000000001"
+        }
+      ],
+      "product_collections": [
+        {
+          "collection_id": "00000001-0002-4000-8000-000000000001"
+        }
+      ]
+    }
+  ],
+  "inventory": [
+    {
+      "id": "00000001-0006-4000-8000-000000000010",
+      "product_id": null,
+      "variant_id": "00000001-0004-4000-8000-000000000010",
+      "quantity": 8,
+      "low_stock_threshold": 3
+    },
+    {
+      "id": "00000001-0006-4000-8000-000000000011",
+      "product_id": null,
+      "variant_id": "00000001-0004-4000-8000-000000000011",
+      "quantity": 9,
+      "low_stock_threshold": 3
+    },
+    {
+      "id": "00000001-0006-4000-8000-000000000020",
+      "product_id": null,
+      "variant_id": "00000001-0004-4000-8000-000000000020",
+      "quantity": 9,
+      "low_stock_threshold": 3
+    },
+    {
+      "id": "00000001-0006-4000-8000-000000000021",
+      "product_id": null,
+      "variant_id": "00000001-0004-4000-8000-000000000021",
+      "quantity": 10,
+      "low_stock_threshold": 3
+    },
+    {
+      "id": "00000001-0006-4000-8000-000000000030",
+      "product_id": null,
+      "variant_id": "00000001-0004-4000-8000-000000000030",
+      "quantity": 10,
+      "low_stock_threshold": 3
+    },
+    {
+      "id": "00000001-0006-4000-8000-000000000031",
+      "product_id": null,
+      "variant_id": "00000001-0004-4000-8000-000000000031",
+      "quantity": 11,
+      "low_stock_threshold": 3
+    },
+    {
+      "id": "00000001-0006-4000-8000-000000000040",
+      "product_id": null,
+      "variant_id": "00000001-0004-4000-8000-000000000040",
+      "quantity": 11,
+      "low_stock_threshold": 3
+    },
+    {
+      "id": "00000001-0006-4000-8000-000000000041",
+      "product_id": null,
+      "variant_id": "00000001-0004-4000-8000-000000000041",
+      "quantity": 12,
+      "low_stock_threshold": 3
+    },
+    {
+      "id": "00000001-0006-4000-8000-000000000050",
+      "product_id": null,
+      "variant_id": "00000001-0004-4000-8000-000000000050",
+      "quantity": 12,
+      "low_stock_threshold": 3
+    },
+    {
+      "id": "00000001-0006-4000-8000-000000000051",
+      "product_id": null,
+      "variant_id": "00000001-0004-4000-8000-000000000051",
+      "quantity": 13,
+      "low_stock_threshold": 3
+    },
+    {
+      "id": "00000001-0006-4000-8000-000000000060",
+      "product_id": null,
+      "variant_id": "00000001-0004-4000-8000-000000000060",
+      "quantity": 13,
+      "low_stock_threshold": 3
+    },
+    {
+      "id": "00000001-0006-4000-8000-000000000061",
+      "product_id": null,
+      "variant_id": "00000001-0004-4000-8000-000000000061",
+      "quantity": 14,
+      "low_stock_threshold": 3
+    },
+    {
+      "id": "00000001-0006-4000-8000-000000000070",
+      "product_id": null,
+      "variant_id": "00000001-0004-4000-8000-000000000070",
+      "quantity": 14,
+      "low_stock_threshold": 3
+    },
+    {
+      "id": "00000001-0006-4000-8000-000000000071",
+      "product_id": null,
+      "variant_id": "00000001-0004-4000-8000-000000000071",
+      "quantity": 15,
+      "low_stock_threshold": 3
+    },
+    {
+      "id": "00000001-0006-4000-8000-000000000080",
+      "product_id": null,
+      "variant_id": "00000001-0004-4000-8000-000000000080",
+      "quantity": 15,
+      "low_stock_threshold": 3
+    },
+    {
+      "id": "00000001-0006-4000-8000-000000000081",
+      "product_id": null,
+      "variant_id": "00000001-0004-4000-8000-000000000081",
+      "quantity": 16,
+      "low_stock_threshold": 3
+    },
+    {
+      "id": "00000001-0006-4000-8000-000000000090",
+      "product_id": null,
+      "variant_id": "00000001-0004-4000-8000-000000000090",
+      "quantity": 16,
+      "low_stock_threshold": 3
+    },
+    {
+      "id": "00000001-0006-4000-8000-000000000091",
+      "product_id": null,
+      "variant_id": "00000001-0004-4000-8000-000000000091",
+      "quantity": 17,
+      "low_stock_threshold": 3
+    },
+    {
+      "id": "00000001-0006-4000-8000-000000000100",
+      "product_id": null,
+      "variant_id": "00000001-0004-4000-8000-000000000100",
+      "quantity": 17,
+      "low_stock_threshold": 3
+    },
+    {
+      "id": "00000001-0006-4000-8000-000000000101",
+      "product_id": null,
+      "variant_id": "00000001-0004-4000-8000-000000000101",
+      "quantity": 18,
+      "low_stock_threshold": 3
+    }
+  ],
+  "reviews": [],
+  "orders": [],
+  "payments": []
+}

@@ -1,0 +1,1244 @@
+{
+  "version": 1,
+  "id": "poveste",
+  "fictitious": true,
+  "checkoutValidated": false,
+  "theme": "evergreen",
+  "art": {
+    "accent": "#416a59",
+    "background": "#edf2eb"
+  },
+  "store": {
+    "name": "Cadouri cu Poveste",
+    "tagline": "Un nume. Un mesaj. O amintire.",
+    "description": "Obiecte personalizate pentru aniversări, mulțumiri și începuturi noi. Alege un model și adaugă un mesaj care face darul al tău.",
+    "seoDescription": "Cadouri cu Poveste: concept comercial fictiv, fără vânzare reală.",
+    "footerDescription": "DEMO FICTIV · Prețuri și produse demonstrative. Ilustrații originale, nu fotografii de produs. Fără comenzi, plăți sau expediere reale.",
+    "theme": "evergreen",
+    "assets": {
+      "logo": "/branding/poveste-logo.svg",
+      "icon": "/branding/poveste-icon.svg",
+      "ogImage": null
+    },
+    "copy": {
+      "heroTitle": "Cadouri care spun ce ai pe suflet.",
+      "highlightsTitle": "În atelierul nostru demonstrativ",
+      "highlights": [
+        "Mesaje și nume în configurator",
+        "Ocazii speciale, prezentate simplu",
+        "Concept fictiv · fără comenzi reale"
+      ],
+      "shopDescription": "Obiecte personalizate pentru aniversări, mulțumiri și începuturi noi. Alege un model și adaugă un mesaj care face darul al tău. Catalog fictiv, fără vânzare reală."
+    }
+  },
+  "settings": {
+    "display_name": "Cadouri cu Poveste",
+    "tagline": "Un nume. Un mesaj. O amintire.",
+    "short_description": "Obiecte personalizate pentru aniversări, mulțumiri și începuturi noi. Alege un model și adaugă un mesaj care face darul al tău.",
+    "seo_description": "Cadouri cu Poveste: concept comercial fictiv, fără vânzare reală.",
+    "footer_description": "DEMO FICTIV · Prețuri și produse demonstrative. Ilustrații originale, nu fotografii de produs. Fără comenzi, plăți sau expediere reale.",
+    "public_email": null,
+    "public_phone": null,
+    "whatsapp": null,
+    "instagram_url": null,
+    "facebook_url": null,
+    "tiktok_url": null
+  },
+  "homepage": [
+    {
+      "slot": "hero",
+      "eyebrow": "Concept demonstrativ · România",
+      "title": "Cadouri care spun ce ai pe suflet.",
+      "subtitle": "Obiecte personalizate pentru aniversări, mulțumiri și începuturi noi. Alege un model și adaugă un mesaj care face darul al tău.",
+      "cta_label": "Descoperă colecția",
+      "cta_href": "/shop",
+      "display_order": 0,
+      "is_active": true
+    },
+    {
+      "slot": "products",
+      "eyebrow": "Selecția atelierului",
+      "title": "Începe cu un gând frumos",
+      "subtitle": "Produse fictive · prețuri demonstrative în lei",
+      "cta_label": "Vezi toate produsele",
+      "cta_href": "/shop",
+      "display_order": 10,
+      "is_active": true
+    },
+    {
+      "slot": "categories",
+      "eyebrow": "Găsește inspirația",
+      "title": "Alege ce ți se potrivește",
+      "subtitle": null,
+      "cta_label": "Toate categoriile",
+      "cta_href": "/categories",
+      "display_order": 20,
+      "is_active": true
+    },
+    {
+      "slot": "collections",
+      "eyebrow": "O selecție cu personalitate",
+      "title": "Momente de păstrat",
+      "subtitle": null,
+      "cta_label": "Vezi colecțiile",
+      "cta_href": "/collections",
+      "display_order": 30,
+      "is_active": true
+    },
+    {
+      "slot": "promo",
+      "eyebrow": "Doar în prezentarea locală",
+      "title": "Un singur template. Identitatea ta.",
+      "subtitle": "Această prezentare demonstrează catalogul și designul. Checkout-ul și plățile nu sunt validate aici.",
+      "cta_label": "Explorează magazinul",
+      "cta_href": "/shop",
+      "display_order": 40,
+      "is_active": true
+    }
+  ],
+  "categories": [
+    {
+      "id": "00000003-0001-4000-8000-000000000001",
+      "name": "Pentru aniversări",
+      "slug": "pentru-aniversari",
+      "description": "Selecție demonstrativă: pentru aniversări."
+    },
+    {
+      "id": "00000003-0001-4000-8000-000000000002",
+      "name": "Pentru familie",
+      "slug": "pentru-familie",
+      "description": "Selecție demonstrativă: pentru familie."
+    },
+    {
+      "id": "00000003-0001-4000-8000-000000000003",
+      "name": "Mici mulțumiri",
+      "slug": "mici-multumiri",
+      "description": "Selecție demonstrativă: mici mulțumiri."
+    }
+  ],
+  "collections": [
+    {
+      "id": "00000003-0002-4000-8000-000000000001",
+      "name": "Momente de păstrat",
+      "slug": "momente-de-pastrat",
+      "description": "O colecție fictivă, pregătită pentru prezentarea template-ului."
+    }
+  ],
+  "products": [
+    {
+      "id": "00000003-0003-4000-8000-000000000001",
+      "name": "Cutie Amintiri",
+      "slug": "cutie-amintiri",
+      "description": "O cutie pentru bilețele, fotografii și obiecte mici cu însemnătate. Personalizează capacul cu un nume și alege ocazia în configurator.",
+      "base_price": 99,
+      "product_type": "made_to_order",
+      "availability_status": "made_to_order",
+      "publication_status": "published",
+      "is_customizable": true,
+      "lead_time_days": 5,
+      "created_at": "2026-10-27T09:00:00Z",
+      "product_images": [
+        {
+          "storage_path": "poveste/cutie-amintiri.svg",
+          "display_order": 0,
+          "alt_text": "Ilustrație originală demonstrativă — Cutie Amintiri"
+        }
+      ],
+      "product_variants": [
+        {
+          "id": "00000003-0004-4000-8000-000000000010",
+          "title": "Format compact",
+          "attributes": {
+            "Format": "Format compact"
+          },
+          "price_override": 99,
+          "is_active": true,
+          "display_order": 0
+        },
+        {
+          "id": "00000003-0004-4000-8000-000000000011",
+          "title": "Format generos",
+          "attributes": {
+            "Format": "Format generos"
+          },
+          "price_override": 119,
+          "is_active": true,
+          "display_order": 1
+        }
+      ],
+      "customization_options": [
+        {
+          "id": "00000003-0005-4000-8000-000000000010",
+          "name": "Nume sau mesaj",
+          "description": "Exemplu fictiv de text pentru personalizare.",
+          "option_type": "text",
+          "is_required": true,
+          "additional_cost": 10,
+          "configuration": {
+            "min_length": 2,
+            "max_length": 24,
+            "multiline": false
+          },
+          "display_order": 0,
+          "is_active": true
+        },
+        {
+          "id": "00000003-0005-4000-8000-000000000011",
+          "name": "Ocazia",
+          "description": "Alege motivul darului.",
+          "option_type": "selection",
+          "is_required": true,
+          "additional_cost": 0,
+          "configuration": {
+            "values": [
+              "Aniversare",
+              "Mulțumire",
+              "Casă nouă"
+            ]
+          },
+          "display_order": 1,
+          "is_active": true
+        },
+        {
+          "id": "00000003-0005-4000-8000-000000000012",
+          "name": "Ambalaj cadou",
+          "description": "Panglică și cartonaș, în prezentarea demonstrativă.",
+          "option_type": "boolean",
+          "is_required": false,
+          "additional_cost": 8,
+          "configuration": {},
+          "display_order": 2,
+          "is_active": true
+        }
+      ],
+      "product_categories": [
+        {
+          "category_id": "00000003-0001-4000-8000-000000000002"
+        }
+      ],
+      "product_collections": [
+        {
+          "collection_id": "00000003-0002-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "id": "00000003-0003-4000-8000-000000000002",
+      "name": "Ramă Împreună",
+      "slug": "rama-impreuna",
+      "description": "O ramă decorativă pentru un loc drag din casă. Mesajul scurt și numele sunt exemple de personalizare text, fără upload privat de imagini.",
+      "base_price": 89,
+      "product_type": "made_to_order",
+      "availability_status": "made_to_order",
+      "publication_status": "published",
+      "is_customizable": true,
+      "lead_time_days": 5,
+      "created_at": "2026-10-26T09:00:00Z",
+      "product_images": [
+        {
+          "storage_path": "poveste/rama-impreuna.svg",
+          "display_order": 0,
+          "alt_text": "Ilustrație originală demonstrativă — Ramă Împreună"
+        }
+      ],
+      "product_variants": [
+        {
+          "id": "00000003-0004-4000-8000-000000000020",
+          "title": "Format compact",
+          "attributes": {
+            "Format": "Format compact"
+          },
+          "price_override": 89,
+          "is_active": true,
+          "display_order": 0
+        },
+        {
+          "id": "00000003-0004-4000-8000-000000000021",
+          "title": "Format generos",
+          "attributes": {
+            "Format": "Format generos"
+          },
+          "price_override": 109,
+          "is_active": true,
+          "display_order": 1
+        }
+      ],
+      "customization_options": [
+        {
+          "id": "00000003-0005-4000-8000-000000000020",
+          "name": "Nume sau mesaj",
+          "description": "Exemplu fictiv de text pentru personalizare.",
+          "option_type": "text",
+          "is_required": true,
+          "additional_cost": 10,
+          "configuration": {
+            "min_length": 2,
+            "max_length": 24,
+            "multiline": false
+          },
+          "display_order": 0,
+          "is_active": true
+        },
+        {
+          "id": "00000003-0005-4000-8000-000000000021",
+          "name": "Ocazia",
+          "description": "Alege motivul darului.",
+          "option_type": "selection",
+          "is_required": true,
+          "additional_cost": 0,
+          "configuration": {
+            "values": [
+              "Aniversare",
+              "Mulțumire",
+              "Casă nouă"
+            ]
+          },
+          "display_order": 1,
+          "is_active": true
+        },
+        {
+          "id": "00000003-0005-4000-8000-000000000022",
+          "name": "Ambalaj cadou",
+          "description": "Panglică și cartonaș, în prezentarea demonstrativă.",
+          "option_type": "boolean",
+          "is_required": false,
+          "additional_cost": 8,
+          "configuration": {},
+          "display_order": 2,
+          "is_active": true
+        }
+      ],
+      "product_categories": [
+        {
+          "category_id": "00000003-0001-4000-8000-000000000002"
+        }
+      ],
+      "product_collections": [
+        {
+          "collection_id": "00000003-0002-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "id": "00000003-0003-4000-8000-000000000003",
+      "name": "Semn de carte Poveste",
+      "slug": "semn-de-carte-poveste",
+      "description": "Un semn de carte cu nume, pentru cititori pasionați. Un dar simplu de mulțumire, cu text de până la 24 de caractere.",
+      "base_price": 29,
+      "product_type": "made_to_order",
+      "availability_status": "made_to_order",
+      "publication_status": "published",
+      "is_customizable": true,
+      "lead_time_days": 5,
+      "created_at": "2026-10-25T09:00:00Z",
+      "product_images": [
+        {
+          "storage_path": "poveste/semn-de-carte-poveste.svg",
+          "display_order": 0,
+          "alt_text": "Ilustrație originală demonstrativă — Semn de carte Poveste"
+        }
+      ],
+      "product_variants": [
+        {
+          "id": "00000003-0004-4000-8000-000000000030",
+          "title": "Format compact",
+          "attributes": {
+            "Format": "Format compact"
+          },
+          "price_override": 29,
+          "is_active": true,
+          "display_order": 0
+        },
+        {
+          "id": "00000003-0004-4000-8000-000000000031",
+          "title": "Format generos",
+          "attributes": {
+            "Format": "Format generos"
+          },
+          "price_override": 49,
+          "is_active": true,
+          "display_order": 1
+        }
+      ],
+      "customization_options": [
+        {
+          "id": "00000003-0005-4000-8000-000000000030",
+          "name": "Nume sau mesaj",
+          "description": "Exemplu fictiv de text pentru personalizare.",
+          "option_type": "text",
+          "is_required": true,
+          "additional_cost": 10,
+          "configuration": {
+            "min_length": 2,
+            "max_length": 24,
+            "multiline": false
+          },
+          "display_order": 0,
+          "is_active": true
+        },
+        {
+          "id": "00000003-0005-4000-8000-000000000031",
+          "name": "Ocazia",
+          "description": "Alege motivul darului.",
+          "option_type": "selection",
+          "is_required": true,
+          "additional_cost": 0,
+          "configuration": {
+            "values": [
+              "Aniversare",
+              "Mulțumire",
+              "Casă nouă"
+            ]
+          },
+          "display_order": 1,
+          "is_active": true
+        },
+        {
+          "id": "00000003-0005-4000-8000-000000000032",
+          "name": "Ambalaj cadou",
+          "description": "Panglică și cartonaș, în prezentarea demonstrativă.",
+          "option_type": "boolean",
+          "is_required": false,
+          "additional_cost": 8,
+          "configuration": {},
+          "display_order": 2,
+          "is_active": true
+        }
+      ],
+      "product_categories": [
+        {
+          "category_id": "00000003-0001-4000-8000-000000000003"
+        }
+      ],
+      "product_collections": [
+        {
+          "collection_id": "00000003-0002-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "id": "00000003-0003-4000-8000-000000000004",
+      "name": "Plachetă La mulți ani",
+      "slug": "placheta-la-multi-ani",
+      "description": "O plachetă decorativă pentru aniversări, cu un mesaj ales de tine. Dimensiunile și timpul de realizare sunt orientative în demo.",
+      "base_price": 79,
+      "product_type": "made_to_order",
+      "availability_status": "made_to_order",
+      "publication_status": "published",
+      "is_customizable": true,
+      "lead_time_days": 5,
+      "created_at": "2026-10-24T09:00:00Z",
+      "product_images": [
+        {
+          "storage_path": "poveste/placheta-la-multi-ani.svg",
+          "display_order": 0,
+          "alt_text": "Ilustrație originală demonstrativă — Plachetă La mulți ani"
+        }
+      ],
+      "product_variants": [
+        {
+          "id": "00000003-0004-4000-8000-000000000040",
+          "title": "Format compact",
+          "attributes": {
+            "Format": "Format compact"
+          },
+          "price_override": 79,
+          "is_active": true,
+          "display_order": 0
+        },
+        {
+          "id": "00000003-0004-4000-8000-000000000041",
+          "title": "Format generos",
+          "attributes": {
+            "Format": "Format generos"
+          },
+          "price_override": 99,
+          "is_active": true,
+          "display_order": 1
+        }
+      ],
+      "customization_options": [
+        {
+          "id": "00000003-0005-4000-8000-000000000040",
+          "name": "Nume sau mesaj",
+          "description": "Exemplu fictiv de text pentru personalizare.",
+          "option_type": "text",
+          "is_required": true,
+          "additional_cost": 10,
+          "configuration": {
+            "min_length": 2,
+            "max_length": 24,
+            "multiline": false
+          },
+          "display_order": 0,
+          "is_active": true
+        },
+        {
+          "id": "00000003-0005-4000-8000-000000000041",
+          "name": "Ocazia",
+          "description": "Alege motivul darului.",
+          "option_type": "selection",
+          "is_required": true,
+          "additional_cost": 0,
+          "configuration": {
+            "values": [
+              "Aniversare",
+              "Mulțumire",
+              "Casă nouă"
+            ]
+          },
+          "display_order": 1,
+          "is_active": true
+        },
+        {
+          "id": "00000003-0005-4000-8000-000000000042",
+          "name": "Ambalaj cadou",
+          "description": "Panglică și cartonaș, în prezentarea demonstrativă.",
+          "option_type": "boolean",
+          "is_required": false,
+          "additional_cost": 8,
+          "configuration": {},
+          "display_order": 2,
+          "is_active": true
+        }
+      ],
+      "product_categories": [
+        {
+          "category_id": "00000003-0001-4000-8000-000000000001"
+        }
+      ],
+      "product_collections": [
+        {
+          "collection_id": "00000003-0002-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "id": "00000003-0003-4000-8000-000000000005",
+      "name": "Breloc Aproape",
+      "slug": "breloc-aproape",
+      "description": "Un breloc cu nume sau inițiale, pentru un gest mic și personal. Alege formatul și verifică prețul orientativ înainte de adăugarea în coș.",
+      "base_price": 35,
+      "product_type": "made_to_order",
+      "availability_status": "made_to_order",
+      "publication_status": "published",
+      "is_customizable": true,
+      "lead_time_days": 5,
+      "created_at": "2026-10-23T09:00:00Z",
+      "product_images": [
+        {
+          "storage_path": "poveste/breloc-aproape.svg",
+          "display_order": 0,
+          "alt_text": "Ilustrație originală demonstrativă — Breloc Aproape"
+        }
+      ],
+      "product_variants": [
+        {
+          "id": "00000003-0004-4000-8000-000000000050",
+          "title": "Format compact",
+          "attributes": {
+            "Format": "Format compact"
+          },
+          "price_override": 35,
+          "is_active": true,
+          "display_order": 0
+        },
+        {
+          "id": "00000003-0004-4000-8000-000000000051",
+          "title": "Format generos",
+          "attributes": {
+            "Format": "Format generos"
+          },
+          "price_override": 55,
+          "is_active": true,
+          "display_order": 1
+        }
+      ],
+      "customization_options": [
+        {
+          "id": "00000003-0005-4000-8000-000000000050",
+          "name": "Nume sau mesaj",
+          "description": "Exemplu fictiv de text pentru personalizare.",
+          "option_type": "text",
+          "is_required": true,
+          "additional_cost": 10,
+          "configuration": {
+            "min_length": 2,
+            "max_length": 24,
+            "multiline": false
+          },
+          "display_order": 0,
+          "is_active": true
+        },
+        {
+          "id": "00000003-0005-4000-8000-000000000051",
+          "name": "Ocazia",
+          "description": "Alege motivul darului.",
+          "option_type": "selection",
+          "is_required": true,
+          "additional_cost": 0,
+          "configuration": {
+            "values": [
+              "Aniversare",
+              "Mulțumire",
+              "Casă nouă"
+            ]
+          },
+          "display_order": 1,
+          "is_active": true
+        },
+        {
+          "id": "00000003-0005-4000-8000-000000000052",
+          "name": "Ambalaj cadou",
+          "description": "Panglică și cartonaș, în prezentarea demonstrativă.",
+          "option_type": "boolean",
+          "is_required": false,
+          "additional_cost": 8,
+          "configuration": {},
+          "display_order": 2,
+          "is_active": true
+        }
+      ],
+      "product_categories": [
+        {
+          "category_id": "00000003-0001-4000-8000-000000000003"
+        }
+      ],
+      "product_collections": [
+        {
+          "collection_id": "00000003-0002-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "id": "00000003-0003-4000-8000-000000000006",
+      "name": "Album Prima noastră vară",
+      "slug": "album-prima-noastra-vara",
+      "description": "Un album cu copertă personalizată pentru amintiri în familie. Exemplul demonstrează textul de pe copertă, nu încărcarea fotografiilor.",
+      "base_price": 119,
+      "product_type": "made_to_order",
+      "availability_status": "made_to_order",
+      "publication_status": "published",
+      "is_customizable": true,
+      "lead_time_days": 5,
+      "created_at": "2026-10-22T09:00:00Z",
+      "product_images": [
+        {
+          "storage_path": "poveste/album-prima-noastra-vara.svg",
+          "display_order": 0,
+          "alt_text": "Ilustrație originală demonstrativă — Album Prima noastră vară"
+        }
+      ],
+      "product_variants": [
+        {
+          "id": "00000003-0004-4000-8000-000000000060",
+          "title": "Format compact",
+          "attributes": {
+            "Format": "Format compact"
+          },
+          "price_override": 119,
+          "is_active": true,
+          "display_order": 0
+        },
+        {
+          "id": "00000003-0004-4000-8000-000000000061",
+          "title": "Format generos",
+          "attributes": {
+            "Format": "Format generos"
+          },
+          "price_override": 139,
+          "is_active": true,
+          "display_order": 1
+        }
+      ],
+      "customization_options": [
+        {
+          "id": "00000003-0005-4000-8000-000000000060",
+          "name": "Nume sau mesaj",
+          "description": "Exemplu fictiv de text pentru personalizare.",
+          "option_type": "text",
+          "is_required": true,
+          "additional_cost": 10,
+          "configuration": {
+            "min_length": 2,
+            "max_length": 24,
+            "multiline": false
+          },
+          "display_order": 0,
+          "is_active": true
+        },
+        {
+          "id": "00000003-0005-4000-8000-000000000061",
+          "name": "Ocazia",
+          "description": "Alege motivul darului.",
+          "option_type": "selection",
+          "is_required": true,
+          "additional_cost": 0,
+          "configuration": {
+            "values": [
+              "Aniversare",
+              "Mulțumire",
+              "Casă nouă"
+            ]
+          },
+          "display_order": 1,
+          "is_active": true
+        },
+        {
+          "id": "00000003-0005-4000-8000-000000000062",
+          "name": "Ambalaj cadou",
+          "description": "Panglică și cartonaș, în prezentarea demonstrativă.",
+          "option_type": "boolean",
+          "is_required": false,
+          "additional_cost": 8,
+          "configuration": {},
+          "display_order": 2,
+          "is_active": true
+        }
+      ],
+      "product_categories": [
+        {
+          "category_id": "00000003-0001-4000-8000-000000000002"
+        }
+      ],
+      "product_collections": [
+        {
+          "collection_id": "00000003-0002-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "id": "00000003-0003-4000-8000-000000000007",
+      "name": "Cutie Mulțumesc",
+      "slug": "cutie-multumesc",
+      "description": "O cutie decorativă pentru un mesaj de apreciere. Conținutul interior nu este inclus; produsul ilustrează personalizări și ambalaj opțional.",
+      "base_price": 69,
+      "product_type": "made_to_order",
+      "availability_status": "made_to_order",
+      "publication_status": "published",
+      "is_customizable": true,
+      "lead_time_days": 5,
+      "created_at": "2026-10-21T09:00:00Z",
+      "product_images": [
+        {
+          "storage_path": "poveste/cutie-multumesc.svg",
+          "display_order": 0,
+          "alt_text": "Ilustrație originală demonstrativă — Cutie Mulțumesc"
+        }
+      ],
+      "product_variants": [
+        {
+          "id": "00000003-0004-4000-8000-000000000070",
+          "title": "Format compact",
+          "attributes": {
+            "Format": "Format compact"
+          },
+          "price_override": 69,
+          "is_active": true,
+          "display_order": 0
+        },
+        {
+          "id": "00000003-0004-4000-8000-000000000071",
+          "title": "Format generos",
+          "attributes": {
+            "Format": "Format generos"
+          },
+          "price_override": 89,
+          "is_active": true,
+          "display_order": 1
+        }
+      ],
+      "customization_options": [
+        {
+          "id": "00000003-0005-4000-8000-000000000070",
+          "name": "Nume sau mesaj",
+          "description": "Exemplu fictiv de text pentru personalizare.",
+          "option_type": "text",
+          "is_required": true,
+          "additional_cost": 10,
+          "configuration": {
+            "min_length": 2,
+            "max_length": 24,
+            "multiline": false
+          },
+          "display_order": 0,
+          "is_active": true
+        },
+        {
+          "id": "00000003-0005-4000-8000-000000000071",
+          "name": "Ocazia",
+          "description": "Alege motivul darului.",
+          "option_type": "selection",
+          "is_required": true,
+          "additional_cost": 0,
+          "configuration": {
+            "values": [
+              "Aniversare",
+              "Mulțumire",
+              "Casă nouă"
+            ]
+          },
+          "display_order": 1,
+          "is_active": true
+        },
+        {
+          "id": "00000003-0005-4000-8000-000000000072",
+          "name": "Ambalaj cadou",
+          "description": "Panglică și cartonaș, în prezentarea demonstrativă.",
+          "option_type": "boolean",
+          "is_required": false,
+          "additional_cost": 8,
+          "configuration": {},
+          "display_order": 2,
+          "is_active": true
+        }
+      ],
+      "product_categories": [
+        {
+          "category_id": "00000003-0001-4000-8000-000000000003"
+        }
+      ],
+      "product_collections": [
+        {
+          "collection_id": "00000003-0002-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "id": "00000003-0003-4000-8000-000000000008",
+      "name": "Ornament Un nou început",
+      "slug": "ornament-un-nou-inceput",
+      "description": "Un ornament cu nume pentru casă nouă sau o aniversare. Alege ocazia și un mesaj scurt pentru exemplul de comandă personalizată.",
+      "base_price": 45,
+      "product_type": "made_to_order",
+      "availability_status": "made_to_order",
+      "publication_status": "published",
+      "is_customizable": true,
+      "lead_time_days": 5,
+      "created_at": "2026-10-20T09:00:00Z",
+      "product_images": [
+        {
+          "storage_path": "poveste/ornament-un-nou-inceput.svg",
+          "display_order": 0,
+          "alt_text": "Ilustrație originală demonstrativă — Ornament Un nou început"
+        }
+      ],
+      "product_variants": [
+        {
+          "id": "00000003-0004-4000-8000-000000000080",
+          "title": "Format compact",
+          "attributes": {
+            "Format": "Format compact"
+          },
+          "price_override": 45,
+          "is_active": true,
+          "display_order": 0
+        },
+        {
+          "id": "00000003-0004-4000-8000-000000000081",
+          "title": "Format generos",
+          "attributes": {
+            "Format": "Format generos"
+          },
+          "price_override": 65,
+          "is_active": true,
+          "display_order": 1
+        }
+      ],
+      "customization_options": [
+        {
+          "id": "00000003-0005-4000-8000-000000000080",
+          "name": "Nume sau mesaj",
+          "description": "Exemplu fictiv de text pentru personalizare.",
+          "option_type": "text",
+          "is_required": true,
+          "additional_cost": 10,
+          "configuration": {
+            "min_length": 2,
+            "max_length": 24,
+            "multiline": false
+          },
+          "display_order": 0,
+          "is_active": true
+        },
+        {
+          "id": "00000003-0005-4000-8000-000000000081",
+          "name": "Ocazia",
+          "description": "Alege motivul darului.",
+          "option_type": "selection",
+          "is_required": true,
+          "additional_cost": 0,
+          "configuration": {
+            "values": [
+              "Aniversare",
+              "Mulțumire",
+              "Casă nouă"
+            ]
+          },
+          "display_order": 1,
+          "is_active": true
+        },
+        {
+          "id": "00000003-0005-4000-8000-000000000082",
+          "name": "Ambalaj cadou",
+          "description": "Panglică și cartonaș, în prezentarea demonstrativă.",
+          "option_type": "boolean",
+          "is_required": false,
+          "additional_cost": 8,
+          "configuration": {},
+          "display_order": 2,
+          "is_active": true
+        }
+      ],
+      "product_categories": [
+        {
+          "category_id": "00000003-0001-4000-8000-000000000001"
+        }
+      ],
+      "product_collections": [
+        {
+          "collection_id": "00000003-0002-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "id": "00000003-0003-4000-8000-000000000009",
+      "name": "Ramă Bunici",
+      "slug": "rama-bunici",
+      "description": "O ramă decorativă cu un mesaj pentru bunici. Date fictive și ilustrație originală, fără fotografii sau informații despre persoane reale.",
+      "base_price": 95,
+      "product_type": "made_to_order",
+      "availability_status": "made_to_order",
+      "publication_status": "published",
+      "is_customizable": true,
+      "lead_time_days": 5,
+      "created_at": "2026-10-19T09:00:00Z",
+      "product_images": [
+        {
+          "storage_path": "poveste/rama-bunici.svg",
+          "display_order": 0,
+          "alt_text": "Ilustrație originală demonstrativă — Ramă Bunici"
+        }
+      ],
+      "product_variants": [
+        {
+          "id": "00000003-0004-4000-8000-000000000090",
+          "title": "Format compact",
+          "attributes": {
+            "Format": "Format compact"
+          },
+          "price_override": 95,
+          "is_active": true,
+          "display_order": 0
+        },
+        {
+          "id": "00000003-0004-4000-8000-000000000091",
+          "title": "Format generos",
+          "attributes": {
+            "Format": "Format generos"
+          },
+          "price_override": 115,
+          "is_active": true,
+          "display_order": 1
+        }
+      ],
+      "customization_options": [
+        {
+          "id": "00000003-0005-4000-8000-000000000090",
+          "name": "Nume sau mesaj",
+          "description": "Exemplu fictiv de text pentru personalizare.",
+          "option_type": "text",
+          "is_required": true,
+          "additional_cost": 10,
+          "configuration": {
+            "min_length": 2,
+            "max_length": 24,
+            "multiline": false
+          },
+          "display_order": 0,
+          "is_active": true
+        },
+        {
+          "id": "00000003-0005-4000-8000-000000000091",
+          "name": "Ocazia",
+          "description": "Alege motivul darului.",
+          "option_type": "selection",
+          "is_required": true,
+          "additional_cost": 0,
+          "configuration": {
+            "values": [
+              "Aniversare",
+              "Mulțumire",
+              "Casă nouă"
+            ]
+          },
+          "display_order": 1,
+          "is_active": true
+        },
+        {
+          "id": "00000003-0005-4000-8000-000000000092",
+          "name": "Ambalaj cadou",
+          "description": "Panglică și cartonaș, în prezentarea demonstrativă.",
+          "option_type": "boolean",
+          "is_required": false,
+          "additional_cost": 8,
+          "configuration": {},
+          "display_order": 2,
+          "is_active": true
+        }
+      ],
+      "product_categories": [
+        {
+          "category_id": "00000003-0001-4000-8000-000000000002"
+        }
+      ],
+      "product_collections": [
+        {
+          "collection_id": "00000003-0002-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "id": "00000003-0003-4000-8000-000000000010",
+      "name": "Plachetă O zi a ta",
+      "slug": "placheta-o-zi-a-ta",
+      "description": "O plachetă cu mesaj pentru cineva care merită sărbătorit. Personalizarea text și ambalajul sunt configurabile în exemplul local.",
+      "base_price": 85,
+      "product_type": "made_to_order",
+      "availability_status": "made_to_order",
+      "publication_status": "published",
+      "is_customizable": true,
+      "lead_time_days": 5,
+      "created_at": "2026-10-18T09:00:00Z",
+      "product_images": [
+        {
+          "storage_path": "poveste/placheta-o-zi-a-ta.svg",
+          "display_order": 0,
+          "alt_text": "Ilustrație originală demonstrativă — Plachetă O zi a ta"
+        }
+      ],
+      "product_variants": [
+        {
+          "id": "00000003-0004-4000-8000-000000000100",
+          "title": "Format compact",
+          "attributes": {
+            "Format": "Format compact"
+          },
+          "price_override": 85,
+          "is_active": true,
+          "display_order": 0
+        },
+        {
+          "id": "00000003-0004-4000-8000-000000000101",
+          "title": "Format generos",
+          "attributes": {
+            "Format": "Format generos"
+          },
+          "price_override": 105,
+          "is_active": true,
+          "display_order": 1
+        }
+      ],
+      "customization_options": [
+        {
+          "id": "00000003-0005-4000-8000-000000000100",
+          "name": "Nume sau mesaj",
+          "description": "Exemplu fictiv de text pentru personalizare.",
+          "option_type": "text",
+          "is_required": true,
+          "additional_cost": 10,
+          "configuration": {
+            "min_length": 2,
+            "max_length": 24,
+            "multiline": false
+          },
+          "display_order": 0,
+          "is_active": true
+        },
+        {
+          "id": "00000003-0005-4000-8000-000000000101",
+          "name": "Ocazia",
+          "description": "Alege motivul darului.",
+          "option_type": "selection",
+          "is_required": true,
+          "additional_cost": 0,
+          "configuration": {
+            "values": [
+              "Aniversare",
+              "Mulțumire",
+              "Casă nouă"
+            ]
+          },
+          "display_order": 1,
+          "is_active": true
+        },
+        {
+          "id": "00000003-0005-4000-8000-000000000102",
+          "name": "Ambalaj cadou",
+          "description": "Panglică și cartonaș, în prezentarea demonstrativă.",
+          "option_type": "boolean",
+          "is_required": false,
+          "additional_cost": 8,
+          "configuration": {},
+          "display_order": 2,
+          "is_active": true
+        }
+      ],
+      "product_categories": [
+        {
+          "category_id": "00000003-0001-4000-8000-000000000001"
+        }
+      ],
+      "product_collections": [
+        {
+          "collection_id": "00000003-0002-4000-8000-000000000001"
+        }
+      ]
+    }
+  ],
+  "inventory": [
+    {
+      "id": "00000003-0006-4000-8000-000000000010",
+      "product_id": null,
+      "variant_id": "00000003-0004-4000-8000-000000000010",
+      "quantity": 8,
+      "low_stock_threshold": 3
+    },
+    {
+      "id": "00000003-0006-4000-8000-000000000011",
+      "product_id": null,
+      "variant_id": "00000003-0004-4000-8000-000000000011",
+      "quantity": 9,
+      "low_stock_threshold": 3
+    },
+    {
+      "id": "00000003-0006-4000-8000-000000000020",
+      "product_id": null,
+      "variant_id": "00000003-0004-4000-8000-000000000020",
+      "quantity": 9,
+      "low_stock_threshold": 3
+    },
+    {
+      "id": "00000003-0006-4000-8000-000000000021",
+      "product_id": null,
+      "variant_id": "00000003-0004-4000-8000-000000000021",
+      "quantity": 10,
+      "low_stock_threshold": 3
+    },
+    {
+      "id": "00000003-0006-4000-8000-000000000030",
+      "product_id": null,
+      "variant_id": "00000003-0004-4000-8000-000000000030",
+      "quantity": 10,
+      "low_stock_threshold": 3
+    },
+    {
+      "id": "00000003-0006-4000-8000-000000000031",
+      "product_id": null,
+      "variant_id": "00000003-0004-4000-8000-000000000031",
+      "quantity": 11,
+      "low_stock_threshold": 3
+    },
+    {
+      "id": "00000003-0006-4000-8000-000000000040",
+      "product_id": null,
+      "variant_id": "00000003-0004-4000-8000-000000000040",
+      "quantity": 11,
+      "low_stock_threshold": 3
+    },
+    {
+      "id": "00000003-0006-4000-8000-000000000041",
+      "product_id": null,
+      "variant_id": "00000003-0004-4000-8000-000000000041",
+      "quantity": 12,
+      "low_stock_threshold": 3
+    },
+    {
+      "id": "00000003-0006-4000-8000-000000000050",
+      "product_id": null,
+      "variant_id": "00000003-0004-4000-8000-000000000050",
+      "quantity": 12,
+      "low_stock_threshold": 3
+    },
+    {
+      "id": "00000003-0006-4000-8000-000000000051",
+      "product_id": null,
+      "variant_id": "00000003-0004-4000-8000-000000000051",
+      "quantity": 13,
+      "low_stock_threshold": 3
+    },
+    {
+      "id": "00000003-0006-4000-8000-000000000060",
+      "product_id": null,
+      "variant_id": "00000003-0004-4000-8000-000000000060",
+      "quantity": 13,
+      "low_stock_threshold": 3
+    },
+    {
+      "id": "00000003-0006-4000-8000-000000000061",
+      "product_id": null,
+      "variant_id": "00000003-0004-4000-8000-000000000061",
+      "quantity": 14,
+      "low_stock_threshold": 3
+    },
+    {
+      "id": "00000003-0006-4000-8000-000000000070",
+      "product_id": null,
+      "variant_id": "00000003-0004-4000-8000-000000000070",
+      "quantity": 14,
+      "low_stock_threshold": 3
+    },
+    {
+      "id": "00000003-0006-4000-8000-000000000071",
+      "product_id": null,
+      "variant_id": "00000003-0004-4000-8000-000000000071",
+      "quantity": 15,
+      "low_stock_threshold": 3
+    },
+    {
+      "id": "00000003-0006-4000-8000-000000000080",
+      "product_id": null,
+      "variant_id": "00000003-0004-4000-8000-000000000080",
+      "quantity": 15,
+      "low_stock_threshold": 3
+    },
+    {
+      "id": "00000003-0006-4000-8000-000000000081",
+      "product_id": null,
+      "variant_id": "00000003-0004-4000-8000-000000000081",
+      "quantity": 16,
+      "low_stock_threshold": 3
+    },
+    {
+      "id": "00000003-0006-4000-8000-000000000090",
+      "product_id": null,
+      "variant_id": "00000003-0004-4000-8000-000000000090",
+      "quantity": 16,
+      "low_stock_threshold": 3
+    },
+    {
+      "id": "00000003-0006-4000-8000-000000000091",
+      "product_id": null,
+      "variant_id": "00000003-0004-4000-8000-000000000091",
+      "quantity": 17,
+      "low_stock_threshold": 3
+    },
+    {
+      "id": "00000003-0006-4000-8000-000000000100",
+      "product_id": null,
+      "variant_id": "00000003-0004-4000-8000-000000000100",
+      "quantity": 17,
+      "low_stock_threshold": 3
+    },
+    {
+      "id": "00000003-0006-4000-8000-000000000101",
+      "product_id": null,
+      "variant_id": "00000003-0004-4000-8000-000000000101",
+      "quantity": 18,
+      "low_stock_threshold": 3
+    }
+  ],
+  "reviews": [],
+  "orders": [],
+  "payments": []
+}
