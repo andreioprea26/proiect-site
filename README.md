@@ -221,3 +221,11 @@ Specificația completă este disponibilă în [Project Bible v0.4](docs/project-
 
 Runner-ele demo sunt intenționat limitate la proiectul de test aprobat, nu sunt
 installere generice pentru clienți. Nu copia `.env` sau credențialele între instalări.
+
+## Client Delivery Package — 10B.3
+
+[Indexul documentației de livrare](docs/client-delivery/README.md) leagă onboarding-ul,
+ghidul instalatorului Test/Preview, ghidul administratorului, acceptanța și predarea,
+mentenanța, fișa clientului și procedura Production cu aprobări separate.
+Pachetul nu certifică un client instalat și nu autorizează Production; limitele
+E2E generic și Stripe Live sunt documentate în auditul pachetului.
