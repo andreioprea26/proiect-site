@@ -6,33 +6,25 @@ Repository-ul conține proiectul unui magazin online pentru produse handmade, de
 
 Faza 9 și revalidarea handmade 9.1–9.3 sunt finalizate în Development/Preview.
 Obiectivul unic este personalizarea și lansarea propriului magazin handmade.
-Baza validată este `task/handmade-clean-baseline`, descendentă din commitul
-`e703929` al branch-ului `task/handmade-9-3-functional-regression`.
-`task/handmade-replace-develop` reproduce această bază și pregătește PR-ul explicit
-de înlocuire a conținutului din `develop`. Numai după integrarea aprobată a acelui
-PR, `develop` devine baza oficială handmade. Până atunci conține productizarea
-abandonată: nu se integrează cod de acolo în versiunea handmade.
-`main` nu este încă aliniat cu baza handmade. Nu publicați schimbări înainte de review.
+Baza oficială este `develop`, după integrarea PR #55 (`029f036`).
+`main` și Production rămân separate și nu sunt încă aliniate cu versiunea handmade.
+Arhiva permanentă este `archive/phase-9-final` / tagul `phase-9-final`.
 
 ## Documentația activă handmade
 
-- [Regresia funcțională finală 9.3](docs/handmade-9-3-functional-regression.md).
-- [Curățare 9.4, inventar și plan de retragere 10B](docs/handmade-9-4-clean-baseline.md).
-- [Înlocuire locală develop și verificare 9.4b](docs/handmade-9-4b-replacement-validation.md).
+- [Starea finală a mediului Development și Preview](docs/handmade-final-development.md).
+- [Regresia funcțională validată 9.3](docs/handmade-9-3-functional-regression.md).
 - [Securitate 9.1](docs/handmade-9-1-security-tests.md) și
-  [hardening secvență 9.2](docs/handmade-9-2-order-sequence-hardening.md).
-- [Istoricul Development](docs/supabase-development-migrations.md): momentan
-  **28 fișiere locale / 29 migrări remote**, Store Settings păstrată temporar.
-- [Configurația Preview 9.3](docs/handmade-9-3b-preview-configuration-plan.md)
-  este procedura istorică pentru branch-ul 9.3; nu configurează automat un branch nou.
-- [Checklist Production](docs/production-launch-checklist.md): etapă separată,
-  încă neaprobată pentru aplicare.
+  [hardening secvență 9.2](docs/handmade-9-2-order-sequence-hardening.md): dovezi istorice.
+- [Istoricul Development](docs/supabase-development-migrations.md): **28 locale / 28 remote**.
+- [Checklist Production](docs/production-launch-checklist.md): etapă separată, încă neaprobată.
 
-Aplicația nu include instalatoare client, showcase-uri sau configurații de brand
-10B. Testele SQL păstrează temporar contractul strict Store Settings deoarece
-extensia există încă în Development; acesta nu este cod de productizare activ.
-Testele izolate citesc sursa auditată din obiectul Git fix `0081812`; păstrați
-acel obiect disponibil (inclusiv în CI), fără a integra branch-ul `develop`.
+Preview-ul unic urmărește `develop`, folosește Supabase Development și Stripe Sandbox.
+Emailurile operaționale sunt redirecționate exclusiv către destinatarul de test aprobat.
+Codul și testele nu mai depind de obiectele sau commiturile productizării abandonate.
+Testele SQL locale folosesc PGlite existent prin `HANDMADE_PGLITE_MODULE`;
+`node --test --test-concurrency=1 tests/unit/*.test.mjs` nu contactează Supabase.
+Nu rulați E2E sau SQL pe remote fără verificarea țintei și autorizarea efectelor.
 
 ## Tehnologii planificate
 

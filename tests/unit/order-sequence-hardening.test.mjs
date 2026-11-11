@@ -24,9 +24,9 @@ async function snapshot(db) {
   ) as snapshot`)).rows[0].snapshot;
 }
 
-for (const extended of [false, true]) {
-  test(`real Phase 9 SQL + ${extended ? "Store Settings" : "no extension"}: hardening and order regression`, async (t) => {
-    const db = await fixture(extended);
+{
+  test("real handmade Phase 9 SQL: hardening and order regression", async (t) => {
+    const db = await fixture();
     try {
       await t.test("existing security suite passes before hardening", async () => {
         await db.exec(sqlTest("security_data_integrity"));
@@ -34,14 +34,14 @@ for (const extended of [false, true]) {
       const before = await snapshot(db);
       const historyBefore = (await db.query("select * from supabase_migrations.schema_migrations order by version")).rows;
       await t.test("applies atomically using the appropriate history", async () => {
-        await db.exec(extended ? prepareDevelopmentSql() : hardening);
+        await db.exec(prepareDevelopmentSql());
         assert.deepEqual(await snapshot(db), before, "only target sequence grants may change");
         const historyAfter = (await db.query("select * from supabase_migrations.schema_migrations order by version")).rows;
-        if (extended) {
-          assert.deepEqual(historyAfter.slice(0, -1), historyBefore);
-          assert.deepEqual(historyAfter.at(-1), { version, name, statements: [hardening] });
-          assert.equal(historyAfter.length, 29);
-        } else assert.deepEqual(historyAfter, historyBefore);
+
+        assert.deepEqual(historyAfter.slice(0, -1), historyBefore);
+        assert.deepEqual(historyAfter.at(-1), { version, name, statements: [hardening] });
+        assert.equal(historyAfter.length, 28);
+
       });
       await t.test("existing security suites pass after hardening", async () => {
         await db.exec(sqlTest("security_data_integrity"));
@@ -107,13 +107,13 @@ for (const extended of [false, true]) {
         await db.exec(hardening);
         assert.deepEqual(await snapshot(db), state);
       });
-      if (extended) {
+      {
         await t.test("prepared batch refuses replay without changing history or grants", async () => {
           const state = await snapshot(db);
           await assert.rejects(db.exec(prepareDevelopmentSql()), /history differs/);
           await db.exec("rollback;");
           assert.deepEqual(await snapshot(db), state);
-          assert.equal((await db.query("select count(*)::int as n from supabase_migrations.schema_migrations")).rows[0].n, 29);
+          assert.equal((await db.query("select count(*)::int as n from supabase_migrations.schema_migrations")).rows[0].n, 28);
         });
       }
     } finally { await db.close(); }
@@ -121,19 +121,19 @@ for (const extended of [false, true]) {
 }
 
 test("inherited sequence grant aborts and restores the original ACL", async () => {
-  const db = await fixture(true);
+  const db = await fixture();
   try {
     await db.exec("grant usage on sequence public.order_public_number_seq to inherited_sequence_reader; grant inherited_sequence_reader to anon;");
     const acl = (await db.query("select relacl::text from pg_class where oid='public.order_public_number_seq'::regclass")).rows;
     await assert.rejects(db.exec(prepareDevelopmentSql()), /privileges remain effective/);
     await db.exec("rollback;");
     assert.deepEqual((await db.query("select relacl::text from pg_class where oid='public.order_public_number_seq'::regclass")).rows, acl);
-    assert.equal((await db.query("select count(*)::int as n from supabase_migrations.schema_migrations")).rows[0].n, 28);
+    assert.equal((await db.query("select count(*)::int as n from supabase_migrations.schema_migrations")).rows[0].n, 27);
   } finally { await db.close(); }
 });
 
 test("failure to record history rolls back the grant change too", async () => {
-  const db = await fixture(true);
+  const db = await fixture();
   try {
     await db.exec(`alter table supabase_migrations.schema_migrations add check(version <> '${version}');`);
     const before = await snapshot(db);
@@ -145,9 +145,9 @@ test("failure to record history rolls back the grant change too", async () => {
 });
 
 test("same count with an unexpected historical migration name is refused before revocation", async () => {
-  const db = await fixture(true);
+  const db = await fixture();
   try {
-    await db.exec("update supabase_migrations.schema_migrations set name='unexpected_drift' where version='20260915120000';");
+    await db.exec("update supabase_migrations.schema_migrations set name='unexpected_drift' where version=(select min(version) from supabase_migrations.schema_migrations);");
     const before = await snapshot(db);
     await assert.rejects(db.exec(prepareDevelopmentSql()), /history differs/);
     await db.exec("rollback;");
@@ -157,7 +157,7 @@ test("same count with an unexpected historical migration name is refused before 
 });
 
 test("PUBLIC sequence grants are removed while privileged grants remain intact", async () => {
-  const db = await fixture(false);
+  const db = await fixture();
   try {
     await db.exec("grant all on sequence public.order_public_number_seq to public;");
     const before = await snapshot(db);
@@ -168,7 +168,7 @@ test("PUBLIC sequence grants are removed while privileged grants remain intact",
 });
 
 test("complete persistent snapshot-guarded batch reaches COMMIT without replacing any guard", async () => {
-  const db = await fixture(true);
+  const db = await fixture();
   try {
     const before = (await db.query(snapshotQuery)).rows[0].audit;
     const batch = prepareDevelopmentSql(before);
@@ -177,8 +177,8 @@ test("complete persistent snapshot-guarded batch reaches COMMIT without replacin
     await db.exec(batch);
     await db.exec(sqlTest("order_public_number_sequence_privileges"));
     const after = (await db.query(snapshotQuery)).rows[0].audit;
-    assert.equal(after.migrations.length, 29);
-    assert.deepEqual(after.migrations.slice(0, 28), before.migrations);
+    assert.equal(after.migrations.length, 28);
+    assert.deepEqual(after.migrations.slice(0, 27), before.migrations);
     assert.deepEqual(after.sequence_state, before.sequence_state);
     assert.deepEqual(after.functions, before.functions);
     assert.deepEqual(after.sequence.definition, before.sequence.definition);
@@ -186,20 +186,20 @@ test("complete persistent snapshot-guarded batch reaches COMMIT without replacin
 });
 
 test("complete guarded batch refuses snapshot drift before revocation", async () => {
-  const db = await fixture(true);
+  const db = await fixture();
   try {
     const before = (await db.query(snapshotQuery)).rows[0].audit;
     const batch = prepareDevelopmentSql(before);
     await db.exec("grant select on sequence public.order_public_number_seq to inherited_sequence_reader;");
     await assert.rejects(db.exec(batch), /changed since saved snapshot/);
     await db.exec("rollback;");
-    assert.equal((await db.query(snapshotQuery)).rows[0].audit.migrations.length, 28);
+    assert.equal((await db.query(snapshotQuery)).rows[0].audit.migrations.length, 27);
     assert.equal((await db.query("select has_sequence_privilege('anon','public.order_public_number_seq','USAGE') as allowed")).rows[0].allowed, true);
   } finally { await db.close(); }
 });
 
 test("postflight guard failure rolls back grants AND migration registration", async () => {
-  const db = await fixture(true);
+  const db = await fixture();
   try {
     const before = (await db.query(snapshotQuery)).rows[0].audit;
     const batch = prepareDevelopmentSql(before).replace("do $final_postflight$",

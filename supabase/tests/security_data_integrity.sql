@@ -1,103 +1,5 @@
 begin;
 
--- Optional 10B compatibility contract. Absence is valid for the 27-migration
--- Phase 9 schema; presence is accepted only for the exact audited public RPC.
-do $store_settings_contract$
-declare
-  v_function oid := to_regprocedure('public.get_public_store_settings()');
-  v_named_functions integer;
-begin
-  select count(*) into v_named_functions
-  from pg_catalog.pg_proc
-  where pronamespace = 'public'::regnamespace
-    and proname = 'get_public_store_settings';
-
-  assert v_named_functions = 0 or (v_named_functions = 1 and v_function is not null),
-    'unexpected get_public_store_settings signature or overload';
-
-  if v_function is not null then
-    assert exists (
-      select 1
-      from pg_catalog.pg_proc p
-      join pg_catalog.pg_language l on l.oid = p.prolang
-      where p.oid = v_function
-        and p.prokind = 'f'
-        and p.pronargs = 0
-        and p.pronargdefaults = 0
-        and p.provariadic = 0
-        and p.proretset
-        and p.prorettype = 'record'::regtype
-        and pg_catalog.pg_get_function_result(p.oid) =
-          'TABLE(display_name text, tagline text, short_description text, seo_description text, footer_description text, public_email text, public_phone text, whatsapp text, instagram_url text, facebook_url text, tiktok_url text)'
-        and l.lanname = 'sql'
-        and p.provolatile = 's'
-        and p.prosecdef
-        and not p.proisstrict
-        and not p.proleakproof
-        and p.proparallel = 'u'
-        and pg_catalog.pg_get_userbyid(p.proowner) = 'postgres'
-        and p.proconfig in (array['search_path=']::text[], array['search_path=""']::text[])
-        -- Only trim surrounding whitespace/CRLF. Do not normalize away SQL
-        -- tokens, comments, predicates, or changes to the public projection.
-        and btrim(replace(p.prosrc, E'\r\n', E'\n'), E' \t\n\r') = btrim($expected_store_settings_body$
-  select s.display_name, s.tagline, s.short_description, s.seo_description, s.footer_description, s.public_email, s.public_phone, s.whatsapp, s.instagram_url, s.facebook_url, s.tiktok_url from public.store_settings s where s.singleton;
-$expected_store_settings_body$, E' \t\n\r')
-    ), 'get_public_store_settings differs from the audited definition/public projection';
-
-    assert has_function_privilege('anon', v_function, 'EXECUTE')
-      and has_function_privilege('authenticated', v_function, 'EXECUTE')
-      and not has_function_privilege('service_role', v_function, 'EXECUTE'),
-      'get_public_store_settings effective EXECUTE grants differ from the audited grants';
-
-    assert (
-      select count(*) = 3
-        and bool_and(
-          a.grantee in ('postgres'::regrole, 'anon'::regrole, 'authenticated'::regrole)
-          and a.grantor = 'postgres'::regrole
-          and a.privilege_type = 'EXECUTE'
-          and not a.is_grantable
-        )
-      from pg_catalog.pg_proc p,
-        lateral pg_catalog.aclexplode(coalesce(p.proacl, pg_catalog.acldefault('f', p.proowner))) a
-      where p.oid = v_function
-    ), 'get_public_store_settings ACL contains unexpected roles, PUBLIC, or grant options';
-
-    assert to_regclass('public.store_settings') is not null,
-      'get_public_store_settings source table is missing';
-    assert (
-      select c.relkind = 'r' and c.relrowsecurity
-        and pg_catalog.pg_get_userbyid(c.relowner) = 'postgres'
-      from pg_catalog.pg_class c where c.oid = 'public.store_settings'::regclass
-    ), 'store_settings must remain an RLS-protected postgres-owned table';
-    assert not has_table_privilege('anon', 'public.store_settings', 'SELECT,INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER')
-      and not has_any_column_privilege('anon', 'public.store_settings', 'SELECT,INSERT,UPDATE,REFERENCES'),
-      'anon has direct table/column access to store_settings';
-    assert has_table_privilege('authenticated', 'public.store_settings', 'SELECT')
-      and not has_table_privilege('authenticated', 'public.store_settings', 'INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER')
-      and not has_any_column_privilege('authenticated', 'public.store_settings', 'INSERT,UPDATE,REFERENCES'),
-      'authenticated store_settings access differs from SELECT through admin RLS';
-    assert (
-      select count(*) = 1 and bool_and(
-        policyname = 'store_settings_admin_read'
-        and permissive = 'PERMISSIVE'
-        and roles = array['authenticated']::name[]
-        and cmd = 'SELECT'
-        and btrim(qual) = '( SELECT is_admin() AS is_admin)'
-        and with_check is null
-      )
-      from pg_catalog.pg_policies
-      where schemaname = 'public' and tablename = 'store_settings'
-    ), 'store_settings admin-only RLS policy differs from the audited policy';
-
-    assert to_regprocedure('public.save_store_settings(text,text,text,text,text,text,text,text,text,text,text)') is not null,
-      'audited store settings administrative entry point is missing';
-    assert not has_function_privilege('anon', 'public.save_store_settings(text,text,text,text,text,text,text,text,text,text,text)', 'EXECUTE')
-      and has_function_privilege('authenticated', 'public.save_store_settings(text,text,text,text,text,text,text,text,text,text,text)', 'EXECUTE'),
-      'store settings administrative RPC grants are unsafe or incomplete';
-  end if;
-end;
-$store_settings_contract$;
-
 do $$
 declare
   v_unsafe_function text;
@@ -151,8 +53,6 @@ begin
       'submit_custom_order_request',
       'subscribe_newsletter'
     )
-    -- This exact OID is admitted only after the contract above has passed.
-    and p.oid is distinct from to_regprocedure('public.get_public_store_settings()')
   limit 1;
   assert v_unexpected_anon_function is null,
     format('anon can execute unexpected SECURITY DEFINER: %s', v_unexpected_anon_function);

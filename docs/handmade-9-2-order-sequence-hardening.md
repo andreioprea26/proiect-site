@@ -1,5 +1,10 @@
 # Handmade 9.2 — hardening pentru secvența comenzilor
 
+> Raport istoric: configurația și numerele de migrări de mai jos descriu momentul testării.
+> Starea curentă este [handmade Development](handmade-final-development.md), 28/28 migrări.
+> Extensia Store Settings și vechile Preview-uri au fost retrase; nu reaplicați procedurile istorice.
+
+
 ## Verdict și limite
 
 **2026-11-11: PASS — TASK 9.2 finalizat pe Development.** Unica reîncercare

@@ -1,5 +1,10 @@
 # Handmade 9.1 — contracte de securitate și diferența de migrări
 
+> Raport istoric: configurația și numerele de migrări de mai jos descriu momentul testării.
+> Starea curentă este [handmade Development](handmade-final-development.md), 28/28 migrări.
+> Extensia Store Settings și vechile Preview-uri au fost retrase; nu reaplicați procedurile istorice.
+
+
 ## Domeniu și verdict
 
 Bază Git: `task/handmade-relaunch-phase9`, commit
