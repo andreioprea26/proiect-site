@@ -108,14 +108,21 @@ complet Supabase restaurat și nu se pretinde acest lucru.
   callbackurile fără token redirecționează sigur 307, webhook GET 405.
   Integrările reale de plată finalizată rămân dovezile 9.3; nu au fost repetate.
 
-## Limitări și review
+## Decizia finală și review — 2026-11-12
 
-Supabase Demo `bfmihaxfleztajzyamio` răspunde în continuare HTTP 403 la metadata.
-Nu putem confirma ownership/dependențe și nu a fost șters; nu se declară curățare
-completă a tuturor resurselor comerciale. Proiectul separat `proiect-meditatii` nu a fost atins.
+Proprietarul a confirmat că proiectul Supabase Demo `bfmihaxfleztajzyamio` aparține
+altui cont și este exclus definitiv din proiectul handmade. Nu va mai fi investigat,
+accesat sau șters în cadrul acestui proiect și nu constituie un blocaj ori o lucrare rămasă.
+Singura bază Development a magazinului este `bdyocajhhylvasfhmnal`.
+Proiectul separat `proiect-meditatii` nu a fost atins.
 
-Verdict global **PARTIAL** din cauza Demo inaccesibil și a integrării locale încă
-supuse review-ului. Magazinul poate continua exclusiv pe direcția handmade.
-Modificările repository-ului necesită review înainte de push/PR/merge; niciun merge
-și niciun deployment suplimentar pentru acest branch temporar nu au fost executate.
-Production, main și arhiva Fazei 9 au rămas neschimbate.
+Verdict pentru curățarea din domeniul proiectului handmade: **PASS**. Publicarea
+branch-ului temporar și PR-ul către `develop` au fost autorizate pe 2026-11-12;
+merge-ul necesită în continuare review și nu este autorizat. Nu s-au schimbat codul
+runtime sau migrările prin această actualizare documentară.
+
+Singurele lucrări rămase privesc magazinul handmade: review-ul și integrarea acestei
+curățări, personalizarea magazinului și pregătirea/verificarea lansării conform
+[checklistului Production](production-launch-checklist.md). Nu rămâne un task de productizare
+sau de administrare a proiectului Demo extern. Production, main și arhiva Fazei 9
+au rămas neschimbate.
