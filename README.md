@@ -4,35 +4,42 @@ Repository-ul conține proiectul unui magazin online pentru produse handmade, de
 
 ## Stadiul proiectului
 
-Fazele 1–9 sunt validate și integrate în `develop`: storefront, catalog și administrare,
-Auth, coș, checkout COD/Stripe Sandbox, comenzi, notificări și conținut administrabil.
-Productizarea 10B este în desfășurare. Acest lucru nu reprezintă aprobarea lansării Production
-sau activarea Stripe Live. Starea finală a Fazei 9 este păstrată în tag-ul `phase-9-final`
-și branch-ul `archive/phase-9-final`.
+Faza 9 și revalidarea handmade 9.1–9.3 sunt finalizate în Development/Preview.
+Obiectivul unic este personalizarea și lansarea propriului magazin handmade.
+Baza validată este `task/handmade-clean-baseline`, descendentă din commitul
+`e703929` al branch-ului `task/handmade-9-3-functional-regression`.
+`task/handmade-replace-develop` reproduce această bază și pregătește PR-ul explicit
+de înlocuire a conținutului din `develop`. Numai după integrarea aprobată a acelui
+PR, `develop` devine baza oficială handmade. Până atunci conține productizarea
+abandonată: nu se integrează cod de acolo în versiunea handmade.
+`main` nu este încă aliniat cu baza handmade. Nu publicați schimbări înainte de review.
 
-## Instalare client Test și Preview
+## Documentația activă handmade
 
-Instalare client Test/Preview: [clean-install guide](docs/clean-install-guide.md),
-[preflight fail-closed](docs/preflight.md). `node scripts/preflight.mjs empty`
-rulează fără npm install într-un checkout operator curat, cu manifest extern și
-secrete injectate în proces. Production este refuzat; demo seed este opt-in.
-Tooling: `npm run test:preflight` și `npm run verify:migrations`.
+- [Regresia funcțională finală 9.3](docs/handmade-9-3-functional-regression.md).
+- [Curățare 9.4, inventar și plan de retragere 10B](docs/handmade-9-4-clean-baseline.md).
+- [Înlocuire locală develop și verificare 9.4b](docs/handmade-9-4b-replacement-validation.md).
+- [Securitate 9.1](docs/handmade-9-1-security-tests.md) și
+  [hardening secvență 9.2](docs/handmade-9-2-order-sequence-hardening.md).
+- [Istoricul Development](docs/supabase-development-migrations.md): momentan
+  **28 fișiere locale / 29 migrări remote**, Store Settings păstrată temporar.
+- [Configurația Preview 9.3](docs/handmade-9-3b-preview-configuration-plan.md)
+  este procedura istorică pentru branch-ul 9.3; nu configurează automat un branch nou.
+- [Checklist Production](docs/production-launch-checklist.md): etapă separată,
+  încă neaprobată pentru aplicare.
 
-Writes client: `npm run client:install -- all --apply`, cu gate-uri interne pentru
-migrations și bootstrap. [Comenzi și limite](docs/client-install-runner.md).
-Testare runner fără cloud: `npm run test:client-install`. Demo-ul existent este
-interzis installer-ului. Proiectele standalone Test/Preview sunt suportate prin
-[autorizare explicită owner](docs/standalone-target-authorization.md):
-`npm run client:authorize`, apoi preflight și runner. Branching este opțional,
-nu necesită activarea unui plan plătit pentru fluxul standalone.
+Aplicația nu include instalatoare client, showcase-uri sau configurații de brand
+10B. Testele SQL păstrează temporar contractul strict Store Settings deoarece
+extensia există încă în Development; acesta nu este cod de productizare activ.
+Testele izolate citesc sursa auditată din obiectul Git fix `0081812`; păstrați
+acel obiect disponibil (inclusiv în CI), fără a integra branch-ul `develop`.
 
-## Tehnologii folosite
+## Tehnologii planificate
 
 - Next.js, React și TypeScript;
-- Tailwind CSS;
+- Tailwind CSS și shadcn/ui;
 - Supabase pentru PostgreSQL, autentificare și storage;
 - Stripe Checkout pentru plăți online;
-- Resend pentru notificări operaționale;
 - Vercel pentru hosting și Preview deployments;
 - Playwright pentru testarea fluxurilor critice;
 - GitHub pentru versionare.
@@ -65,9 +72,6 @@ npm run build
 npm run check
 npm run test:e2e
 npm run test:e2e:headed
-npm run test:config
-npm run test:email
-npm run test:theme
 ```
 
 - `npm run dev` pornește serverul local de dezvoltare.
@@ -124,66 +128,8 @@ Clienții pentru browser și server sunt separați în `src/lib/supabase`.
 Fluxul curent pentru aplicarea și verificarea manuală a migrațiilor Development
 este documentat în [Migrații Supabase Development](docs/supabase-development-migrations.md).
 
-Stripe Sandbox și notificările operaționale sunt implementate. Mediul de test
-controlează explicit cheile placeholder Stripe și dezactivează Resend; nu reutiliza
-configurația de test pentru plăți reale. Pentru statusul și limitele integrărilor,
-consultă [checklist-ul de lansare](docs/production-launch-checklist.md).
-
-## Store identity configuration
-
-Identitatea publică se configurează în `src/lib/config/store.ts`, contractul tipat
-`PublicStoreConfig`, versiunea 1. Schimbă `STORE_CONFIG.name` într-un singur loc pentru
-brandingul storefront/Auth/account/admin, titluri SEO și emailuri. Tagline-ul,
-descrierile, footer-ul și `copy` sunt fallback-uri publice editabile în cod.
-Din 10B.2b, `/admin/settings` permite proprietarului cu rol admin să configureze
-numele, tagline-ul, descrierile, emailul/telefonul/WhatsApp public și linkuri pentru
-Instagram/Facebook/TikTok, fără editarea codului. Precedența este valoare DB validă
-→ fallback versionat. Câmp gol elimină override-ul; datele de contact/social rămân
-ascunse dacă fallback-ul lor este `null`.
-
-Citirea publică proiectează numai cele 11 câmpuri aprobate și folosește cheia publică,
-nu service role. Memoizare React pe request, fetch `no-store`, timeout 2 secunde și
-fallback pe erori; Save invalidează layout-ul rădăcină. Nu există cache persistent
-de branding. Metadata se generează dinamic; global-error rămâne complet static,
-fără dependență de Settings/DB. Fallback-ul nu garantează funcționarea catalogului
-sau autentificării dacă întreaga bază este indisponibilă.
-
-Fallback-urile homepage se folosesc când sloturile nu sunt configurate. Conținutul
-editorial deja salvat în administrarea homepage are prioritate și nu este rescris
-la schimbarea configului. Datele produselor rămân sursa metadatelor dinamice.
-
-10B.2c adaugă `theme` (`evergreen`, `plum`, `terracotta`) și `assets.logo`,
-`assets.icon`, `assets.ogImage` în același config. Asset-urile sunt locale, versionate,
-în `public/branding`, cu nume simple precum `/branding/logo-v2.svg`. Logo absent sau
-invalid → nume; eroare de încărcare → nume în același spațiu 192×48. Logo/Icon SVG
-sunt permise numai ca surse revizuite în Git, niciodată upload. OG: PNG/JPEG/WebP.
-OG produs → OG brand → imagine generică statică `/brand-og` (PNG 1200×630, generată
-la build, fără fonturi externe). Favicon implicit: `/branding/icon.svg`; vechiul ICO
-starter este arhivat în `public/branding/legacy-favicon.ico`, nu mai overridează metadata.
-Nu adăuga `src/app/favicon.ico`/`icon.*`, care ar avea prioritate față de config.
-Nu există theme editor/upload/CSS arbitrar în Admin; tema și asset-urile cer release.
-Detalii de instalare, securitate și verificare: [10B.2c](docs/10b2c-theme-brand-assets.md).
-Contact/social rămân în footer, `/contact` disponibil. Emailul public NU schimbă
-expeditorul/reply-to Resend; emailurile folosesc numele și culoarea controlată a paletei.
-
-Configul este public și poate intra în bundle-ul browserului. NU include chei,
-parole, service role, roluri admin, RLS, reguli financiare, stocuri sau infrastructură.
-Secretele rămân exclusiv în env; `APP_URL`, `RESEND_FROM_EMAIL` și
-`RESEND_REPLY_TO_EMAIL` rămân tot în env. Contractul RO/ro-RO/RON/Europe/Bucharest
-este declarativ, nu un mecanism i18n sau multi-currency. Cheile browserului pentru
-coș și checkout nu se redenumesc odată cu brandul.
-
-`npm run test:config` verifică două branduri fictive doar în teste, metadata,
-copy/Auth, toate cele opt emailuri, escaping, independența de DB/env și cheile browserului.
-Importul explicit `.ts` permite testarea acelorași module direct în Node fără loader
-nou; `allowImportingTsExtensions` este folosit împreună cu `noEmit`, compilarea aplicației
-rămânând în responsabilitatea Next.js.
-
-`npm run test:settings` verifică validarea și fallback-ul Settings. Testele E2E
-`store-settings` rulează serial înaintea proiectului `chromium`, deoarece modifică
-temporar identitatea globală; valorile originale sunt restaurate în `afterAll`.
-`npx playwright test --project=chromium` include automat această dependență.
-Nu rula concomitent alte suite/deployment-uri care modifică Settings în aceeași bază.
+Secțiunile pentru Stripe, e-mail și livrare sunt doar pregătitoare; aceste
+servicii nu sunt încă configurate.
 
 ## Structura proiectului
 
@@ -212,20 +158,3 @@ Nu se lucrează direct pe `main`. Fiecare task trebuie implementat și verificat
 - Implementarea respectă ordinea și deciziile aprobate în Project Bible.
 
 Specificația completă este disponibilă în [Project Bible v0.4](docs/project-bible-v0.4.md).
-
-## Instalare demo și lecții pentru onboarding
-
-- [Registru probleme, corecții și prevenție pentru clienți](docs/10b2d-installation-findings.md).
-- [Checkpoint clean install — dovezi și limite](docs/10b2d-clean-install-checkpoint.md).
-- [Seed demo controlat](docs/demo-seed.md) și [E2E demo izolat](docs/demo-e2e.md).
-
-Runner-ele demo sunt intenționat limitate la proiectul de test aprobat, nu sunt
-installere generice pentru clienți. Nu copia `.env` sau credențialele între instalări.
-
-## Client Delivery Package — 10B.3
-
-[Indexul documentației de livrare](docs/client-delivery/README.md) leagă onboarding-ul,
-ghidul instalatorului Test/Preview, ghidul administratorului, acceptanța și predarea,
-mentenanța, fișa clientului și procedura Production cu aprobări separate.
-Pachetul nu certifică un client instalat și nu autorizează Production; limitele
-E2E generic și Stripe Live sunt documentate în auditul pachetului.

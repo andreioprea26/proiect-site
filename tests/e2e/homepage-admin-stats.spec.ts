@@ -1,7 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import { STORE_CONFIG } from "../../src/lib/config/store";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
-import { createFixtureClient } from "./demo-fixture-client";
 
 const adminEmail = process.env.E2E_ADMIN_EMAIL ?? "";
 const adminPassword = process.env.E2E_ADMIN_PASSWORD ?? "";
@@ -33,7 +31,7 @@ test.describe.serial("8C homepage administrabil și statistici", () => {
   let originalBlocks: Array<Record<string, unknown>> = [];
 
   test.beforeAll(async () => {
-    service = createFixtureClient(supabaseUrl, serviceRoleKey, { auth: { autoRefreshToken: false, persistSession: false } });
+    service = createClient(supabaseUrl, serviceRoleKey, { auth: { autoRefreshToken: false, persistSession: false } });
     adminAuth = createClient(supabaseUrl, supabaseKey, { auth: { autoRefreshToken: false, persistSession: false } });
     customerAuth = createClient(supabaseUrl, supabaseKey, { auth: { autoRefreshToken: false, persistSession: false } });
     anonAuth = createClient(supabaseUrl, supabaseKey, { auth: { autoRefreshToken: false, persistSession: false } });
@@ -63,7 +61,7 @@ test.describe.serial("8C homepage administrabil și statistici", () => {
 
   test("homepage-ul folosește fallback-ul când slotul nu este configurat", async ({ page }) => {
     await page.goto("/");
-    await expect(page.getByRole("heading", { level: 1, name: STORE_CONFIG.copy.heroTitle })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: "Obiecte handmade pentru gesturi care rămân." })).toBeVisible();
   });
 
   test("anon și customer nu pot accesa administrarea", async ({ page }) => {

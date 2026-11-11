@@ -1,5 +1,4 @@
 import { expect, test, type Page } from "@playwright/test";
-import { STORE_CONFIG } from "../../src/lib/config/store";
 import { createClient } from "@supabase/supabase-js";
 
 import { readProductFields, validateProductFields } from "../../src/lib/admin/catalog-validation";
@@ -53,7 +52,7 @@ test("un customer autentificat nu poate accesa administrarea catalogului", async
   await expect(
     page.getByRole("heading", {
       level: 1,
-      name: STORE_CONFIG.copy.heroTitle,
+      name: "Obiecte handmade pentru gesturi care rămân.",
     }),
   ).toBeVisible();
 });

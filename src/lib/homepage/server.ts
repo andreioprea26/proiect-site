@@ -1,6 +1,4 @@
-import { STORE_CONFIG } from "@/lib/config/store";
 import "server-only";
-import { getPublicStoreSettings } from "@/lib/store-settings/server";
 
 import { requireAdminContext } from "@/lib/admin/server";
 import { createClient } from "@/lib/supabase/server";
@@ -30,9 +28,9 @@ export type HomepageBlock = {
 export const HOMEPAGE_DEFAULTS: Record<HomepageSlot, HomepageBlock> = {
   hero: {
     slot: "hero",
-    eyebrow: STORE_CONFIG.tagline,
-    title: STORE_CONFIG.copy.heroTitle,
-    subtitle: STORE_CONFIG.description,
+    eyebrow: "Lucrat manual în România",
+    title: "Obiecte handmade pentru gesturi care rămân.",
+    subtitle: "Descoperă produse realizate în serii mici, unicate și creații pregătite special la comandă.",
     ctaLabel: "Descoperă Magazinul",
     ctaHref: "/shop",
     isActive: true,
@@ -52,7 +50,7 @@ export const HOMEPAGE_DEFAULTS: Record<HomepageSlot, HomepageBlock> = {
   },
   products: {
     slot: "products",
-    eyebrow: STORE_CONFIG.copy.productsEyebrow,
+    eyebrow: "Din atelier",
     title: "Produse publicate recent",
     subtitle: null,
     ctaLabel: "Vezi Magazinul",
@@ -74,9 +72,9 @@ export const HOMEPAGE_DEFAULTS: Record<HomepageSlot, HomepageBlock> = {
   },
   promo: {
     slot: "promo",
-    eyebrow: STORE_CONFIG.copy.promoEyebrow,
-    title: STORE_CONFIG.copy.promoTitle,
-    subtitle: STORE_CONFIG.copy.promoDescription,
+    eyebrow: "Din atelierul nostru",
+    title: "Cauți ceva creat special pentru tine?",
+    subtitle: "Spune-ne ce îți imaginezi, iar noi îți răspundem cu opțiunile potrivite.",
     ctaLabel: "Trimite o cerere",
     ctaHref: "/custom-orders",
     isActive: false,
@@ -86,20 +84,18 @@ export const HOMEPAGE_DEFAULTS: Record<HomepageSlot, HomepageBlock> = {
 };
 
 export async function getPublicHomepageBlocks(): Promise<HomepageBlock[]> {
-  const store = await getPublicStoreSettings();
-  const defaults = { ...HOMEPAGE_DEFAULTS, hero: { ...HOMEPAGE_DEFAULTS.hero, eyebrow: store.tagline, subtitle: store.description } };
   const supabase = await createClient();
   const { data, error } = await supabase.rpc("get_public_homepage_blocks");
 
   if (error?.code === "PGRST202" || error?.code === "42883") {
-    return HOMEPAGE_SLOTS.map((slot) => defaults[slot]);
+    return HOMEPAGE_SLOTS.map((slot) => HOMEPAGE_DEFAULTS[slot]);
   }
   if (error) throw new Error("Configurația homepage-ului nu a putut fi încărcată.");
 
   const configured = new Map<HomepageSlot, HomepageBlock>();
   for (const raw of (data ?? []) as Array<Record<string, unknown>>) {
     if (!isHomepageSlot(raw.slot)) continue;
-    const fallback = defaults[raw.slot];
+    const fallback = HOMEPAGE_DEFAULTS[raw.slot];
     const isActive = raw.is_active === true;
     configured.set(raw.slot, {
       slot: raw.slot,
@@ -114,7 +110,7 @@ export async function getPublicHomepageBlocks(): Promise<HomepageBlock[]> {
     });
   }
 
-  return HOMEPAGE_SLOTS.map((slot) => configured.get(slot) ?? defaults[slot])
+  return HOMEPAGE_SLOTS.map((slot) => configured.get(slot) ?? HOMEPAGE_DEFAULTS[slot])
     .sort((a, b) => a.displayOrder - b.displayOrder);
 }
 

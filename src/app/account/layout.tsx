@@ -1,6 +1,3 @@
-import { getPublicStoreSettings } from "@/lib/store-settings/server";
-import { storeTitle } from "@/lib/config/store";
-import { StoreBrand } from "@/components/store-brand";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -10,19 +7,15 @@ import { PRIVATE_ROBOTS } from "@/lib/seo";
 
 import { logout } from "../login/actions";
 
-export async function generateMetadata(): Promise<Metadata> {
-  const store = await getPublicStoreSettings();
-  return {
-    title: storeTitle("Contul meu", store),
-    description: "Zona contului de client.",
-    robots: PRIVATE_ROBOTS,
-  };
-}
+export const metadata: Metadata = {
+  title: "Contul meu | Brand Handmade",
+  description: "Zona contului de client.",
+  robots: PRIVATE_ROBOTS,
+};
 
 export default async function AccountLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const store = await getPublicStoreSettings();
   const user = await getAuthenticatedUser();
 
   if (!user) {
@@ -30,11 +23,11 @@ export default async function AccountLayout({
   }
 
   return (
-    <div className="min-h-screen bg-brand-background text-brand-text">
-      <header className="border-b border-brand-border/25 bg-brand-surface">
+    <div className="min-h-screen bg-amber-50 text-stone-900">
+      <header className="border-b border-stone-200 bg-white">
         <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4 px-6 py-4">
-          <Link className="font-semibold text-brand" href="/">
-            <StoreBrand name={store.name} logo={store.assets.logo} />
+          <Link className="font-semibold text-emerald-800" href="/">
+            Brand Handmade
           </Link>
           <nav aria-label="Navigare cont" className="site-navigation flex flex-wrap items-center gap-4 text-sm">
             <Link href="/account">Cont</Link>
