@@ -1,6 +1,25 @@
 # Migrații Supabase Development
 
-## Fluxul curent
+## Excepția curentă — handmade Faza 9 / TASK 9.2
+
+Development `bdyocajhhylvasfhmnal` păstrează migrarea suplimentară Store Settings
+din 10B. Nu presupuneți istorii identice și nu aplicați automat fluxul generic
+de mai jos. TASK 9.2 a fost aplicat și verificat pe 2026-11-11:
+**28 fișiere locale / 29 versiuni remote**, cu Store Settings păstrată remote.
+Cele 28 versiuni remote anterioare au rămas intacte; versiunea nouă este
+`20261110120000_harden_order_public_number_sequence`.
+Procedura punctuală, gărzile și rezultatele reale
+sunt documentate în [Handmade 9.2](handmade-9-2-order-sequence-hardening.md).
+Nu utilizați reset/repair pentru a ascunde diferența și nu recuperați automat 10B.
+
+## Flux istoric — nu se aplică automat bazei handmade
+
+Instrucțiunile CLI de mai jos descriu alinierea din septembrie, nu o autorizare
+curentă de `db push`. Pentru baza handmade sunt interzise reset/repair/db push
+automat cât timp istoricul este 28 local / 29 remote. Planul separat de retragere
+Store Settings și condițiile de backup sunt în
+[TASK 9.4](handmade-9-4-clean-baseline.md). Nu ștergeți versiunea din istoric
+înainte de anularea verificată a obiectelor și aprobarea expresă a operațiunii.
 
 Istoricul CLI al proiectului Supabase Development a fost reconciliat controlat
 la 2026-09-04. Migrațiile noi aprobate se aplică prin `supabase db push
@@ -827,19 +846,6 @@ inactiv și formulele agregărilor financiare și operaționale.
 | `20260904230000` | `security_data_integrity` | Development | 2026-09-04 | Aplicată prin CLI după dry-run exclusiv; elimină `anon` de pe patru RPC-uri admin 8B, blochează apelarea directă a generatorului de numere de comandă și restrânge granturile tabelelor de cont. Suita `security_data_integrity.sql` a trecut integral cu rollback. |
 
 ## Reconcilierea istoricului Supabase CLI
-
-### Aplicare aditivă 10B.2b — 2026-09-15
-
-`20260915120000_public_store_settings.sql` — **Aplicată și validată în Development**,
-project ref `bdyocajhhylvasfhmnal`. Înainte: 27/27 Local/Remote; dry-run-ul linked
-a enumerat exclusiv această migrare, fără seeds/roluri. Aplicare prin
-`supabase db push --linked --yes`, fără reset/repair/pull/diff.
-După: 28/28 Local/Remote și dry-run final `upToDate: true`, liste goale.
-`supabase/tests/public_store_settings.sql`: **53/53 PASS**, transaction + rollback.
-Regresiile `security_data_integrity`, `homepage_admin_stats` și
-`operational_notifications_cod` au trecut cu rollback. Allowlist-ul explicit al
-testului de securitate include noul RPC public auditat, nu RPC-ul de salvare.
-Nicio modificare a tabelelor/RPC-urilor comerciale și nicio operație Production.
 
 Istoricul proiectului Supabase Development/Test cu project ref
 `bdyocajhhylvasfhmnal` a fost reconciliat controlat la 2026-09-04. Înainte de

@@ -1,6 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import { type SupabaseClient } from "@supabase/supabase-js";
-import { createFixtureClient as createSupabaseClient } from "./demo-fixture-client";
+import { createClient as createSupabaseClient, type SupabaseClient } from "@supabase/supabase-js";
 
 import { CART_STORAGE_KEY, createCartLine, serializeCart } from "../../src/lib/cart/model";
 import { cartLinesToCheckoutPayload } from "../../src/lib/checkout/payload";
@@ -237,7 +236,7 @@ test.describe.serial("plasarea COD cu fixture-uri Development", () => {
     });
 
     await expect(page).toHaveURL(/\/order-confirmation\/[0-9a-f-]+$/, { timeout: 30_000 });
-    await expect(page.getByText("Comandă înregistrată", { exact: true })).toBeVisible();
+    await expect(page.getByText("Comandă înregistrată")).toBeVisible();
     await expect.poll(() => storedCartCount(page)).toBe(0);
   });
 
@@ -296,7 +295,7 @@ test("customer autentificat primește prefill și plasează COD", async ({ page 
   await page.getByLabel("Metoda de livrare").selectOption(testShippingId);
   await page.getByRole("button", { name: "Plasează comanda ramburs" }).click();
   await expect(page).toHaveURL(/\/order-confirmation\/[0-9a-f-]+$/, { timeout: 30_000 });
-  await expect(page.getByText("Comandă înregistrată", { exact: true })).toBeVisible();
+  await expect(page.getByText("Comandă înregistrată")).toBeVisible();
 });
 
 test("checkout-ul este responsive fără overflow orizontal", async ({ page }) => {

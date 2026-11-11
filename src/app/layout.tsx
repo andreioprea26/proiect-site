@@ -1,19 +1,28 @@
-import { getPublicStoreSettings } from "@/lib/store-settings/server";
 import type { Metadata } from "next";
 
-import { getSiteUrl } from "@/lib/seo";
-import { STORE_CONFIG, storeMetadata } from "@/lib/config/store";
-import { themeVariables } from "@/lib/config/theme";
+import { getSiteUrl, SITE_DESCRIPTION, SITE_NAME } from "@/lib/seo";
 
 import "./globals.css";
 
-export async function generateMetadata(): Promise<Metadata> {
-  const store = await getPublicStoreSettings();
-  return {
-    metadataBase: getSiteUrl(),
-    ...storeMetadata(store),
-  };
-}
+export const metadata: Metadata = {
+  metadataBase: getSiteUrl(),
+  title: SITE_NAME,
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_NAME,
+  openGraph: {
+    type: "website",
+    locale: "ro_RO",
+    siteName: SITE_NAME,
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
+    url: "/",
+  },
+  twitter: {
+    card: "summary",
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
+  },
+};
 
 export default function RootLayout({
   children,
@@ -21,7 +30,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ro" style={themeVariables(STORE_CONFIG.theme)}>
+    <html lang="ro">
       <body>
         <a className="skip-link" href="#main-content">
           Sari la conținut

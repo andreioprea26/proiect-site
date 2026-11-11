@@ -3,14 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "client:authorize": "node scripts/authorize-client-target.mjs",
-    "preflight": "node scripts/preflight.mjs",
-    "client:install": "node scripts/install-client.mjs",
-    "test:client-install": "node --test tests/unit/client-install.test.mjs",
-    "seed-demo": "node scripts/seed-demo.mjs",
-    "verify:migrations": "node scripts/verify-migration-manifest.mjs",
-    "test:preflight": "node --test tests/unit/client-preflight.test.mjs",
-    "scan:secrets": "node scripts/scan-secrets.mjs",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -19,10 +11,7 @@
     "check": "npm run lint && npm run typecheck && npm run build",
     "test:e2e": "npm run build && playwright test",
     "test:e2e:headed": "npm run build && playwright test --headed",
-    "test:email": "node --test --experimental-strip-types tests/unit/email-notifications.test.mjs",
-    "test:config": "node --test --experimental-strip-types tests/unit/store-config.test.mjs",
-    "test:settings": "node --test --experimental-strip-types tests/unit/store-settings.test.mjs",
-    "test:theme": "node --test --experimental-strip-types tests/unit/theme.test.mjs"
+    "test:email": "node --test --experimental-strip-types tests/unit/email-notifications.test.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.4",

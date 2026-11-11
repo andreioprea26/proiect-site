@@ -1,4 +1,3 @@
-import { STORE_CONFIG } from "@/lib/config/store";
 import type { StorefrontProduct } from "@/lib/storefront/catalog";
 
 import { EmptyState } from "./empty-state";
@@ -7,7 +6,7 @@ import { ProductCard } from "./product-card";
 export function ProductGrid({
   products,
   emptyTitle = "Nu există încă produse publicate",
-  emptyDescription = STORE_CONFIG.copy.emptyProducts,
+  emptyDescription = "Revenim curând cu produse handmade pregătite pentru tine.",
   headingLevel = 3,
 }: {
   products: StorefrontProduct[];
