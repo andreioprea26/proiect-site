@@ -12,13 +12,12 @@ const literal = (value) => `'${value.replaceAll("'", "''")}'`;
 
 export function prepareDevelopmentSql(snapshot) {
   const files = readdirSync(migrationsUrl).filter((file) => /^\d{14}_.+\.sql$/.test(file)).sort();
-  const original = files.filter((file) => file.slice(0, 14) < "20260915120000");
+  const original = files.filter((file) => file !== `${version}_${name}.sql`);
   if (original.length !== 27 || files.length !== 28
     || !files.includes(`${version}_${name}.sql`)) {
     throw new Error("Unexpected local migration manifest; review the application procedure again");
   }
   const expected = original.map((file) => ({ version: file.slice(0, 14), name: file.slice(15, -4) }));
-  expected.push({ version: "20260915120000", name: "public_store_settings" });
   const migration = readFileSync(new URL(`${version}_${name}.sql`, migrationsUrl), "utf8");
   const guards = snapshot ? buildSnapshotGuards(snapshot, migration) : { preflight: "", postflight: "" };
   const sequenceTest = snapshot
@@ -40,14 +39,14 @@ begin
   select jsonb_agg(jsonb_build_object('version', version, 'name', name) order by version)
     into v_history from supabase_migrations.schema_migrations;
   if v_history is distinct from ${literal(JSON.stringify(expected))}::jsonb then
-    raise exception 'Development migration history differs from the audited 28 versions/names; STOP';
+    raise exception 'Development migration history differs from the audited 27 original versions/names; STOP';
   end if;
 end;
 $history_preflight$;
 
 ${migration}
 
--- Record only the change actually applied above. Do not delete or repair 10B history.
+-- Record only the change actually applied above. Existing migration records are never replaced.
 insert into supabase_migrations.schema_migrations(version, name, statements)
 values (${literal(version)}, ${literal(name)}, array[${literal(migration)}]::text[]);
 ${sequenceTest}

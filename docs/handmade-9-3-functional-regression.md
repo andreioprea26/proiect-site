@@ -1,5 +1,10 @@
 # Handmade 9.3 — regresie funcțională
 
+> Raport istoric: configurația și numerele de migrări de mai jos descriu momentul testării.
+> Starea curentă este [handmade Development](handmade-final-development.md), 28/28 migrări.
+> Extensia Store Settings și vechile Preview-uri au fost retrase; nu reaplicați procedurile istorice.
+
+
 ## Închidere finală TASK 9.3 — 11 noiembrie 2026
 
 **Verdict: PASS pentru regresia funcțională Development/Preview.** Proprietarul

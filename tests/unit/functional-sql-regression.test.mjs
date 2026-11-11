@@ -11,12 +11,12 @@ const suites = readdirSync(directory).filter((file) => file.endsWith(".sql")).so
 // Execute unchanged SQL suites only in fresh in-memory PostgreSQL instances.
 // Auth and Storage are local platform substitutes, not real service integrations.
 for (const file of suites) {
-  test(`Phase 9 + preserved Store Settings + 9.2: ${file}`, async () => {
-    const db = await createPhase9Fixture(true);
+  test(`Handmade Phase 9 + sequence hardening: ${file}`, async () => {
+    const db = await createPhase9Fixture();
     try {
       const before = (await db.query(snapshotQuery)).rows[0].audit;
       await db.exec(prepareDevelopmentSql(before));
-      assert.equal((await db.query("select count(*)::int as n from supabase_migrations.schema_migrations")).rows[0].n, 29);
+      assert.equal((await db.query("select count(*)::int as n from supabase_migrations.schema_migrations")).rows[0].n, 28);
       await db.exec(readFileSync(new URL(file, directory), "utf8"));
     } finally { await db.close(); }
   });

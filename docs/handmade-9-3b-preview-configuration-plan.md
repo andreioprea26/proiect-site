@@ -1,5 +1,7 @@
 # Handmade 9.3b — plan Preview, fără activare
 
+> Plan istoric pentru branch-ul 9.3, retras. Configurația activă este în [starea handmade](handmade-final-development.md). Nu recreați branch-ul sau endpointurile vechi.
+
 Data: 2026-11-11. Bază/HEAD: `a301e6b2a542555393fae60cad60802e699d7caa`,
 branch `task/handmade-9-3-functional-regression`. Pregătirea este realizată;
 configurarea cloud și publicarea rămân pentru review ChatGPT și aprobarea proprietarului.

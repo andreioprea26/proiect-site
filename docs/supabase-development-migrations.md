@@ -1,25 +1,25 @@
 # Migrații Supabase Development
 
-## Excepția curentă — handmade Faza 9 / TASK 9.2
+## Starea verificată la 2026-11-11
 
-Development `bdyocajhhylvasfhmnal` păstrează migrarea suplimentară Store Settings
-din 10B. Nu presupuneți istorii identice și nu aplicați automat fluxul generic
-de mai jos. TASK 9.2 a fost aplicat și verificat pe 2026-11-11:
-**28 fișiere locale / 29 versiuni remote**, cu Store Settings păstrată remote.
-Cele 28 versiuni remote anterioare au rămas intacte; versiunea nouă este
-`20261110120000_harden_order_public_number_sequence`.
-Procedura punctuală, gărzile și rezultatele reale
-sunt documentate în [Handmade 9.2](handmade-9-2-order-sequence-hardening.md).
-Nu utilizați reset/repair pentru a ascunde diferența și nu recuperați automat 10B.
+Proiectul original `bdyocajhhylvasfhmnal` are **28 versiuni remote / 28 fișiere locale**:
+27 originale din Faza 9 și `20261110120000_harden_order_public_number_sequence`.
+Store Settings (`20260915120000`) a fost eliminat real, apoi retras atomic din istoric,
+cu aprobarea expresă A+B+C. Nu s-a folosit reset, db push sau migration repair.
+Celelalte 28 rânduri de istoric, metadatele handmade, datele comerciale verificate
+și valoarea secvenței au rămas identice. Recuperarea punctuală a fost testată local;
+aceasta nu reprezintă un backup complet Supabase.
 
-## Flux istoric — nu se aplică automat bazei handmade
+Înaintea oricărei migrări viitoare: confirmați identitatea proiectului, comparați
+toate versiunile și numele cu manifestul local, inspectați SQL-ul și dependențele,
+stabiliți recuperarea și obțineți aprobarea aplicării. Opriți la orice diferență.
+Generatorul offline 9.2 acceptă strict cele 27 versiuni originale pentru simularea
+aplicării hardeningului; pe baza actuală deja securizată trebuie să refuze replay-ul.
+Nu aplicați automat acel batch pe Development și nu folosiți repair pentru a masca drift.
 
-Instrucțiunile CLI de mai jos descriu alinierea din septembrie, nu o autorizare
-curentă de `db push`. Pentru baza handmade sunt interzise reset/repair/db push
-automat cât timp istoricul este 28 local / 29 remote. Planul separat de retragere
-Store Settings și condițiile de backup sunt în
-[TASK 9.4](handmade-9-4-clean-baseline.md). Nu ștergeți versiunea din istoric
-înainte de anularea verificată a obiectelor și aprobarea expresă a operațiunii.
+Configurația curentă și rezultatele sunt în [starea handmade](handmade-final-development.md).
+
+## Istoric Faza 9 — dovezi, nu instrucțiuni de execuție curentă
 
 Istoricul CLI al proiectului Supabase Development a fost reconciliat controlat
 la 2026-09-04. Migrațiile noi aprobate se aplică prin `supabase db push

@@ -4,8 +4,8 @@ export const snapshotQuery = "select jsonb_build_object(\n'read_only',current_se
 const literal = (value) => "'" + value.replaceAll("'", "''") + "'";
 
 export function buildSnapshotGuards(snapshot, migration) {
-  if (snapshot.migrations?.length !== 28 || snapshot.sequence?.owner !== "postgres") {
-    throw new Error("Expected audited 28-migration Development snapshot");
+  if (snapshot.migrations?.length !== 27 || snapshot.sequence?.owner !== "postgres") {
+    throw new Error("Expected original 27-migration snapshot before hardening");
   }
   const before = structuredClone(snapshot);
   delete before.read_only;
@@ -44,8 +44,8 @@ begin
  if v->'roles' is distinct from ${literal(JSON.stringify(expectedRoles))}::jsonb then
    raise exception 'Effective sequence privileges differ from expected roles';
  end if;
- if jsonb_array_length(v->'migrations') <> 29
-   or ((v->'migrations') - 28) is distinct from ${literal(JSON.stringify(before.migrations))}::jsonb then
+ if jsonb_array_length(v->'migrations') <> 28
+   or ((v->'migrations') - 27) is distinct from ${literal(JSON.stringify(before.migrations))}::jsonb then
    raise exception 'Previous migration records changed';
  end if;
  if not exists(select 1 from supabase_migrations.schema_migrations
